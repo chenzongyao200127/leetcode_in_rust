@@ -4,30 +4,39 @@ fn main() {
     // let ans = get_max_repetitions("abc".to_string(), 4, "ab".to_string(), 2);
     // assert_eq!(ans, 2);
 
-    let ans = largest_local(vec![vec![9,9,8,1],vec![5,6,2,6],vec![8,2,6,4],vec![6,2,2,2]]);
-    assert_eq!(ans, vec![vec![2,2,2],vec![2,2,2],vec![2,2,2]]);
+    let ans = least_bricks(vec![vec![1,1],vec![2],vec![1,1]]);
+    assert_eq!(ans, 1);
 
 }
 
-pub fn largest_local(grid: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
-    let len = grid.len();
-    let mut ans = vec![vec![0; len-2]; len-2];
-    for i in 2..len {
-        for j in 2..len {
-            ans[i-2][j-2] = largest_nine(&grid, i, j);
+pub fn least_bricks(wall: Vec<Vec<i32>>) -> i32 {
+    let mut other_wall = vec![];
+    let len = wall.len();
+    let mut ans = wall.len();
+    let mut long = 0;
+    for line in wall {
+        let mut cur_xum = 0;
+        let mut new_line = vec![];
+        for brick in line {
+            cur_xum += brick;
+            new_line.push(cur_xum);
+        }
+        long = cur_xum;
+        other_wall.push(new_line);
+    }
+    let mut map: HashMap<i32, usize> = HashMap::new();
+    for line in other_wall {
+        for brick in line {
+            map.entry(brick).and_modify(|cnt| *cnt += 1).or_insert(1);
         }
     }
-    ans
-}
-
-
-pub fn largest_nine(grid: &Vec<Vec<i32>>, x: usize, y: usize) -> i32 {
-    let mut max = 0;
-    for i in x-2..=x {
-        for j in y-2..=y {
-            max = max.max(grid[i][j]);
+    for (&k, &v) in map.iter() {
+        println!("{:?}",(k,v));
+        if k != long as i32 {
+            ans = ans.min((len as usize - v) as usize);
+            println!("{:?}", ans);
         }
     }
 
-    max
+    ans as i32
 }

@@ -24,3 +24,21 @@ pub fn largest_nine(grid: &Vec<Vec<i32>>, x: usize, y: usize) -> i32 {
 
     max
 }
+
+    pub fn contains_nearby_almost_duplicate(nums: Vec<i32>, index_diff: i32, value_diff: i32) -> bool {
+        let mut s: HashSet<i32> = HashSet::new();
+        for (i, val) in nums.iter().enumerate() {
+            for diff_y in 0..=value_diff {
+                if s.contains(&(val+diff_y)) || s.contains(&(val-diff_y)) { // to be optimised
+                    return true;
+                }
+            }
+    
+            s.insert(*val);
+            if s.len() >= (index_diff + 1) as usize {
+                let offset = i - index_diff as usize;
+                s.remove(&nums[offset]);
+            }
+        }
+        false
+    }
