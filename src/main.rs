@@ -4,39 +4,26 @@ fn main() {
     // let ans = get_max_repetitions("abc".to_string(), 4, "ab".to_string(), 2);
     // assert_eq!(ans, 2);
 
-    let ans = least_bricks(vec![vec![1,1],vec![2],vec![1,1]]);
-    assert_eq!(ans, 1);
-
+    let ans = four_sum(vec![0], 0);
+    assert_eq!(ans, vec![vec![]]);
 }
 
-pub fn least_bricks(wall: Vec<Vec<i32>>) -> i32 {
-    let mut other_wall = vec![];
-    let len = wall.len();
-    let mut ans = wall.len();
-    let mut long = 0;
-    for line in wall {
-        let mut cur_xum = 0;
-        let mut new_line = vec![];
-        for brick in line {
-            cur_xum += brick;
-            new_line.push(cur_xum);
-        }
-        long = cur_xum;
-        other_wall.push(new_line);
-    }
-    let mut map: HashMap<i32, usize> = HashMap::new();
-    for line in other_wall {
-        for brick in line {
-            map.entry(brick).and_modify(|cnt| *cnt += 1).or_insert(1);
+pub fn four_sum(nums: Vec<i32>, target: i32) -> Vec<Vec<i32>> {
+    let mut ans = vec![];
+    let mut set: HashSet<Vec<i32>> = HashSet::new();
+    for i in 0..nums.len()-3 {
+        for j in i+1..nums.len()-2 {
+            for m in j+1..nums.len()-1 {
+                for n in m+1..nums.len() {
+                    if nums[i]+nums[j]+nums[m]+nums[n] == target {
+                        set.insert(vec![nums[i],nums[j],nums[m],nums[n]]);
+                    }
+                }
+            }
         }
     }
-    for (&k, &v) in map.iter() {
-        println!("{:?}",(k,v));
-        if k != long as i32 {
-            ans = ans.min((len as usize - v) as usize);
-            println!("{:?}", ans);
-        }
+    for item in set {
+        ans.push(item);
     }
-
-    ans as i32
+    ans
 }
