@@ -1,55 +1,29 @@
-use std::collections::{HashSet, HashMap};
+use std::{collections::{HashSet, HashMap}, process::id};
 
 fn main() {
     // let ans = get_max_repetitions("abc".to_string(), 4, "ab".to_string(), 2);
     // assert_eq!(ans, 2);
 
-    let ans = print_bin(0.625);
-    assert_eq!(ans, "0.101".to_string());
+    let ans = find_max_length(vec![0,0,0,1,1,1]);
+    assert_eq!(ans, 6);
 }
 
-pub fn print_bin(num: f64) -> String {
-    let mut ans = "0.".to_string();
-    let mut dig = -1;
-    let mut n = num;
-    let base = 2.0 as f64;
-    while n != 0.0 {
-        if n >= base.powi(dig) {
-            n = n - base.powi(dig);
-            ans.push('1');
+pub fn find_max_length(nums: Vec<i32>) -> i32 {
+    let mut ans = 0;
+    let mut map: HashMap<i32, i32> = HashMap::new();
+    map.insert(0, -1);
+    let mut compare = 0;
+    for i in 0..nums.len() {
+        if nums[i] == 1 {
+            compare += 1;
         } else {
-            ans.push('0');
+            compare -= 1;
         }
-        dig -= 1;
-        if dig == -30 {
-            break;
+        if let Some(val) = map.get(&compare) {
+            ans = ans.max(i as i32 - *val);
+        } else {
+            map.insert(compare, i as i32);
         }
     }
-
-    if n == 0.0 {
-        ans
-    } else {
-        "ERROR".to_string()
-    }
+    ans
 }
-
-
-// pub fn four_sum(nums: Vec<i32>, target: i32) -> Vec<Vec<i32>> {
-//     let mut ans = vec![];
-//     let mut set: HashSet<Vec<i32>> = HashSet::new();
-//     for i in 0..nums.len()-3 {
-//         for j in i+1..nums.len()-2 {
-//             for m in j+1..nums.len()-1 {
-//                 for n in m+1..nums.len() {
-//                     if nums[i]+nums[j]+nums[m]+nums[n] == target {
-//                         set.insert(vec![nums[i],nums[j],nums[m],nums[n]]);
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     for item in set {
-//         ans.push(item);
-//     }
-//     ans
-// }
