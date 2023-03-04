@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 fn main() {
     // let ans = get_max_repetitions("abc".to_string(), 4, "ab".to_string(), 2);
@@ -6,27 +6,26 @@ fn main() {
 
     // let ans = candy(vec![1,2,87,87,87,2,1]);
     // assert_eq!(ans, 13);
-    let ans = find_min_arrow_shots(vec![vec![1,2],vec![2,3],vec![3,4],vec![4,5]]);
-    assert_eq!(ans, 2);
+    let ans = count_triplets(vec![0,0,0]);
+    assert_eq!(ans, 12);
 }
 
-pub fn find_min_arrow_shots(points: Vec<Vec<i32>>) -> i32 {
-    let mut ans = 0;
-    let mut points = points;
-    points.sort_unstable_by(|x, y| x[0].cmp(&y[0]));
-    let mut start = i32::MIN;
-    let mut end = i32::MAX;
-    for point in points {
-        if point[0] <= end {
-            start = start.max(point[0]);
-            end = end.min(point[1]);
-        } else {
-            start = point[0];
-            end = point[1];
-            ans += 1;
+pub fn count_triplets(nums: Vec<i32>) -> i32 {
+    let mut cnt = vec![0; 1<<16];
+    for x in nums.iter() {
+        for y in nums.iter() {
+            cnt[(x & y) as usize] += 1;
         }
-        // println!("{:?}", (start, end));
     }
-
-    ans+1
+    let mut ans = 0;
+    for x in nums.iter() {
+        let mut mask = 0;
+        while mask < (1<<16) {
+            if (x & mask) == 0 {
+                ans += cnt[mask as usize];
+            }
+            mask += 1;
+        }
+    }
+    ans
 }
