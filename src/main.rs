@@ -6,26 +6,29 @@ fn main() {
 
     // let ans = candy(vec![1,2,87,87,87,2,1]);
     // assert_eq!(ans, 13);
-    let ans = count_triplets(vec![0,0,0]);
-    assert_eq!(ans, 12);
+    sort_colors(&mut vec![1,2,0,0,0,2,1,1,2,2,1,0,2,1]);
 }
 
-pub fn count_triplets(nums: Vec<i32>) -> i32 {
-    let mut cnt = vec![0; 1<<16];
-    for x in nums.iter() {
-        for y in nums.iter() {
-            cnt[(x & y) as usize] += 1;
+
+pub fn sort_colors(nums: &mut Vec<i32>) {
+    let (mut num0, mut num1, mut num2) = (0, 0, 0);
+    for i in 0..nums.len() {
+        if nums[i] == 0 {
+            nums[num2] = 2;
+            nums[num1] = 1;
+            nums[num0] = 0;
+            num0 += 1;
+            num1 += 1;
+            num2 += 1;
+        }else if nums[i] == 1  {
+            nums[num2] = 2;
+            nums[num1] = 1;
+            num1 += 1;
+            num2 += 1;
+        }else {
+            nums[num2] = 2;
+            num2 += 1;
         }
+        println!("{:?}", nums);
     }
-    let mut ans = 0;
-    for x in nums.iter() {
-        let mut mask = 0;
-        while mask < (1<<16) {
-            if (x & mask) == 0 {
-                ans += cnt[mask as usize];
-            }
-            mask += 1;
-        }
-    }
-    ans
 }
