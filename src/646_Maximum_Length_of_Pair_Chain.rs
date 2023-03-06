@@ -9,6 +9,35 @@
 // 你不需要用到所有的数对，你可以以任何顺序选择其中的一些数对来构造。
 impl Solution {
     pub fn find_longest_chain(pairs: Vec<Vec<i32>>) -> i32 {
+        let mut pairs = pairs;
+        pairs.sort_unstable_by(|x, y| x[1].cmp(&y[1]));
+        let mut curr = i32::MIN;
+        let mut ans = 0;
+        for pair in pairs {
+            if curr < pair[0] {
+                curr = pair[1];
+                ans += 1;
+            }
+        }
+        ans
+    }
+}    
 
+
+impl Solution {
+    pub fn find_longest_chain(pairs: Vec<Vec<i32>>) -> i32 {
+        let n = pairs.len();
+        let mut pairs = pairs;
+        pairs.sort_unstable_by(|x, y| x[0].cmp(&y[0]));
+        let mut dp = vec![1; n];
+        for i in 0..n {
+            for j in 0..i {
+                if pair[i][0] > pairs[j][1] {
+                    dp[i] = dp[1].max(dp[j] + 1);
+                }
+            }
+        }
+        dp[n-1]
     }
 }
+

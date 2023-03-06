@@ -1,14 +1,32 @@
 pub fn main() {
-    let ans = reconstruct_queue(vec![vec![7,0],vec![4,4],vec![7,1],vec![5,0],vec![6,1],vec![5,2]]);
-    assert_eq!(ans, vec![vec![5,0],vec![7,0],vec![5,2],vec![6,1],vec![4,4],vec![7,1]]);
+    let ans = predict_party_victory("RRDDRRDDD".to_string());
+    assert_eq!(ans, "Radiant".to_string());
 }
 
-pub fn reconstruct_queue(people: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
-    let mut people = people;
-    let mut ans = vec![];
-    people.sort_by(|a, b| b[0].cmp(&a[0]).then(a[1].cmp(&b[1])));
-    for p in people.iter() {
-        ans.insert(p[1] as usize, p.to_vec());
+use std::collections::VecDeque;
+
+pub fn predict_party_victory(senate: String) -> String {
+    let mut radiant = VecDeque::new();
+    let mut dire = VecDeque::new();
+    senate.chars().enumerate().for_each(|(i, c)| {
+        if c == 'R' {
+            radiant.push_back(i);
+        } else {
+            dire.push_back(i)
+        }
+    });
+    while !radiant.is_empty() && !dire.is_empty() {
+        let (r, d) = (radiant.pop_front().unwrap(), dire.pop_front().unwrap());
+        if r < d {
+            radiant.push_back(r + senate.len());
+        } else {
+            dire.push_back(d + senate.len());
+        }
     }
-    ans
+
+    if radiant.is_empty() {
+        "Dire".into()
+    } else {
+        "Radiant".into()
+    }
 }
