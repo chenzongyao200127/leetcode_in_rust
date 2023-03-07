@@ -5,6 +5,30 @@
 impl Solution {
     pub fn merge(intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
         let mut intervals = intervals;
+        intervals.sort_unstable_by(|a, b| a[0].cmp(&b[0]).then(a[1].cmp(&b[1])));
+        // println!("{:?}", intervals);
+        let mut left = intervals[0][0];
+        let mut right = intervals[0][1];
+        let mut ans: Vec<Vec<i32>> = vec![];
+        for i in 1..intervals.len() {
+            if intervals[i][0] <= right {
+                right = right.max(intervals[i][1]);
+            } else {
+                ans.push(vec![left, right]);
+                left = intervals[i][0];
+                right = intervals[i][1];
+            }
+        }
+        ans.push(vec![left, right]);
+
+        ans
+    }
+}
+
+
+impl Solution {
+    pub fn merge(intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+        let mut intervals = intervals;
         intervals.sort();
         let mut ans = vec![];
         let (mut start, mut end) = (intervals[0][0], intervals[0][1]);
@@ -57,7 +81,23 @@ impl Solution {
 
 impl Solution {
     pub fn merge(intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+        let mut intervals = intervals;
+        intervals.sort_unstable_by(|a, b| a[0].cmp(&b[0]).then(a[1].cmp(&b[1])));
+        let len = intervals.len();
+        let mut left = intervals[0][0];
+        let mut right = intervals[0][1];
+        let mut ans: Vec<Vec<i32>> = vec![];
+        for i in 1..intervals.len() {
+            if intervals[i][0] <= right {
+                right = intervals[i][1];
+            } else {
+                ans.push(vec![left, right]);
+                left = intervals[i][0];
+                left = intervals[i][1];
+            }
+        }
 
+        ans
     }
 }
 

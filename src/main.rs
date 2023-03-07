@@ -1,32 +1,25 @@
 pub fn main() {
-    let ans = predict_party_victory("RRDDRRDDD".to_string());
-    assert_eq!(ans, "Radiant".to_string());
+    let ans = merge(vec![vec![1,3],vec![2,6],vec![8,10],vec![15,18]]);
+    assert_eq!(ans, vec![vec![1,6],vec![8,10],vec![15,18]]);
 }
 
-use std::collections::VecDeque;
-
-pub fn predict_party_victory(senate: String) -> String {
-    let mut radiant = VecDeque::new();
-    let mut dire = VecDeque::new();
-    senate.chars().enumerate().for_each(|(i, c)| {
-        if c == 'R' {
-            radiant.push_back(i);
+pub fn merge(intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+    let mut intervals = intervals;
+    intervals.sort_unstable_by(|a, b| a[0].cmp(&b[0]).then(a[1].cmp(&b[1])));
+    println!("{:?}", intervals);
+    let mut left = intervals[0][0];
+    let mut right = intervals[0][1];
+    let mut ans: Vec<Vec<i32>> = vec![];
+    for i in 1..intervals.len() {
+        if intervals[i][0] <= right {
+            right = right.max(intervals[i][1]);
         } else {
-            dire.push_back(i)
-        }
-    });
-    while !radiant.is_empty() && !dire.is_empty() {
-        let (r, d) = (radiant.pop_front().unwrap(), dire.pop_front().unwrap());
-        if r < d {
-            radiant.push_back(r + senate.len());
-        } else {
-            dire.push_back(d + senate.len());
+            ans.push(vec![left, right]);
+            left = intervals[i][0];
+            right = intervals[i][1];
         }
     }
+    ans.push(vec![left, right]);
 
-    if radiant.is_empty() {
-        "Dire".into()
-    } else {
-        "Radiant".into()
-    }
+    ans
 }
