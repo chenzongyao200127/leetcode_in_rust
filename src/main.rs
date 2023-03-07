@@ -1,25 +1,25 @@
 pub fn main() {
-    let ans = merge(vec![vec![1,3],vec![2,6],vec![8,10],vec![15,18]]);
-    assert_eq!(ans, vec![vec![1,6],vec![8,10],vec![15,18]]);
+    let ans = ways_to_reach_target(6, vec![vec![6,1],vec![3,2],vec![2,3]]);
+    assert_eq!(ans, 7);
 }
 
-pub fn merge(intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
-    let mut intervals = intervals;
-    intervals.sort_unstable_by(|a, b| a[0].cmp(&b[0]).then(a[1].cmp(&b[1])));
-    println!("{:?}", intervals);
-    let mut left = intervals[0][0];
-    let mut right = intervals[0][1];
-    let mut ans: Vec<Vec<i32>> = vec![];
-    for i in 1..intervals.len() {
-        if intervals[i][0] <= right {
-            right = right.max(intervals[i][1]);
-        } else {
-            ans.push(vec![left, right]);
-            left = intervals[i][0];
-            right = intervals[i][1];
+pub fn ways_to_reach_target(target: i32, types: Vec<Vec<i32>>) -> i32 {
+    let _MOD = 1000_000_007;
+    let type_len = types.len();
+
+    let mut dp = vec![vec![0; target as usize + 1]; type_len + 1];
+    dp[0][0] = 1; //dp[i][j] 前i题获得j分数所有的方法数
+    for i in 1..=type_len {
+        let tmp_score = types[i-1][1];
+        for j in 0..=target as usize {
+            let mut k = 0;
+            while k <= types[i-1][0] && (j as i32 - tmp_score * k >= 0) {
+                dp[i][j] += dp[i-1][j-(k*tmp_score) as usize];
+                dp[i][j] = dp[i][j] % _MOD;
+                k += 1;
+            }
         }
     }
-    ans.push(vec![left, right]);
 
-    ans
+    dp[type_len][target as usize]
 }
