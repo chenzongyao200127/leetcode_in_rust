@@ -1,25 +1,57 @@
+use std::collections::HashSet;
+
 pub fn main() {
-    let ans = can_complete_circuit(vec![1,2,3,4,5],  vec![3,4,5,1,2]);
-    assert_eq!(ans, 3);
+    let ans = wiggle_max_length(vec![0,0,0]);
+    assert_eq!(ans, 6);
 }
 
-pub fn can_complete_circuit(gas: Vec<i32>, cost: Vec<i32>) -> i32 {
-    let mut cur = 0;
-    let (mut sum, mut pre) = (0, 0);
-    let retain: Vec<i32> = gas.iter().zip(cost).map(|(&x, y)| x - y).collect();
 
-    for (i, &n) in retain.iter().enumerate() {
-        sum += n;
-        
-        if sum < 0 {
-            pre += sum;
-            sum = 0;
-            cur = i + 1;
+pub fn wiggle_max_length(nums: Vec<i32>) -> i32 {
+    if nums.len() == 1 {
+        return 1;
+    }
+    if nums.len() == 2 {
+        if nums[0] != nums[1] {
+            return 2;
+        } else {
+            return 1;
         }
     }
-    if pre + sum < 0 {
-        -1
-    } else {
-        cur as i32
+    let mut ans = vec![nums[0]];
+    let mut diff = 0;
+    for i in 1..nums.len() {
+        if nums[i] != nums[0] {
+            ans.push(nums[i]);
+            diff = i;
+            break;
+        }
     }
+    if diff == 0 {
+        return 1;
+    }
+
+    for i in diff..nums.len() {
+        if (nums[i] - ans[ans.len()-1]) * (ans[ans.len()-1] - ans[ans.len()-2]) < 0 {
+            ans.push(nums[i]);
+        } else {
+            if (ans[ans.len()-1] - ans[ans.len()-2]) > 0 {
+                if ans[ans.len()-1] >= nums[i] {
+                    continue;
+                } else {
+                    ans.pop();
+                    ans.push(nums[i]);
+                }
+            } else {
+                if ans[ans.len()-1] <= nums[i] {
+                    continue;
+                } else {
+                    ans.pop();
+                    ans.push(nums[i]);
+                }
+            }
+        }
+    }
+    // println!("{:?}", ans);
+
+    ans.len() as i32
 }
