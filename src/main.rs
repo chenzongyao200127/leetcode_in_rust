@@ -1,57 +1,33 @@
-use std::collections::HashSet;
 
 pub fn main() {
-    let ans = wiggle_max_length(vec![0,0,0]);
-    assert_eq!(ans, 6);
+    let ans = remove_kdigits("112".to_string(), 1);
+    assert_eq!("11".to_string(), ans);
 }
 
+// pub fn remove_kdigits(num: String, k: i32) -> String {
+//     if k as usize == num.len() {
+//         return "0".to_string();
+//     }
+//     let mut s: Vec<char> = num.chars().collect();
+//     for _ in 0..k {
+//         for i in 1..s.len() {
+//             let pre = s[i-1] as u8;
+//             if pre <= s[i] as u8 {
+//                 if i == s.len()-1 {
+//                     s.remove(i);
+//                 } else {
+//                     continue;
+//                 }
+//             } else {
+//                 s.remove(i-1);
+//                 break;
+//             }
+//         }
+//     }
 
-pub fn wiggle_max_length(nums: Vec<i32>) -> i32 {
-    if nums.len() == 1 {
-        return 1;
-    }
-    if nums.len() == 2 {
-        if nums[0] != nums[1] {
-            return 2;
-        } else {
-            return 1;
-        }
-    }
-    let mut ans = vec![nums[0]];
-    let mut diff = 0;
-    for i in 1..nums.len() {
-        if nums[i] != nums[0] {
-            ans.push(nums[i]);
-            diff = i;
-            break;
-        }
-    }
-    if diff == 0 {
-        return 1;
-    }
+//     let mut ans: String = s.iter().collect();
+//     if ans == "0".repeat(num.len() - k as usize) {
+//         return "0".to_string();
+//     }
 
-    for i in diff..nums.len() {
-        if (nums[i] - ans[ans.len()-1]) * (ans[ans.len()-1] - ans[ans.len()-2]) < 0 {
-            ans.push(nums[i]);
-        } else {
-            if (ans[ans.len()-1] - ans[ans.len()-2]) > 0 {
-                if ans[ans.len()-1] >= nums[i] {
-                    continue;
-                } else {
-                    ans.pop();
-                    ans.push(nums[i]);
-                }
-            } else {
-                if ans[ans.len()-1] <= nums[i] {
-                    continue;
-                } else {
-                    ans.pop();
-                    ans.push(nums[i]);
-                }
-            }
-        }
-    }
-    // println!("{:?}", ans);
-
-    ans.len() as i32
-}
+// }
