@@ -37,9 +37,25 @@ impl Solution {
     }
 }
 
-// 双指针
+/// 单调栈
+/// 还是不熟悉，看着思路都没写出来....
 impl Solution {
     pub fn trap(height: Vec<i32>) -> i32 {
-        
+        let mut stk: Vec<usize>= vec![];
+        let mut ans = 0;
+
+        for i in 0..height.len() {
+            while !stk.is_empty() && height[stk[stk.len()-1]] < height[i] {
+                let top = stk.pop().unwrap();
+                if stk.is_empty() {
+                    break;
+                }
+                let left = stk[stk.len()-1];
+                ans += (i-left-1)*((height[i].min(height[left])-height[top]) as usize);
+            }
+            stk.push(i);
+        }
+
+        ans as i32
     }
 }
