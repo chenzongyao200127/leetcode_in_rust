@@ -1,14 +1,34 @@
+use std::vec;
+
 
 pub fn main() {
-    let ans = count_subgraphs_for_each_diameter(4, vec![vec![1,2],vec![2,3],vec![2,4]]);
-    assert_eq!(ans, vec![3,4,0]);
+    // let ans = count_subgraphs_for_each_diameter(4, vec![vec![1,2],vec![2,3],vec![2,4]]);
+    // assert_eq!(ans, vec![3,4,0]);
+
+    let ans = min_number_of_hours(94, 70, vec![58,47,100,71,47,6,92,82,35,16,50,15,42,5,2,45,22], vec![77,83,99,76,75,66,58,84,44,98,70,41,48,7,10,61,28]);
+    assert_eq!(ans, 0);
 }
 
-pub fn count_subgraphs_for_each_diameter(n: i32, edges: Vec<Vec<i32>>) -> Vec<i32> {
-    let mut roads = vec![];
+pub fn min_number_of_hours(initial_energy: i32, initial_experience: i32, 
+    energy: Vec<i32>, experience: Vec<i32>) -> i32 {
     
-}
+    let mut ans = 0;
+    let sum_egy = energy.iter().sum::<i32>();
+    if sum_egy >= initial_energy {
+        ans += sum_egy+1-initial_energy;
+    }
+    let mut cur_exp = initial_experience;
+    for i in 0..experience.len() {
+        if cur_exp > experience[i] {
+            cur_exp += experience[i];
+        } else {
+            ans += experience[i] + 1 - cur_exp;
+            cur_exp += 2 * experience[i] + 1 - cur_exp;
+        }
+    }
 
+    ans
+}
 
 // pub fn beautiful_subarrays(nums: Vec<i32>) -> i64 {
 //     if nums.len() <= 1 {
