@@ -1,41 +1,27 @@
 use std::collections::HashMap;
-
+use std::collections::VecDeque;
 
 pub fn main() {
     // let ans = count_subgraphs_for_each_diameter(4, vec![vec![1,2],vec![2,3],vec![2,4]]);
     // assert_eq!(ans, vec![3,4,0]);
 
-    let ans = min_sub_array_len(4, vec![1,4,4]);
-    assert_eq!(ans, 2);
+    let ans = restore_matrix(vec![14, 9], vec![6,9,8]);
+    assert_eq!(ans, vec![vec![]]);
 }
 
-pub fn min_sub_array_len(target: i32, nums: Vec<i32>) -> i32 {
-    if nums.iter().sum::<i32>() < target {
-        return 0;
-    }
-    let mut start = 0 as usize;
-    let mut end = 0 as usize;
-    let mut tmp_sum = nums[start];
-    while tmp_sum < target {
-        end += 1;
-        tmp_sum += nums[end];
-    }
-    // println!("{:?}", (start, end));
-    let mut ans = end - start + 1;
-    while start < nums.len() {
-        start += 1;
-        tmp_sum -= nums[start-1];
-        while tmp_sum < target && end < nums.len()-1 {
-            end += 1;
-            tmp_sum += nums[end];
-        }
-        // println!("{:?}", (start, end));
-        if tmp_sum >= target {
-            ans = ans.min(end - start + 1);
-        }
-        if ans == 1 {
-            return 1;
+
+pub fn restore_matrix(mut row_sum: Vec<i32>, mut col_sum: Vec<i32>) -> Vec<Vec<i32>> {
+    let mut ans = vec![vec![0; col_sum.len()]; row_sum.len()];
+    for i in 0..row_sum.len() {
+        for j in 0..col_sum.len() {
+            if col_sum[j] == 0 || row_sum[i] == 0 {
+                ans[i][j] = 0;
+            } else {
+                ans[i][j] = row_sum[i].min(col_sum[j]);
+                row_sum[i] -= ans[i][j];
+                col_sum[j] -= ans[i][j];
+            }
         }
     }
-    ans as i32
+    ans
 }
