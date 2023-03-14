@@ -5,23 +5,22 @@ pub fn main() {
     // let ans = count_subgraphs_for_each_diameter(4, vec![vec![1,2],vec![2,3],vec![2,4]]);
     // assert_eq!(ans, vec![3,4,0]);
 
-    let ans = restore_matrix(vec![14, 9], vec![6,9,8]);
-    assert_eq!(ans, vec![vec![]]);
+    let ans = min_window("ADOBECODEBANC".to_owned(), "ABC".to_string());
+    assert_eq!(ans, "BANC".to_string());
 }
 
+pub fn min_window(s: String, t: String) -> String {
+    let s: Vec<char> = s.chars().collect();
+    let len = s.len();
+    let t: Vec<char> = t.chars().collect();
+    let mut target_window = vec![0; 100];
+    t.iter().for_each(|&ch| target_window[ch as usize - 'A' as usize] += 1);
 
-pub fn restore_matrix(mut row_sum: Vec<i32>, mut col_sum: Vec<i32>) -> Vec<Vec<i32>> {
-    let mut ans = vec![vec![0; col_sum.len()]; row_sum.len()];
-    for i in 0..row_sum.len() {
-        for j in 0..col_sum.len() {
-            if col_sum[j] == 0 || row_sum[i] == 0 {
-                ans[i][j] = 0;
-            } else {
-                ans[i][j] = row_sum[i].min(col_sum[j]);
-                row_sum[i] -= ans[i][j];
-                col_sum[j] -= ans[i][j];
-            }
-        }
-    }
-    ans
+    let mut cnt_window = vec![0; 100];
+    let mut idx_window = vec![-1; 100];
+    let mut left = 0;
+    let mut right = 
+
+    "1".to_owned()
+
 }
