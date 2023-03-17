@@ -57,7 +57,6 @@ impl Solution {
     pub fn find_radius(houses: Vec<i32>, heaters: Vec<i32>) -> i32 {
         let mut map = vec![0; (houses[houses.len()-1] as usize + 1).max(heaters[heaters.len()-1] as usize + 1)];
         heaters.iter().for_each(|&heater| map[heater as usize] = 1);
-        // println!("{:?}", map);
         let mut ans = 0;
         let mut heaters = heaters;
         heaters.sort_unstable(); 
@@ -80,9 +79,7 @@ impl Solution {
                     right += 1;
                 }
             }
-            // println!("{:?}", (left, right));
             let tmp = (left.abs()).min(right.abs());
-            // println!("{:?}", tmp);
             ans = ans.max(tmp);
         }
 
