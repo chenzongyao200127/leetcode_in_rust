@@ -1,19 +1,31 @@
-use std::collections::HashSet;
-use std::collections::VecDeque;
-
 pub fn main() {
-    let ans = rob(vec![2,7,9,3,1]);
-    assert_eq!(ans, 12);
+    let ans = check_palindrome_formation("khekdvakkkggbopatnbtcbbqkntplzoqectgexifhinhsjohplfebkynpxkraayuythwgbwvzqzprhapxgevfnmexkkutaybuspnmkztgxryipgxlowdsnmqlsslnxupsvsbttxdlgvjvrbxnqezowacfplqkzubwduirbgmjzkdmpwctoowzcsjbaoiumsthvgcagvsihjqgbfjejhtspyrdsmoabvmrgmtshraxgmwknmijgypvgmgfqcytumqcqhgiuihbkcrcehnglsoxegdailsjlibsfnyeoejeltxsvtubakuvskokudtgkbhaab".to_string(),
+    "baahbkgtdukoksvukabutvsxtlejeoeynfsbilqwuqnbpyzmlttjzewwcgvcmaqlsosagpztvpbbxkxsclcashgzstktuuernbmymfkfpalyprnmzeakyyruodavblsyxohctqzcknefhucfdpsntixoczieytxeaqaextyeizcoxitnspdfcuhfenkczqtchoxyslbvadouryykaezmnrpylapfkfmymbnreuutktszghsaclcsxkxbbpvtzpgasoslqamcvgcwwezjttlmzypbnquwqhgcqjqzjrfhcfloqdrpvggnupsizifdzeqpvbz".to_string());
+    assert_eq!(ans, true);
+
+    let ans = check_palindrome_formation("abc".to_string(), "cba".to_string());
+    assert_eq!(ans, true);
 }
 
-pub fn rob(nums: Vec<i32>) -> i32 {
-    let mut dp = vec![];
-    dp.push(0);
-    dp.push(nums[0]);
-    for i in 1..nums.len() {
-        dp.push((nums[i] + dp[i-1]).max(dp[i]));
+pub fn check_palindrome_formation(a: String, b: String) -> bool {
+    fn check(a: &[u8], b: &[u8], mut left: i32) -> i32 {
+        let mut right = a.len() - 1 - left as usize;
+        while left >= 0 && right < a.len() {
+            if a[left as usize] != b[right] {
+                break;
+            }
+            left -= 1;
+            right += 1;
+        }
+        
+        return left
     }
-    println!("{:?}",dp);
-    
-    dp[dp.len()-1] as i32
+
+    let a = a.as_bytes();
+    let b = b.as_bytes();
+    let mut left = (a.len() / 2 - 1) as i32;
+    left = check(a, a, left as i32).min(check(b, b, left as i32));
+    left = check(a, b, left as i32 ).min(check(b, a, left as i32));
+
+    left == -1
 }
