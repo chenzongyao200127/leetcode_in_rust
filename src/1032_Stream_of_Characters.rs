@@ -1,3 +1,6 @@
+// 1032. Stream of Characters
+// https://leetcode.cn/problems/stream-of-characters/
+
 
 struct StreamChecker {
     buffer: String,

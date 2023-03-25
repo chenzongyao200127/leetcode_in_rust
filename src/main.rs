@@ -1,36 +1,41 @@
 pub fn main() {
-    // let ans = best_team_score(vec![4,6,5,7,8,2], vec![3,2,4,6,5,2]);
-    // assert_eq!(ans, 19);
+    let ans = find_length_of_shortest_subarray(vec![5,4,3,2,1]);
+    assert_eq!(ans, 4);
 
-    // let ans = best_team_score(vec![4,5,6,5], vec![2,1,2,1]);
-    // assert_eq!(ans, 16);
+    let ans = find_length_of_shortest_subarray(vec![1,2,3]);
+    assert_eq!(ans, 0);
 
-    let ans = check_arithmetic_subarrays(vec![-12,-9,-3,-12,-6,15,20,-25,-20,-15,-10], vec![0,1,6,4,8,7], vec![4,4,9,7,9,10]);
-    assert_eq!(ans, vec![false,true,false,false,true,true]);
+    let ans = find_length_of_shortest_subarray(vec![1,2,3,10,0,7,8,9]);
+    assert_eq!(ans, 2);
 
+    let ans = find_length_of_shortest_subarray(vec![13,0,14,7,18,18,18,16,8,15,20]);
+    assert_eq!(ans, 8);
 }
 
-pub fn check_arithmetic_subarrays(nums: Vec<i32>, l: Vec<i32>, r: Vec<i32>) -> Vec<bool> {
-    let mut ans = vec![];
-    for (l, r) in l.into_iter().zip(r) {
-        ans.push(check_arithmetic_array(&nums[l as usize..r as usize+1].to_vec()));
+
+pub fn find_length_of_shortest_subarray(arr: Vec<i32>) -> i32 {
+    let n = arr.len();
+    let mut i = 0;
+    let mut j = n - 1;
+
+    while i < n - 1 && arr[i] <= arr[i + 1] {
+        i += 1;
+    }
+    while j > 0 && arr[j-1] <= arr[j] {
+        j -= 1;
+    }
+    if i >= j {
+        return 0;
     }
 
-    ans
-}
-
-pub fn check_arithmetic_array(nums: &Vec<i32>) -> bool {
-    let mut nums = nums.clone();
-    nums.sort_unstable();
-
-    let diff = nums[1] - nums[0];
-    for i in 1..nums.len()-1 {
-        if nums[i+1] - nums[i] == diff {
-            continue;
-        } else {
-            return false;
+    let mut ans = j.min(n-i-1);
+    let mut right = j;
+    for left in 0..i+1 {
+        while right < n && arr[right] < arr[left] {
+            right += 1;
         }
+        ans = ans.min(right - left - 1);
     }
     
-    true
+    ans as i32
 }

@@ -1,3 +1,7 @@
+# // 1032. Stream of Characters
+# // https://leetcode.cn/problems/stream-of-characters/
+
+
 # 字典树
 class Trie:
     def __init__(self):
@@ -43,3 +47,4 @@ class StreamChecker:
 # param_1 = obj.query(letter)
 
 
+H
