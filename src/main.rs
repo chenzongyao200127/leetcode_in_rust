@@ -39,3 +39,19 @@ pub fn find_length_of_shortest_subarray(arr: Vec<i32>) -> i32 {
     
     ans as i32
 }
+
+
+use std::collections::HashSet;
+pub fn find_subarrays(nums: Vec<i32>) -> bool {
+    let mut set: HashSet<i32> = HashSet::new();
+    for i in 0..nums.len()-1 {
+        let tmp_sum = nums[i] + nums[i+1];
+        if set.contains(&tmp_sum) {
+            return true;
+        } else {
+            set.insert(tmp_sum);
+        }
+    }
+    
+    false
+}
