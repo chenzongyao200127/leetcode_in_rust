@@ -41,17 +41,36 @@ pub fn find_length_of_shortest_subarray(arr: Vec<i32>) -> i32 {
 }
 
 
-use std::collections::HashSet;
-pub fn find_subarrays(nums: Vec<i32>) -> bool {
-    let mut set: HashSet<i32> = HashSet::new();
-    for i in 0..nums.len()-1 {
-        let tmp_sum = nums[i] + nums[i+1];
-        if set.contains(&tmp_sum) {
-            return true;
-        } else {
-            set.insert(tmp_sum);
+pub fn count_substrings(s: String, t: String) -> i32 {
+    let mut dpl = vec![vec![0; t.len()]; s.len()];
+    let s: Vec<char> = s.chars().collect();
+    let t: Vec<char> = t.chars().collect();
+    for i in 1..s.len() {
+        for j in 1..t.len() {
+            if s[i] == s[j] {
+                dpl[i][j] = dpl[i-1][j-1] + 1;
+            } else {
+                dpl[i][j] = 0;
+            }
         }
     }
-    
-    false
+    let mut dpr = vec![vec![0; t.len()]; s.len()];
+    for i in (0..s.len()-1).rev() {
+        for j in (0..t.len()-1).rev() {
+            if s[i] == s[j] {
+                dpr[i][j] = dpr[i+1][j+1] + 1;
+            } else {
+                dpr[i][j] = 0;
+            }
+        }
+    }
+    let mut ans = 0;
+    for i in 0..s.len() {
+        for j in 0..t.len() {
+            if s[i] != t[j] {
+                ans += (dpl[i][j] + 1) * (dpr[i][j] + 1);
+            }
+        }
+    }
+    ans
 }
