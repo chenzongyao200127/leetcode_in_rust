@@ -41,36 +41,48 @@ pub fn find_length_of_shortest_subarray(arr: Vec<i32>) -> i32 {
 }
 
 
-pub fn count_substrings(s: String, t: String) -> i32 {
-    let mut dpl = vec![vec![0; t.len()]; s.len()];
-    let s: Vec<char> = s.chars().collect();
-    let t: Vec<char> = t.chars().collect();
-    for i in 1..s.len() {
-        for j in 1..t.len() {
-            if s[i] == s[j] {
-                dpl[i][j] = dpl[i-1][j-1] + 1;
-            } else {
-                dpl[i][j] = 0;
+
+
+    pub fn is_scramble(s1: &str, s2: &str) -> bool {
+        if s1 == s2 {
+            return true;
+        }
+        if !check(&s1, &s2) {
+            return false;
+        }
+        for i in 1..s1.len() {
+            let a = &s1[0..i];
+            let b = &s1[i..s1.len()];
+            let c = &s2[0..i];
+            let d = &s2[i..s2.len()];
+            if is_scramble(a, c) && is_scramble(b, d) {
+                return true;
+            }
+            let e = &s2[0..s2.len()-i];
+            let f = &s2[s2.len()-i..s2.len()];
+            if is_scramble(a, f) && is_scramble(b, e) {
+                return true;
             }
         }
+        false
     }
-    let mut dpr = vec![vec![0; t.len()]; s.len()];
-    for i in (0..s.len()-1).rev() {
-        for j in (0..t.len()-1).rev() {
-            if s[i] == s[j] {
-                dpr[i][j] = dpr[i+1][j+1] + 1;
-            } else {
-                dpr[i][j] = 0;
-            }
-        }
+
+
+pub fn check(s1: &str, s2: &str) -> bool {
+    if s1.len() != s2.len() {
+        return false;
     }
-    let mut ans = 0;
-    for i in 0..s.len() {
-        for j in 0..t.len() {
-            if s[i] != t[j] {
-                ans += (dpl[i][j] + 1) * (dpr[i][j] + 1);
-            }
-        }
+    let mut cnt1 = vec![0; 26];
+    let mut cnt2 = vec![0; 26];
+    let s1: Vec<char> = s1.chars().collect();
+    let s2: Vec<char> = s2.chars().collect();
+    for i in 0..s1.len() {
+        cnt1[(s1[i] as u8 - 'a' as u8) as usize] += 1;
+        cnt2[(s2[i] as u8 - 'a' as u8) as usize] += 1;
     }
-    ans
+    if cnt1 == cnt2 {
+        return true;
+    }
+
+    false
 }

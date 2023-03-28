@@ -10,10 +10,19 @@ class TreeNode:
 
 class Solution:
     def longestUnivaluePath(self, root: Optional[TreeNode]) -> int:
-        self.ans = 0
-        def arrow_length(node: TreeNode):
-            # TODO
-        arrow_length(root)
-        return self.ans
+        ans = 0
+        def dfs(node: Optional[TreeNode]) -> int:
+            if node is None:
+                return 0
+            left = dfs(node.left)
+            right = dfs(node.right)
+            left1 = left + 1 if node.left and node.left.val == node.val else 0
+            right1 = right + 1 if node.right and node.right.val == node.val else 0
+            nonlocal ans
+            ans = max(ans, left1 + right1)
+            return max(left1, right1)
+        dfs(root)
+        return ans
+
 
             
