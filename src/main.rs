@@ -4,15 +4,19 @@ pub fn main() {
 }
 
 
-pub fn max_width_of_vertical_area(points: Vec<Vec<i32>>) -> i32 {
-    let mut tmp = vec![];
-    for vec in points {
-        tmp.push(vec[0]);
-    }
-    tmp.sort_unstable();
+use std::collections::HashSet;
+
+pub fn arithmetic_triplets(nums: Vec<i32>, diff: i32) -> i32 {
+    let mut set: HashSet<i32> = HashSet::new();
+    nums.into_iter().for_each(|num| { set.insert(num); });
+    
     let mut ans = 0;
-    for i in 1..tmp.len() {
-        ans = ans.max(tmp[i] - tmp[i-1]);
+
+    for num in set.iter() {
+        if set.contains(&(*num + diff)) && set.contains(&(*num + diff * 2)) && set.len() >= 3 {
+            ans += 1;
+        }
     }
+
     ans
 }
