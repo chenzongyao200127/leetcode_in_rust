@@ -1,22 +1,35 @@
 pub fn main() {
-    let ans = max_width_of_vertical_area(vec![vec![3,1],vec![9,0],vec![1,0],vec![1,4],vec![5,3],vec![8,8]]);
-    assert_eq!(ans, 3);
+    let ans = mask_pii("LeetCode@LeetCode.com".to_string());
+    assert_eq!("l*****e@leetcode.com".to_string(), ans);
 }
 
 
-use std::collections::HashSet;
-
-pub fn arithmetic_triplets(nums: Vec<i32>, diff: i32) -> i32 {
-    let mut set: HashSet<i32> = HashSet::new();
-    nums.into_iter().for_each(|num| { set.insert(num); });
-    
-    let mut ans = 0;
-
-    for num in set.iter() {
-        if set.contains(&(*num + diff)) && set.contains(&(*num + diff * 2)) && set.len() >= 3 {
-            ans += 1;
+pub fn mask_pii(s: String) -> String {
+    if let Some(idx) = s.find('@') {
+        let s = s.to_ascii_lowercase();
+        let mut new_s = s[0..1].to_string();
+        new_s.push_str(&"*****");
+        new_s.push_str(&s[idx-1..s.len()]);
+        return new_s
+    } else {
+        let splits = vec!['+', '-', '(', ')', ' '];
+        let s: Vec<char> = s.chars().collect();
+        let mut new_s = vec![];
+        s.iter().for_each(|ch| {
+            if !splits.contains(ch) {
+                new_s.push(*ch)
+            }
+        });
+        let mut ans = "".to_string();
+        match new_s.len() {
+            10 => ans.push_str(&"***-***-"),
+            11 => ans.push_str(&"+*-***-***-"),
+            12 => ans.push_str(&"+**-***-***-"),
+            _  => ans.push_str(&"+**-***-***-"),
         }
+        for i in new_s.len()-4..new_s.len() {
+            ans.push(new_s[i]);
+        }
+        return ans;
     }
-
-    ans
 }
