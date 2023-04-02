@@ -1,35 +1,37 @@
-pub fn main() {
-    let ans = mask_pii("LeetCode@LeetCode.com".to_string());
-    assert_eq!("l*****e@leetcode.com".to_string(), ans);
+fn main() {
+    let s1 = "01000111";
+    let s2 = "00111";
+    let s3 = "111";
+
+    println!("Example 1: {}", find_the_longest_balanced_substring(s1.to_string())); // Output: 6
+    println!("Example 2: {}", find_the_longest_balanced_substring(s2.to_string())); // Output: 4
+    println!("Example 3: {}", find_the_longest_balanced_substring(s3.to_string())); // Output: 0
 }
 
-
-pub fn mask_pii(s: String) -> String {
-    if let Some(idx) = s.find('@') {
-        let s = s.to_ascii_lowercase();
-        let mut new_s = s[0..1].to_string();
-        new_s.push_str(&"*****");
-        new_s.push_str(&s[idx-1..s.len()]);
-        return new_s
-    } else {
-        let splits = vec!['+', '-', '(', ')', ' '];
-        let s: Vec<char> = s.chars().collect();
-        let mut new_s = vec![];
-        s.iter().for_each(|ch| {
-            if !splits.contains(ch) {
-                new_s.push(*ch)
+pub fn find_the_longest_balanced_substring(s: String) -> i32 {
+    let mut s: Vec<char> = s.chars().collect();
+    s.insert(0, '1');
+    s.push('0');
+    let mut idx = 0;
+    let mut collect = vec![];
+    for i in 0..s.len()-1 {
+        if s[i] == '1' && s[i+1] == '0' {
+            let mut tmp = vec![];
+            for j in idx..=i {
+                tmp.push(s[j]);
             }
-        });
-        let mut ans = "".to_string();
-        match new_s.len() {
-            10 => ans.push_str(&"***-***-"),
-            11 => ans.push_str(&"+*-***-***-"),
-            12 => ans.push_str(&"+**-***-***-"),
-            _  => ans.push_str(&"+**-***-***-"),
+            idx = i+1;
+            // println!("{:?}", tmp);
+            collect.push(tmp);
         }
-        for i in new_s.len()-4..new_s.len() {
-            ans.push(new_s[i]);
-        }
-        return ans;
     }
+    let mut ans = 0;
+    for tmp in collect {
+        let cnt_0 = tmp.iter().filter(|&&x| x == '0').count();
+        let cnt_1 = tmp.iter().filter(|&&x| x == '1').count();
+        let cnt = cnt_0.min(cnt_1);
+        ans = ans.max(cnt * 2);
+    }
+
+    ans as i32
 }
