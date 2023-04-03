@@ -1,37 +1,76 @@
 fn main() {
-    let s1 = "01000111";
-    let s2 = "00111";
-    let s3 = "111";
+    // let s1 = "01000111";
+    // let s2 = "00111";
+    // let s3 = "111";
 
-    println!("Example 1: {}", find_the_longest_balanced_substring(s1.to_string())); // Output: 6
-    println!("Example 2: {}", find_the_longest_balanced_substring(s2.to_string())); // Output: 4
-    println!("Example 3: {}", find_the_longest_balanced_substring(s3.to_string())); // Output: 0
+    // println!("Example 1: {}", find_the_longest_balanced_substring(s1.to_string())); // Output: 6
+    // println!("Example 2: {}", find_the_longest_balanced_substring(s2.to_string())); // Output: 4
+    // println!("Example 3: {}", find_the_longest_balanced_substring(s3.to_string())); // Output: 0
+
+    let ans = prev_perm_opt1(vec![1,9,4,7,6,7]);
+    assert_eq!(ans, vec![1,9,4,6,7,7]);
+
+    let ans = prev_perm_opt1(vec![1,1,7]);
+    assert_eq!(ans, vec![1,1,7]);
+
+    let ans = prev_perm_opt1(vec![3,2,1]);
+    assert_eq!(ans, vec![3,1,2]);
+
+    let ans = prev_perm_opt1(vec![3,1,1,3]);
+    assert_eq!(ans, vec![1,3,1,3])
 }
 
-pub fn find_the_longest_balanced_substring(s: String) -> i32 {
-    let mut s: Vec<char> = s.chars().collect();
-    s.insert(0, '1');
-    s.push('0');
-    let mut idx = 0;
-    let mut collect = vec![];
-    for i in 0..s.len()-1 {
-        if s[i] == '1' && s[i+1] == '0' {
-            let mut tmp = vec![];
-            for j in idx..=i {
-                tmp.push(s[j]);
+pub fn prev_perm_opt1(arr: Vec<i32>) -> Vec<i32> {
+    let mut arr = arr;
+    for i in (0..arr.len()-1).rev() {
+        if arr[i] > arr[i+1] {
+            let mut tmp_max = (arr[i+1], i+1);
+            for j in i+1..arr.len() {
+                if arr[j] > tmp_max.0 && arr[j] < arr[i] {
+                    tmp_max = (arr[j], j);
+                }
             }
-            idx = i+1;
-            // println!("{:?}", tmp);
-            collect.push(tmp);
+
+            let tmp = arr[i];
+            arr[i] = tmp_max.0;
+            arr[tmp_max.1] = tmp;
+            break;
         }
     }
-    let mut ans = 0;
-    for tmp in collect {
-        let cnt_0 = tmp.iter().filter(|&&x| x == '0').count();
-        let cnt_1 = tmp.iter().filter(|&&x| x == '1').count();
-        let cnt = cnt_0.min(cnt_1);
-        ans = ans.max(cnt * 2);
-    }
 
-    ans as i32
+    return arr;
 }
+
+
+// pub fn prev_perm_opt1(arr: Vec<i32>) -> Vec<i32> {
+//     let mut arr = arr;
+//     let mut idx = 0;
+//     while idx < arr.len() {
+//         if arr[idx] != 1 {
+//             break;
+//         }
+//         idx += 1;
+//     }
+
+//     if idx == arr.len() - 1 {
+//         return arr;
+//     }
+
+//     for left in idx..arr.len()-1 {
+//         let mut tmp = (0, arr.len()+1);
+//         for right in ((left+1)..arr.len()).rev() {
+//             if arr[right] < arr[left] && arr[right] >= tmp.0 && right <= tmp.1 {
+//                 tmp = (arr[right], right);
+//             }
+//         }
+//         if tmp != (0, arr.len()+1) {
+//             let t = arr[left];
+//             arr[left] = tmp.0;
+//             arr[tmp.1] = t;
+//             break;
+//         }
+
+//     }
+
+//     return arr
+// }
