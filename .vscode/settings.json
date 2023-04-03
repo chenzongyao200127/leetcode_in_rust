@@ -42,5 +42,5 @@
         "sstream": "cpp",
         "stdexcept": "cpp",
         "streambuf": "cpp"
-    }
+    },
 }

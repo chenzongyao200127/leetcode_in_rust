@@ -2,12 +2,25 @@
 # https://leetcode.cn/problems/binary-tree-postorder-traversal/
 
 # Definition for a binary tree node.
-class TreeNode:
-    def __init__(self, val=0, left=None, right=None):
-        self.val = val
-        self.left = left
-        self.right = right
+# 前序
+class Solution:
+    def preorderTraversal(self, root: TreeNode) -> List[int]:
+        res = []
+        
+        def preorder(root: TreeNode):
+            if not root:
+                return
+            
+            res.append(root.val)
+            
+            preorder(root.left)
+            preorder(root.right)
 
+        preorder(root)
+        
+        return res
+    
+# 后序
 class Solution:
     def postorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
         result = []
@@ -24,28 +37,55 @@ class Solution:
         
         return result
 
-
+        
+# 后序
 class Solution:
-    def postorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+    def postorderTraversal(self, root: TreeNode) -> List[int]:
         if not root:
-            return []
+            return list()
         
-        res = []
-        stack = [root]
+        res = list()
+        stack = list()
+        prev = None
+
+        while root or stack:
+            while root:
+                stack.append(root)
+                root = root.left
+            root = stack.pop()
+            if not root.right or root.right == prev:
+                res.append(root.val)
+                prev = root
+                root = None
+            else:
+                stack.append(root)
+                root = root.right
         
-        while stack:
-            node = stack.pop()
-            
-            if node.left:
-                stack.append(node.left)
-            if node.right:
-                stack.append(node.right)
-                
-            res.append(node.val)
-
-        res = res[::-1]
-
         return res
     
     
+# 前序
+class Solution:
+    def preorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+
+        if not root:
+            return []
+            
+        result = []
+
+        stack = [root]
+
+        while stack:
+            cur_value = stack[-1]
+            stack = stack[:-1]
+            result += [cur_value.val]
+
+            if cur_value.right:
+                stack += [cur_value.right]
+            if cur_value.left:
+                stack += [cur_value.left]
+        
+        return result
+
+            
 
