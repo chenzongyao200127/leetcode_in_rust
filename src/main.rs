@@ -7,70 +7,66 @@ fn main() {
     // println!("Example 2: {}", find_the_longest_balanced_substring(s2.to_string())); // Output: 4
     // println!("Example 3: {}", find_the_longest_balanced_substring(s3.to_string())); // Output: 0
 
-    let ans = prev_perm_opt1(vec![1,9,4,7,6,7]);
-    assert_eq!(ans, vec![1,9,4,6,7,7]);
+    let ans = merge_stones(vec![3,5,1,2,6], 3);
+    assert_eq!(ans, 25);
 
-    let ans = prev_perm_opt1(vec![1,1,7]);
-    assert_eq!(ans, vec![1,1,7]);
+    let ans = merge_stones(vec![3,2,4,1], 3);
+    assert_eq!(ans, -1);
 
-    let ans = prev_perm_opt1(vec![3,2,1]);
-    assert_eq!(ans, vec![3,1,2]);
-
-    let ans = prev_perm_opt1(vec![3,1,1,3]);
-    assert_eq!(ans, vec![1,3,1,3])
+    let ans = merge_stones(vec![3,2,4,1], 2);
+    assert_eq!(ans, 20);
 }
 
-pub fn prev_perm_opt1(arr: Vec<i32>) -> Vec<i32> {
-    let mut arr = arr;
-    for i in (0..arr.len()-1).rev() {
-        if arr[i] > arr[i+1] {
-            let mut tmp_max = (arr[i+1], i+1);
-            for j in i+1..arr.len() {
-                if arr[j] > tmp_max.0 && arr[j] < arr[i] {
-                    tmp_max = (arr[j], j);
-                }
-            }
+pub fn merge_stones(stones: Vec<i32>, k: i32) -> i32 {
+    let len = stones.len();
+    if (len as i32 - 1) % (k - 1) != 0 {
+        return -1;
+    }
+    let mut cost = 0;
 
-            let tmp = arr[i];
-            arr[i] = tmp_max.0;
-            arr[tmp_max.1] = tmp;
-            break;
+    merge(stones, k, &mut cost);
+
+    return cost;
+}
+
+pub fn merge(stones: Vec<i32>, k: i32, cost: &mut i32) -> i32 {
+    if stones.len() == 1 {
+        return stones[0];
+    }
+
+    let mut tmp_min = i32::MAX;
+    let mut start_idx = 0;
+
+    for i in 0..=stones.len() - k as usize {
+        let mut sum = 0;
+        for j in i..i+k as usize {
+            sum += stones[j];
+        }
+        // println!("sum: {:?}", sum);
+        if sum < tmp_min {
+            tmp_min = sum;
+            start_idx = i;
         }
     }
 
-    return arr;
+    let mut new_stones = vec![];
+
+    for i in 0..start_idx {
+        new_stones.push(stones[i]);
+    }
+
+    new_stones.push(tmp_min);
+
+    for i in start_idx+k as usize..stones.len() {
+        new_stones.push(stones[i]);
+    }
+
+    // println!("{:?}", (cost.clone(), tmp_min.clone()));
+
+    *cost += tmp_min;
+    
+    // println!("new_stones:{:?}", new_stones);
+
+    return merge(new_stones, k, cost);
 }
 
-
-// pub fn prev_perm_opt1(arr: Vec<i32>) -> Vec<i32> {
-//     let mut arr = arr;
-//     let mut idx = 0;
-//     while idx < arr.len() {
-//         if arr[idx] != 1 {
-//             break;
-//         }
-//         idx += 1;
-//     }
-
-//     if idx == arr.len() - 1 {
-//         return arr;
-//     }
-
-//     for left in idx..arr.len()-1 {
-//         let mut tmp = (0, arr.len()+1);
-//         for right in ((left+1)..arr.len()).rev() {
-//             if arr[right] < arr[left] && arr[right] >= tmp.0 && right <= tmp.1 {
-//                 tmp = (arr[right], right);
-//             }
-//         }
-//         if tmp != (0, arr.len()+1) {
-//             let t = arr[left];
-//             arr[left] = tmp.0;
-//             arr[tmp.1] = t;
-//             break;
-//         }
-
-//     }
-
-//     return arr
-// }
