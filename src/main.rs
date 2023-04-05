@@ -70,3 +70,13 @@ pub fn merge(stones: Vec<i32>, k: i32, cost: &mut i32) -> i32 {
     return merge(new_stones, k, cost);
 }
 
+pub fn common_factors(a: i32, b: i32) -> i32 {
+    let mut ans = 0;
+    for i in 1..=a.min(b) as usize {
+        if a as usize % i == 0 && b as usize % i == 0 {
+            ans += 1;
+        }
+    }
+    
+    ans
+}

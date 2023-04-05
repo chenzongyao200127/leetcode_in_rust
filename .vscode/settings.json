@@ -43,4 +43,5 @@
         "stdexcept": "cpp",
         "streambuf": "cpp"
     },
+    "rust-analyzer.showUnlinkedFileNotification": false,
 }
