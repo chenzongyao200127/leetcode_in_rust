@@ -1,82 +1,33 @@
 fn main() {
-    // let s1 = "01000111";
-    // let s2 = "00111";
-    // let s3 = "111";
+    let ans = num_moves_stones_ii(vec![7,4,9]);
+    assert_eq!(ans, vec![1,2]);
 
-    // println!("Example 1: {}", find_the_longest_balanced_substring(s1.to_string())); // Output: 6
-    // println!("Example 2: {}", find_the_longest_balanced_substring(s2.to_string())); // Output: 4
-    // println!("Example 3: {}", find_the_longest_balanced_substring(s3.to_string())); // Output: 0
+    let ans = num_moves_stones_ii(vec![6,5,4,3,10]);
+    assert_eq!(ans, vec![2,3]);
 
-    let ans = merge_stones(vec![3,5,1,2,6], 3);
-    assert_eq!(ans, 25);
-
-    let ans = merge_stones(vec![3,2,4,1], 3);
-    assert_eq!(ans, -1);
-
-    let ans = merge_stones(vec![3,2,4,1], 2);
-    assert_eq!(ans, 20);
+    let ans = num_moves_stones_ii(vec![100,101,104,102,103]);
+    assert_eq!(ans, vec![0,0]);
 }
 
-pub fn merge_stones(stones: Vec<i32>, k: i32) -> i32 {
+pub fn num_moves_stones_ii(stones: Vec<i32>) -> Vec<i32> {
     let len = stones.len();
-    if (len as i32 - 1) % (k - 1) != 0 {
-        return -1;
-    }
-    let mut cost = 0;
+    let mut stones = stones;
+    stones.sort_unstable();
 
-    merge(stones, k, &mut cost);
+    let mut min_moves = i32::MAX;
+    let max_moves = (stones[len-1] - stones[1] - len as i32 + 2).max(stones[len-2] - stones[0] - len as i32 + 2);
 
-    return cost;
-}
-
-pub fn merge(stones: Vec<i32>, k: i32, cost: &mut i32) -> i32 {
-    if stones.len() == 1 {
-        return stones[0];
-    }
-
-    let mut tmp_min = i32::MAX;
-    let mut start_idx = 0;
-
-    for i in 0..=stones.len() - k as usize {
-        let mut sum = 0;
-        for j in i..i+k as usize {
-            sum += stones[j];
+    let mut i = 0;
+    for j in 0..len {
+        while (stones[j] - stones[i]) >= len as i32 {
+            i += 1;
         }
-        // println!("sum: {:?}", sum);
-        if sum < tmp_min {
-            tmp_min = sum;
-            start_idx = i;
-        }
-    }
-
-    let mut new_stones = vec![];
-
-    for i in 0..start_idx {
-        new_stones.push(stones[i]);
-    }
-
-    new_stones.push(tmp_min);
-
-    for i in start_idx+k as usize..stones.len() {
-        new_stones.push(stones[i]);
-    }
-
-    // println!("{:?}", (cost.clone(), tmp_min.clone()));
-
-    *cost += tmp_min;
-    
-    // println!("new_stones:{:?}", new_stones);
-
-    return merge(new_stones, k, cost);
-}
-
-pub fn common_factors(a: i32, b: i32) -> i32 {
-    let mut ans = 0;
-    for i in 1..=a.min(b) as usize {
-        if a as usize % i == 0 && b as usize % i == 0 {
-            ans += 1;
+        if j - i + 1 == len - 1 && stones[j] - stones[i] == len as i32 - 2 {
+            min_moves = min_moves.min(2);
+        } else {
+            min_moves = min_moves.min(len as i32 - (j - i + 1) as i32)
         }
     }
     
-    ans
+    vec![min_moves, max_moves]
 }
