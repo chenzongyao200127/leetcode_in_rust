@@ -16,7 +16,6 @@ class Solution:
         if root.val == key:
             root = root.right
         
-        
         def dfs(node: TreeNode, key: int):
             if node is None:
                 return
