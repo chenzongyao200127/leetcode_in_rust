@@ -1,15 +1,41 @@
 fn main() {
-    // let ans = num_moves_stones_ii(vec![7,4,9]);
-    // assert_eq!(ans, vec![1,2]);
-
-    // let ans = num_moves_stones_ii(vec![6,5,4,3,10]);
-    // assert_eq!(ans, vec![2,3]);
-
-    // let ans = num_moves_stones_ii(vec![100,101,104,102,103]);
-    // assert_eq!(ans, vec![0,0]);
-
-    let ans = check_distances("abaccb".to_string(), vec![1,3,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
+    let ans = is_robot_bounded("GL".to_string());
     assert_eq!(ans, true);
+}
+
+pub fn is_robot_bounded(instructions: String) -> bool {
+    // direction: '北': 0 '西': 1 '南': 2, '东': 3
+    let mut location = ((0, 0), 0);
+    let instructions: Vec<char> = instructions.chars().collect();
+
+    for &ins in instructions.iter() {
+        match ins {
+            'G' => {
+                match location.1 {
+                    0 => {
+                        location.0.1 += 1;
+                    },
+                    1 => {
+                        location.0.0 -= 1;
+                    }
+                    2 => {
+                        location.0.1 -= 1;
+                    }
+                    _ => {
+                        location.0.0 += 1;
+                    }
+                }
+            }
+            'L' => {
+                location.1 = (location.1 + 5) % 4;
+            },
+             _  => {
+                location.1 = (location.1 + 3) % 4;
+            }
+        }
+    }
+
+    location.0 == (0, 0) || location.1 != 0
 }
 
 pub fn check_distances(s: String, distance: Vec<i32>) -> bool {
