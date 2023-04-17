@@ -1,75 +1,61 @@
-use std::cell::Cell;
-
-#[derive(Debug)]
-struct Unmovable<'a> {
-    x: u32,
-    y: Cell<Option<&'a u32>>,
-}
 
 fn main() {
-    let test = Unmovable { x: 42, y: Cell::new(None) };
-    test.y.set(Some(&test.x));
 
-    println!("{:?}", test);
+    let ans = count_days_together(
+    "08-15".to_string(),
+    "08-18".to_string(),
+    "08-16".to_string(),
+    "08-16".to_string(),
+    );
+
+    assert_eq!(ans, 1);
 }
 
+pub fn count_days_together(
+    arrive_alice: String,
+    leave_alice: String,
+    arrive_bob: String,
+    leave_bob: String,
+) -> i32 {
+    let (arrive_alice_month, arrive_alice_date) = parse_date(&arrive_alice);
+    let (leave_alice_month, leave_alice_date) = parse_date(&leave_alice);
+    let (arrive_bob_month, arrive_bob_date) = parse_date(&arrive_bob);
+    let (leave_bob_month, leave_bob_date) = parse_date(&leave_bob);
 
-// pub fn most_frequent_even(nums: Vec<i32>) -> i32 {
-//     let mut nums = nums;
-//     let nums: Vec<i32> = nums.iter().filter(|&x| *x & 1 == 0).collect();
-//     if nums.len() == 0 {
-//         return -1;
-//     }
-//     let mut map: HashMap<i32, usize> = HashMap::new();
-//     for n in nums {
-//         map.entry(n).and_modify(|cnt| *cnt += 1).or_insert(1);
-//     }
-//     let mut res = vec![];
-//     for (k, v) in map {
-//         res.push((k, v));
-//     }
-//     res.sort_unstable_by(|a, b| b.1.cmp(&a.1));
-//     res = res.iter().filter(|&(k, v)| *v == res[0].1).cloned().collect(); // Assign the filtered results back to the `res` variable
-//     res.sort_unstable_by(|a, b| a.0.cmp(&b.0));
-//     res[0].0
-// }
+    let alice_arrive_unidate = unique_dates(arrive_alice_month, arrive_alice_date);
+    let alice_leave_unidate = unique_dates(leave_alice_month, leave_alice_date);
+    let bob_arrive_unidate = unique_dates(arrive_bob_month, arrive_bob_date);
+    let bob_leave_unidate = unique_dates(leave_bob_month, leave_bob_date);
 
-use std::collections::HashMap;
-use std::cmp::Ordering;
+    println!("{:?}", (alice_arrive_unidate,alice_leave_unidate,bob_arrive_unidate,bob_leave_unidate));
 
-pub struct MajorityChecker {
-    arr: Vec<i32>,
-    lst: Vec<(i32, Vec<usize>)>,
+    let ans = alice_leave_unidate.min(bob_leave_unidate)
+        - alice_arrive_unidate.max(bob_arrive_unidate);
+
+    if ans < 0 {
+        return 0;
+    }
+
+    ans + 1
+}
+fn parse_date(date_str: &str) -> (i32, i32) {
+    let date_parts: Vec<&str> = date_str.split('-').collect();
+    (
+        date_parts[0].parse::<i32>().unwrap(),
+        date_parts[1].parse::<i32>().unwrap(),
+    )
 }
 
-impl MajorityChecker {
-    pub fn new(arr: Vec<i32>) -> Self {
-        let mut dct = HashMap::new();
-        for (i, &num) in arr.iter().enumerate() {
-            dct.entry(num).or_insert_with(Vec::new).push(i);
-        }
-        let mut lst: Vec<(i32, Vec<usize>)> = dct.into_iter().collect();
-        lst.sort_unstable_by(|a, b| b.1.len().cmp(&a.1.len()));
-        MajorityChecker { arr, lst }
+fn unique_dates(month: i32, date: i32) -> i32 {
+    let month_dates = vec![31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+    let mut res = 0;
+    for i in 1..month {
+        res += month_dates[i as usize - 1];
+    }
+    for _ in 1..=date {
+        res += 1;
     }
 
-    pub fn query(&self, left: usize, right: usize, threshold: usize) -> i32 {
-        if left + 1 == right {
-            return if self.arr[left] != self.arr[right] { -1 } else { self.arr[left] };
-        }
-        if left == right {
-            return self.arr[left];
-        }
-        for (num, ind) in self.lst.iter() {
-            if ind.len() < threshold {
-                break;
-            }
-            let cur = ind.binary_search(&right).unwrap_or_else(|x| x)
-                - ind.binary_search(&left).unwrap_or_else(|x| x);
-            if cur >= threshold {
-                return *num;
-            }
-        }
-        -1
-    }
+    res
 }
