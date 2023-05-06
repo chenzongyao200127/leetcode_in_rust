@@ -38,3 +38,12 @@ pub fn max_sum_after_partitioning(arr: Vec<i32>, k: i32) -> i32 {
 
 //     ans
 // }
+
+pub fn last_substring(s: String) -> String {
+    let len = s.len();
+    let mut ans = &s[..];
+    for i in 0..len {
+        ans = ans.max(&s[i..])
+    }
+    ans.to_string()
+}
