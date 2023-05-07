@@ -1,49 +1,23 @@
 
 fn main() {
-    let ans = max_sum_after_partitioning(vec![1,15,7,9,2,5,10], 3);
-    assert_eq!(ans, 84)
+    let ans = num_pairs_divisible_by60(vec![60,60,60]);
+    assert_eq!(ans, 3)
 }
 
+pub fn num_pairs_divisible_by60(time: Vec<i32>) -> i64 {
+    let time: Vec<i32> = time.into_iter().map(|x| x % 60).collect();
 
-pub fn max_sum_after_partitioning(arr: Vec<i32>, k: i32) -> i32 {
-    let mut dp = vec![0; arr.len()];
-    
-}
+    let mut res = 0 as i64;
 
+    let mut cnt = vec![0;60];
+    time.iter().for_each(|&x| cnt[x as usize] += 1);
 
-// pub fn max_sum_after_partitioning(arr: Vec<i32>, k: i32) -> i32 {
-//     let len = arr.len();
-//     let remainder = len as i32 % k;
-//     let mut ans = 0;
-
-//     for i in 0..=remainder as usize {
-//         let mut tmp_vecs : Vec<Vec<i32>> = Vec::new();
-//         tmp_vecs.push(arr[0..i].to_vec());
-//         for j in (i..arr.len() - (remainder as usize - i)).step_by(k as usize) {
-//             tmp_vecs.push(arr[j..j+k as usize].to_vec());
-//         }
-//         tmp_vecs.push(arr[len-remainder as usize+i..len].to_vec());
-//         println!("{:?}", tmp_vecs);
-
-//         let mut tmp = 0;
-//         for vec in tmp_vecs {
-//             let len = vec.len();
-//             if len != 0 {
-//                 let &max_in_vec = vec.iter().max().unwrap();
-//                 tmp += max_in_vec  * len as i32;
-//             }
-//         }
-//         ans = ans.max(tmp as i32);
-//     }
-
-//     ans
-// }
-
-pub fn last_substring(s: String) -> String {
-    let len = s.len();
-    let mut ans = &s[..];
-    for i in 0..len {
-        ans = ans.max(&s[i..])
+    for i in 1..30 {
+        res += cnt[i] * cnt[60-i]
     }
-    ans.to_string()
+
+    res += cnt[0] * (cnt[0] - 1) / 2;
+    res += cnt[30] * (cnt[30] - 1) / 2;
+
+    res
 }
