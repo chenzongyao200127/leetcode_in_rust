@@ -1,3 +1,13 @@
+// 连续邮资问题
+// 某国发行了 k 种不同面值的邮票
+// 并规定每封信最多允许贴 h 张邮票
+// 在这些约束下，为了能贴出 {1，2，3，... ，maxvalue} 连续整数集合的所有邮资，并使 maxvalue 的值最大
+// 应该如何设计各邮票的面值？
+
+// 例如，当 k=5、h=4 时，面值设计为{1，3，11，15，32}，可使 max_value 达到最大值70
+// 或者说，用这些面值的1至4张邮票可以表示不超过70的所有邮资，但无法表示邮资71
+// 而用其他面值的1至4张邮票如果可以表示不超过n的所有邮资，必有n<=70
+
 const MAX_NM: usize = 10;
 const MAX_POSTAGE: usize = 1024;
 const INF: i32 = 2147483647;
@@ -33,7 +43,9 @@ impl State {
         if i >= self.k {
             if self.r > self.max_stamp {
                 self.max_stamp = self.r;
-                self.ans = self.stamps.clone();
+                for tmp in 0..self.k {
+                    self.ans[tmp] = self.stamps[tmp];
+                }
             }
             return;
         }
@@ -78,11 +90,12 @@ fn main() {
     let (kinds, nums) = (5, 4);
     let mut state = State::new(kinds, nums);
 
-    // init
     state.stamps[0] = 1;
+
     for i in 0..=state.r as usize {
         state.y[i] = i as i32;
     }
+
     for i in (state.r + 1) as usize..MAX_POSTAGE {
         state.y[i] = INF;
     }

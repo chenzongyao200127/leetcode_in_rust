@@ -1,5 +1,5 @@
 class Solution:
-    def bestTeamScore(self, scores: list[int], ages: list[int]) -> int:
+    def bestTeamScore(self, scores: List[int], ages: List[int]) -> int:
         n = len(scores)
         if n == 1:
             return scores[0]
