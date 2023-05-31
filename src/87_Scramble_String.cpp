@@ -23,6 +23,14 @@ const double eps = 1e-6;
 const int INF = 0x3f3f3f3f;
 const int maxn = 100;
 int T,n,m;
+#include <unordered_map>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <limits.h>
+
+using namespace std;
 
 // 记忆化搜索
 class Solution {

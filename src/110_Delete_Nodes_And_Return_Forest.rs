@@ -1,27 +1,28 @@
-use std::collections::HashSet;
-use std::rc::Rc;
-use std::cell::RefCell;
+// 1110. Delete Nodes And Return Forest
+// https://leetcode.cn/problems/delete-nodes-and-return-forest/
 
+// Definition for a binary tree node.
 #[derive(Debug, PartialEq, Eq)]
 pub struct TreeNode {
-    pub val: i32,
-    pub left: Option<Rc<RefCell<TreeNode>>>,
-    pub right: Option<Rc<RefCell<TreeNode>>>,
+  pub val: i32,
+  pub left: Option<Rc<RefCell<TreeNode>>>,
+  pub right: Option<Rc<RefCell<TreeNode>>>,
 }
 
 impl TreeNode {
-    #[inline]
-    pub fn new(val: i32) -> Self {
-        TreeNode {
-            val,
-            left: None,
-            right: None,
-        }
+  #[inline]
+  pub fn new(val: i32) -> Self {
+    TreeNode {
+      val,
+      left: None,
+      right: None
     }
+  }
 }
 
-pub struct Solution;
-
+use std::collections::HashSet;
+use std::rc::Rc;
+use std::cell::RefCell;
 impl Solution {
     pub fn del_nodes(
         root: Option<Rc<RefCell<TreeNode>>>,
@@ -62,11 +63,6 @@ impl Solution {
         }
 
         dfs(root, true, &to_delete_set, &mut roots);
-        
         roots
     }
-}
-
-pub fn main() {
-
 }
