@@ -67,6 +67,65 @@ impl Solution {
     }
 }
 
+pub fn maximum_tastiness(price: Vec<i32>, k: i32) -> i32 {
+    let mut price = price;
+    let len = price.len();
+    price.sort_unstable();
+    let mut left = 0;
+    let mut right = price[len-1] - price[0];
+    while left < right {
+        let mid = (left + right + 1) / 2;
+        if check(&price, k, mid) {
+            left = mid;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return left;
+
+}
+
+fn check(price: &Vec<i32>, k: i32, tastiness: i32) -> bool {
+    let mut prev = i32::MIN;
+    let mut cnt = 0;
+    for p in price.iter() {
+        if *p - prev >= tastiness {
+            cnt += 1;
+            prev = *p;
+        }
+    }
+    return cnt >= k;
+}
+
+pub fn vowel_strings(words: Vec<String>, queries: Vec<Vec<i32>>) -> Vec<i32> {
+    let vowels = vec!['a', 'e', 'i', 'o', 'u'];
+    let mut flags = vec![];
+    words.iter().for_each(|word| {
+        let word: Vec<char> = word.chars().collect();
+        if vowels.contains(&word[0]) && vowels.contains(&word[word.len()-1]) {
+            flags.push(true);
+        } else {
+            flags.push(false);
+        }
+    });
+    let mut prefix = vec![0];
+    let mut pre_sum = 0;
+    for i in 0..flags.len() {
+        if flags[i] == true {
+            pre_sum += 1;
+        }
+        prefix.push(pre_sum);
+    }
+    let mut ans = vec![];
+    for query in queries {
+        let left = query[0] as usize;
+        let right = query[1] as usize;
+        ans.push(prefix[right+1] - prefix[left] )
+    }
+
+    ans
+}
+
 pub fn main() {
 
 }
