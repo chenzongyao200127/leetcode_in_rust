@@ -126,6 +126,17 @@ pub fn vowel_strings(words: Vec<String>, queries: Vec<Vec<i32>>) -> Vec<i32> {
     ans
 }
 
+
+pub fn distinct_averages(nums: Vec<i32>) -> i32 {
+    let mut nums = nums;
+    let mut sum_set: HashSet<i32> = HashSet::new();
+    nums.sort_unstable();
+    for i in 0..nums.len()/2 {
+        sum_set.insert(nums[i] + nums[nums.len() - i - 1]);
+    }
+    sum_set.len() as i32
+}
+
 pub fn main() {
 
 }
