@@ -137,6 +137,28 @@ pub fn distinct_averages(nums: Vec<i32>) -> i32 {
     sum_set.len() as i32
 }
 
+pub fn letter_combinations(digits: String) -> Vec<String> {
+    if digits.len() == 0 {
+        return vec![]
+    }
+
+    let phone = vec!["abc","def","ghi","jkl","mno","pqrs","tuv","wxyz"];
+    let mut queue = std::collections::VecDeque::new();
+    queue.push_back("".to_string());
+    for digit in digits.chars() {
+        for _ in 0..queue.len() {
+            let tmp = queue.pop_front().unwrap().to_string();
+            for letter in phone[(digit as u8 - '0' as u8 ) as usize].chars() {
+                let mut str = tmp.clone();
+                str.push(letter);
+                queue.push_back(str.clone());
+            }
+        }
+    }
+
+    queue.into_iter().collect::<Vec<String>>()
+}
+
 pub fn main() {
 
 }
