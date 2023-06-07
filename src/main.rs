@@ -159,6 +159,16 @@ pub fn letter_combinations(digits: String) -> Vec<String> {
     queue.into_iter().collect::<Vec<String>>()
 }
 
+// pub fn mice_and_cheese(reward1: Vec<i32>, reward2: Vec<i32>, k: i32) -> i32 {
+//     let rewards: Vec<_> = reward1.into_iter().zip(reward2).collect();
+//     let k = k as usize;
+    
+//     rewards.into_iter()
+//         .sorted_unstable_by(|&a, &b| (b.0 - b.1).cmp(&(a.0 - a.1)))
+//         .enumerate()
+//         .map(|(i, (r1, r2))| if i < k { r1 } else { r2 })
+//         .sum()
+// }
 pub fn main() {
 
 }
