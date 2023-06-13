@@ -1,3 +1,4 @@
+import re
 class TreeAncestor:
     def __init__(self, n: int, parent: List[int]):
         m = n.bit_length() - 1
@@ -14,3 +15,10 @@ class TreeAncestor:
                 node = self.pa[node][i]
                 if node < 0: break
         return node
+
+
+# a function that extract all number from a string
+def extract_number(s):
+    return list(map(int, re.findall(r'\d+', s)))
+
+
