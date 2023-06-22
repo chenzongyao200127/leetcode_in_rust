@@ -45,3 +45,20 @@ pub fn pond_sizes(mut land: Vec<Vec<i32>>) -> Vec<i32> {
     res.sort();
     res
 }
+
+pub fn maximum_value(strs: Vec<String>) -> i32 {
+    let mut ans = i32::MIN;
+    for s in strs {
+        if s.chars().all(|x| x as u8 <= '9' as u8 && x as u8 >= '0' as u8) {
+            ans = ans.max(s.parse::<i32>().unwrap());
+        } else {
+            ans = ans.max(s.len() as i32);
+        }
+    }
+    ans
+}
+
+
+fn main() {
+
+}
