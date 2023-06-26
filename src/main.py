@@ -1,62 +1,42 @@
-# 给你一个下标从 0 开始的整数数组 nums ，它包含 n 个 互不相同 的正整数。如果 nums 的一个排列满足以下条件，我们称它是一个特别的排列：
+def minOperations(num1: int, num2: int) -> int:
+    MAX = 10**9 + 7
+    dp = [MAX] * (num1 + 1)
+    dp[num1] = 0
+    for i in range(61):
+        for j in range(num1, 2**i + num2 - 1, -1):
+            if j - 2**i - num2 >= 0:
+                dp[j - 2**i - num2] = min(dp[j - 2**i - num2], dp[j] + 1)
+    return dp[0] if dp[0] != MAX else -1
 
-# 对于 0 <= i < n - 1 的下标 i ，要么 nums[i] % nums[i+1] == 0 ，要么 nums[i+1] % nums[i] == 0 。
-# 请你返回特别排列的总数目，由于答案可能很大，请将它对 109 + 7 取余 后返回。
 
-def num_permutations(nums):
-    MOD = 10**9 + 7
-    n = len(nums)
+print(minOperations(3,-2))
+
+
+
+def min_operations(num1: int, num2: int) -> int:
+    min_ops = float('inf')
     
-    # 使用字典来存储已经计算过的子问题的结果
-    memo = {}
-
-    def backtrack(index, path):
-        nonlocal memo
-        if index == n:
-            return 1
-
-        # 如果子问题已经计算过，直接返回结果
-        if tuple(path) in memo:
-            return memo[tuple(path)]
-
-        count = 0
-        for i in range(n):
-            if nums[i] not in path and (index == 0 or path[-1] % nums[i] == 0 or nums[i] % path[-1] == 0):
-                path.append(nums[i])
-                count += backtrack(index + 1, path)
-                count %= MOD
-                path.pop()
-
-        # 将子问题的结果存储到字典中
-        memo[tuple(path)] = count
-        return count
-
-    return backtrack(0, [])
-
-# 示例 1
-result = num_permutations([2, 3, 6])
-print(result)  # 输出：2
-
-# 示例 2
-result = num_permutations([1, 4, 3])
-print(result)  # 输出：2
-
-result = num_permutations([31, 93])
-print(result)  # 输出：2
-
-
-def min_cost(cost, time):
-    n = len(cost)
-    total_time = sum(time)
+    def dfs(num1, num2, ops):
+        nonlocal min_ops
+        
+        if num1 == 0:
+            min_ops = min(min_ops, ops)
+            return
+        
+        if ops >= min_ops - 1 or num1 < 0 or abs(num1) > 62 * abs(num2):
+            return
+        
+        for i in range(61):
+            dfs(num1 - (2**i + num2), num2, ops + 1)
     
-    dp = [[float('inf')] * (total_time + 1) for _ in range(n + 1)]
-    dp[0][0] = 0
+    dfs(num1, num2, 0)
+    return min_ops if min_ops != float('inf') else -1
 
-    for i in range(1, n + 1):
-        for j in range(1, total_time + 1):
-            if j >= time[i - 1]:
-                dp[i][j] = min(dp[i][j], dp[i - 1][j - time[i - 1]] + cost[i - 1])
-            if j >= 1:
-                dp[i][j] = min(dp[i][j], dp[i - 1][j - 1])
-    
-    return min(dp[n])
+
+num1 = 3
+num2 = -2
+print(min_operations(num1, num2))  # 输出：3
+
+num1 = 5
+num2 = 7
+print(min_operations(num1, num2))  # 输出：-1
