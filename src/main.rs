@@ -1,40 +1,61 @@
-pub fn combine(n: i32, k: i32) -> Vec<Vec<i32>> {
-    let mut ans = vec![];
-    let mut tmp = vec![];
-    dfs(&mut tmp, 1, n, k, &mut ans);
-    ans
-}
+pub fn minimum_incompatibility(mut nums: Vec<i32>, k: i32) -> i32 {
+    let n = nums.len();
+    let group_size = n / k as usize;
+    if n % k as usize != 0 {
+        return -1;
+    }
+    nums.sort_unstable();
+    let mut groups = vec![vec![]; k as usize];
+    let mut min_incompatibility = i32::MAX;
 
-fn dfs(tmp: &mut Vec<i32>, x: i32, n: i32, k: i32, ans: &mut Vec<Vec<i32>>) {
-    if tmp.len() == k as usize {
-        ans.push(tmp.clone());
-        return;
+    fn backtrack(
+        nums: &[i32],
+        groups: &mut Vec<Vec<i32>>,
+        k: usize,
+        group_size: usize,
+        incompatibility: i32,
+        min_incompatibility: &mut i32,
+    ) {
+        if nums.is_empty() {
+            *min_incompatibility = i32::min(*min_incompatibility, incompatibility);
+            return;
+        }
+        
+        if incompatibility >= *min_incompatibility {
+            return;
+        }
+
+        let num = nums[0];
+        let remaining_nums = &nums[1..];
+        for i in 0..k {
+            if groups[i].len() < group_size && !groups[i].contains(&num) {
+                let prev_incompatibility = if groups[i].is_empty() {
+                    0
+                } else {
+                    num - groups[i][0]
+                };
+                groups[i].push(num);
+                backtrack(
+                    remaining_nums,
+                    groups,
+                    k,
+                    group_size,
+                    incompatibility + prev_incompatibility,
+                    min_incompatibility,
+                );
+                groups[i].pop();
+            }
+        }
     }
 
-    if x > n {
-        return;
+    backtrack(&nums, &mut groups, k as usize, group_size, 0, &mut min_incompatibility);
+    if min_incompatibility == i32::MAX {
+        -1
+    } else {
+        min_incompatibility
     }
-
-    dfs(tmp, x + 1, n, k, ans);
-
-    tmp.push(x);
-    dfs(tmp, x + 1, n, k, ans);
-    tmp.pop();
-}
-
-pub fn maximum_sum(arr: Vec<i32>) -> i32 {
-    let len = arr.len();
-    let mut dp_keep = vec![i32::MIN; len];
-    let mut dp_delete = vec![i32::MIN; len];
-    dp_keep[0] = arr[0];
-    dp_delete[0] = arr[0];
-    for i in 1..len {
-        dp_keep[i] = arr[i].max(dp_keep[i - 1] + arr[i]);
-        dp_delete[i] = arr[i].max(dp_keep[i - 1].max(dp_delete[i - 1] + arr[i]));
-    }
-    return dp_delete.into_iter().max().unwrap()
 }
 
 fn main() {
-    println!("{:?}", combine(5,2))
+    println!("{:?}", minimum_incompatibility(vec![7,3,16,15,1,13,1,2,14,5,3,10,6,2,7,15], 8))
 }
