@@ -1,61 +1,55 @@
-pub fn minimum_incompatibility(mut nums: Vec<i32>, k: i32) -> i32 {
-    let n = nums.len();
-    let group_size = n / k as usize;
-    if n % k as usize != 0 {
-        return -1;
+
+
+pub fn reconstruct_matrix(upper: i32, lower: i32, colsum: Vec<i32>) -> Vec<Vec<i32>> {
+    let mut matrix = vec![vec![0; colsum.len()]; 2];
+    for i in 0..colsum.len() {
+        if colsum[i] == 2 {
+            matrix[0][i] = 1;
+            matrix[1][i] = 1;    
+        }
     }
-    nums.sort_unstable();
-    let mut groups = vec![vec![]; k as usize];
-    let mut min_incompatibility = i32::MAX;
 
-    fn backtrack(
-        nums: &[i32],
-        groups: &mut Vec<Vec<i32>>,
-        k: usize,
-        group_size: usize,
-        incompatibility: i32,
-        min_incompatibility: &mut i32,
-    ) {
-        if nums.is_empty() {
-            *min_incompatibility = i32::min(*min_incompatibility, incompatibility);
-            return;
-        }
-        
-        if incompatibility >= *min_incompatibility {
-            return;
-        }
+    dfs(0, upper, lower, &colsum, &mut matrix);
+    return matrix
+}
 
-        let num = nums[0];
-        let remaining_nums = &nums[1..];
-        for i in 0..k {
-            if groups[i].len() < group_size && !groups[i].contains(&num) {
-                let prev_incompatibility = if groups[i].is_empty() {
-                    0
-                } else {
-                    num - groups[i][0]
-                };
-                groups[i].push(num);
-                backtrack(
-                    remaining_nums,
-                    groups,
-                    k,
-                    group_size,
-                    incompatibility + prev_incompatibility,
-                    min_incompatibility,
-                );
-                groups[i].pop();
+pub fn dfs(cur_col: usize, upper: i32, lower: i32, colsum: &Vec<i32>, matrix: &mut Vec<Vec<i32>>) {
+    if cur_col == colsum.len() {
+        if colsum[cur_col] == 1 {
+            matrix[0][cur_col] = 1;
+            if is_valid(upper, lower, matrix) {
+                return
+            }
+            matrix[0][cur_col] = 0;
+            matrix[1][cur_col] = 0;
+            if is_valid(upper, lower, matrix) {
+                return
+            }
+        } else {
+            if is_valid(upper, lower, matrix) {
+                return
             }
         }
     }
-
-    backtrack(&nums, &mut groups, k as usize, group_size, 0, &mut min_incompatibility);
-    if min_incompatibility == i32::MAX {
-        -1
-    } else {
-        min_incompatibility
+    for i in 0..=1 {
+        matrix[0][cur_col] = 1;
+        let mut next_col = i+1;
+        while next_col < colsum.len() && colsum[next_col] != 1 {
+            next_col += 1;
+        }
+        dfs(next_col, upper, lower, colsum, matrix);
+        matrix[0][cur_col] = 0;
     }
 }
 
+pub fn is_valid(upper: i32, lower: i32, matrix: &Vec<Vec<i32>>) -> bool {
+    if matrix[0].iter().sum() == upper && matrix[1].iter().sum() == lower {
+        return true;
+    }
+    false
+}
+
+
 fn main() {
-    println!("{:?}", minimum_incompatibility(vec![7,3,16,15,1,13,1,2,14,5,3,10,6,2,7,15], 8))
+    println!("{:?}", reconstruct_matrix(2,1,vec![1,1,1]))
 }
