@@ -22,3 +22,28 @@
 # 示例 2:
 # 输入: cards = [1, 2, 1, 2]
 # 输出: false
+from typing import List
+
+
+# GPT - 4
+from itertools import permutations, product
+from operator import add, sub, mul, truediv
+
+
+def judgePoint24(cards: List[int]) -> bool:
+    operators = [add, sub, mul, truediv]
+    for nums in permutations(cards):
+        print(nums)
+        for ops in product(operators, repeat=3):
+            try:
+                if abs(ops[0](ops[1](nums[0], nums[1]), ops[2](nums[2], nums[3])) - 24) < 1e-6:
+                    return True
+                if abs(ops[0](nums[0], ops[1](ops[2](nums[1], nums[2]), nums[3])) - 24) < 1e-6:
+                    return True
+                if abs(ops[0](nums[0], ops[1](nums[1], ops[2](nums[2], nums[3]))) - 24) < 1e-6:
+                    return True
+            except ZeroDivisionError:
+                continue
+    return False
+
+print(judgePoint24([4,1,8,7]))

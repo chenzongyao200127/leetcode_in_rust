@@ -26,6 +26,7 @@ pub unsafe fn guess_num(left: i32, right: i32) -> i32 {
         _ => {return guess_num(mid+1, right)}
     }
 }
+
 // pub unsafe fn guess_num(left: i32, right: i32) -> i32 {
 //     let mid = (left + right + 1) / 2; // 这样写就会超时，原因是什么？
 //     match guess(mid) {
