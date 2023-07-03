@@ -29,7 +29,6 @@ from typing import List
 from itertools import permutations, product
 from operator import add, sub, mul, truediv
 
-
 def judgePoint24(cards: List[int]) -> bool:
     operators = [add, sub, mul, truediv]
     for nums in permutations(cards):
