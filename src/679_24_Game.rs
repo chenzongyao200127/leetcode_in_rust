@@ -1,3 +1,5 @@
+// 679_24_Game
+// https://leetcode.cn/problems/24-game/description/
 
 use itertools::Itertools;
 use permutohedron::Heap;
