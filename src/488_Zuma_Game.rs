@@ -1,3 +1,123 @@
+// 488_Zuma_Game
+
+
+// BFS 栈溢出
+pub fn find_min_step(board: String, hand: String) -> i32 {
+    let mut hand_map = HashMap::new();
+    for ch in hand.chars() {
+        *hand_map.entry(ch).or_insert(0) += 1;
+    }
+    let mut min_count = std::i32::MAX;
+    dfs(board, &mut hand_map, 0, &mut min_count);
+    if min_count == std::i32::MAX {
+        -1
+    } else {
+        min_count
+    }
+}
+
+pub fn dfs(board: String, hand: &mut HashMap<char, i32>, count: i32, min_count: &mut i32) {
+    let board = remove_consecutive(board);
+    if board.is_empty() {
+        *min_count = std::cmp::min(*min_count, count);
+        return;
+    }
+    if count >= *min_count {
+        return;
+    }
+    for i in 0..=board.len() {
+        let mut hand_clone = hand.clone();
+        for (ch, cnt) in hand_clone.iter_mut() {
+            if *cnt > 0 {
+                *cnt -= 1;
+                let new_board = format!("{}{}{}", &board[..i], ch, &board[i..]);
+                dfs(new_board, hand, count + 1, min_count);
+                *cnt += 1;
+            }
+        }
+    }
+}
+
+
+pub fn remove_consecutive(board: String) -> String {
+    let mut stack: Vec<(char, usize, i32)> = Vec::new();
+    let mut i = 0;
+    while i < board.len() {
+        if stack.is_empty() || stack.last().unwrap().0 != board.chars().nth(i).unwrap() {
+            stack.push((board.chars().nth(i).unwrap(), i, 1));
+        } else {
+            let last = stack.last_mut().unwrap();
+            last.2 += 1;
+            if last.2 == 3 {
+                stack.pop();
+            }
+        }
+        i += 1;
+    }
+    stack.iter().map(|(ch, _, cnt)| ch.to_string().repeat((*cnt) as usize)).collect::<Vec<_>>().join("")
+}
+
+
+
+use std::collections::HashMap;
+use std::collections::HashSet;
+use std::collections::VecDeque;
+
+impl Solution {
+    fn remove_consecutive(board: String) -> String {
+        let mut stack: Vec<(char, usize, i32)> = Vec::new();
+        let mut i = 0;
+        while i < board.len() {
+            if stack.is_empty() || stack.last().unwrap().0 != board.chars().nth(i).unwrap() {
+                stack.push((board.chars().nth(i).unwrap(), i, 1));
+            } else {
+                let mut last = stack.last_mut().unwrap();
+                last.2 += 1;
+                if last.2 == 3 {
+                    stack.pop();
+                }
+            }
+            i += 1;
+        }
+        stack.iter().map(|(ch, _, cnt)| ch.to_string().repeat(*cnt)).collect::<Vec<_>>().join("")
+    }
+
+    pub fn find_min_step(board: String, hand: String) -> i32 {
+        let mut hand: Vec<char> = hand.chars().collect();
+        hand.sort_unstable();
+        
+        let mut queue = VecDeque::new();
+        let mut visited = HashSet::new();
+
+        queue.push_back((board.clone(), hand.clone(), 0));
+        visited.insert((board.clone(), hand.clone()));
+
+        while let Some((board, hand, steps)) = queue.pop_front() {
+            if board.is_empty() {
+                return steps;
+            }
+
+            for i in 0..=board.len() {
+                let mut hand_clone = hand.clone();
+                for (ch, cnt) in hand_clone.iter_mut() {
+                    if *cnt > 0 {
+                        *cnt -= 1;
+                        let new_board = format!("{}{}{}", &board[..i], ch, &board[i..]);
+                        let new_board = Self::remove_consecutive(new_board);
+                        if !visited.contains(&(new_board.clone(), hand_clone.clone())) {
+                            queue.push_back((new_board.clone(), hand_clone.clone(), steps + 1));
+                            visited.insert((new_board.clone(), hand_clone.clone()));
+                        }
+                    }
+                }
+            }
+        }
+        -1
+    }
+}
+
+
+
 use std::collections::{HashSet, VecDeque};
 use itertools::iproduct;
 
@@ -27,6 +147,7 @@ fn clean(board: String) -> String {
     stack.iter().map(|(ch, _, cnt)| ch.to_string().repeat((*cnt) as usize)).collect::<Vec<_>>().join("")
 }
 
+// DFS
 pub fn find_min_step(board: String, hand: String) -> i32 {
     let mut hand: Vec<char> = hand.chars().collect();
     hand.sort_unstable();

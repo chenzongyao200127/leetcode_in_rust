@@ -17,6 +17,10 @@
 # 输入：s = ")("
 # 输出：[""]
 
+# Since we do not know which brackets can be removed, we try all the options! We can use recursion.
+# In the recursion, for each bracket, we can either use it or remove it.
+# Recursion will generate all the valid parentheses strings but we want the ones with the least number of parentheses deleted.
+# We can count the number of invalid brackets to be deleted and only generate the valid strings in the recusrion.
 from typing import List
 
 class Solution:
