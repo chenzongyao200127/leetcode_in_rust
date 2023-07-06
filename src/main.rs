@@ -104,6 +104,36 @@ pub fn maximum_even_split(mut final_sum: i64) -> Vec<i64> {
     return res
 }
 
+pub fn max_area_of_island(grid: Vec<Vec<i32>>) -> i32 {
+    let directions: [(i32, i32); 4] = [(1, 0), (-1, 0), (0, 1), (0, -1)];
+    let mut ans = 0;
+    let m = grid.len();
+    let n = grid[0].len();
+
+    fn dfs(x: usize, y: usize, grid: &mut Vec<Vec<i32>>, directions: &[(i32, i32)]) -> i32 {
+        let mut size = 1;
+        grid[x][y] = 0;
+        for &(dx, dy) in directions.iter() {
+            let nx = dx + x as i32;
+            let ny = dy + y as i32;
+            if nx >= 0 && nx < grid.len() as i32 && ny >= 0 && ny < grid[0].len() as i32 && grid[nx as usize][ny as usize] == 1 {
+                size += dfs(nx as usize, ny as usize, grid, directions);
+            }
+        }
+        size
+    }
+
+    for i in 0..m {
+        for j in 0..n {
+            if grid[i][j] == 1 {
+                ans = ans.max(dfs(i, j, &mut grid.to_vec(), &directions));
+            }
+        }
+    }
+
+    ans
+}
+
 fn main() {
     let ans = find_min_step("WWRRBBWW".to_string(), "WWRB".to_string());
     assert_eq!(ans, 2);
