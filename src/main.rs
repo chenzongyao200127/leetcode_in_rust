@@ -88,6 +88,22 @@ pub fn find_min_step(board: String, hand: String) -> i32 {
     -1
 }
 
+pub fn maximum_even_split(mut final_sum: i64) -> Vec<i64> {
+    if final_sum % 2 != 0 {
+        return vec![];
+    }
+
+    let mut tmp = 0;
+    let mut res: Vec<i64> = vec![];
+    while tmp < final_sum {
+        tmp += 2;
+        final_sum -= tmp;
+        res.push(tmp);
+    }
+    *res.last_mut().unwrap() += final_sum;
+    return res
+}
+
 fn main() {
     let ans = find_min_step("WWRRBBWW".to_string(), "WWRB".to_string());
     assert_eq!(ans, 2);
