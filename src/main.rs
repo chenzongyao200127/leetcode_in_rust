@@ -134,7 +134,64 @@ pub fn max_area_of_island(grid: Vec<Vec<i32>>) -> i32 {
     ans
 }
 
+
+
+use std::collections::BinaryHeap;
+use std::cmp::Reverse;
+
+pub fn find_crossing_time(n: i32, k: i32, time: Vec<Vec<i32>>) -> i32 {
+    // 将每个工人的编号附加到 time 列表中，以便追踪
+    let mut time: Vec<_> = time.into_iter().enumerate().map(|(i, mut t)| {
+        t.push(i as i32);
+        t
+    }).collect();
+
+
+    // 根据工人往返桥的时间对 time 进行排序
+    time.sort_by_key(|x| (Reverse(x[0] + x[2]), Reverse(x[4])));
+
+    let mut current_time = 0;
+    let mut left_side_waiting = BinaryHeap::new();
+    let mut right_side_waiting = BinaryHeap::new();
+    let mut left_side_heap: BinaryHeap<_> = (0..k).map(|j| (Reverse(0), j)).collect();
+    let mut right_side_heap = BinaryHeap::new();
+    let mut boxes_left = n;
+    let mut boxes_moved = 0;
+
+    while boxes_left > 0 {
+        if let Some((_, worker_idx)) = right_side_heap.pop() {
+            left_side_waiting.push((Reverse(current_time + time[worker_idx as usize][2] + time[worker_idx as usize][3]), worker_idx));
+            current_time += time[worker_idx as usize][2];
+            boxes_left -= 1;
+        } else if boxes_moved < n {
+            let (_, worker_idx) = left_side_heap.pop().unwrap();
+            right_side_waiting.push((Reverse(current_time + time[worker_idx as usize][0] + time[worker_idx as usize][1]), worker_idx));
+            current_time += time[worker_idx as usize][0];
+            boxes_moved += 1;
+        } else {
+            current_time = *[
+                left_side_waiting.peek().map(|&(Reverse(t), _)| t).unwrap_or(10_i32.pow(9)),
+                right_side_waiting.peek().map(|&(Reverse(t), _)| t).unwrap_or(10_i32.pow(9)),
+            ].iter().min().unwrap();
+        }
+
+        while right_side_waiting.peek().map_or(false, |&(Reverse(t), _)| t <= current_time) {
+            let (_, worker_idx) = right_side_waiting.pop().unwrap();
+            right_side_heap.push((Reverse(worker_idx), current_time));
+        }
+
+        while left_side_waiting.peek().map_or(false, |&(Reverse(t), _)| t <= current_time) {
+            let (_, worker_idx) = left_side_waiting.pop().unwrap();
+            left_side_heap.push((Reverse(worker_idx), current_time));
+        }
+    }
+
+    current_time
+}
+
+
 fn main() {
     let ans = find_min_step("WWRRBBWW".to_string(), "WWRB".to_string());
     assert_eq!(ans, 2);
 }
+
