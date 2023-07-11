@@ -190,8 +190,30 @@ pub fn find_crossing_time(n: i32, k: i32, time: Vec<Vec<i32>>) -> i32 {
 }
 
 
+pub fn max_alternating_sum(nums: Vec<i32>) -> i64 {
+    // find max 
+    let n = nums.len();
+    let mut max_idx = 0;
+    let mut max_val = 0;
+    for i in 0..n {
+        if nums[i] > max_val {
+            max_idx = i;
+            max_val = max_val.max(nums[i])
+        }
+    }
+    println!("{:?}", (max_idx, max_val));
+    let mut ans = max_val as i64;
+    let mut cur_idx = max_idx;
+    let mut next_min_idx = max_idx;
+    let mut next_max_idx = max_idx;
+    while cur_idx < n {
+        
+    }
+    ans
+}
+
 fn main() {
-    let ans = find_min_step("WWRRBBWW".to_string(), "WWRB".to_string());
+    let ans = max_alternating_sum(vec![4,2,5,3,9,2,1,7,3,6]);
     assert_eq!(ans, 2);
 }
 
