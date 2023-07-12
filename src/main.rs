@@ -212,6 +212,18 @@ pub fn max_alternating_sum(nums: Vec<i32>) -> i64 {
     ans
 }
 
+
+pub fn alternate_digit_sum(n: i32) -> i32 {
+    let n = n.to_string();
+    let mut ans = 0;
+    let mut flag = 1;
+    n.chars().into_iter().for_each(|ch| {
+        ans += (ch as u8 - '0' as u8) as i32 * flag;
+        flag *= -1;
+    });
+    ans
+}
+
 fn main() {
     let ans = max_alternating_sum(vec![4,2,5,3,9,2,1,7,3,6]);
     assert_eq!(ans, 2);
