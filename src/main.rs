@@ -212,6 +212,71 @@ pub fn max_alternating_sum(nums: Vec<i32>) -> i64 {
     ans
 }
 
+pub struct UnionFind {
+    parent: Vec<usize>,
+}
+
+impl UnionFind {
+    pub fn new(n: usize) -> Self {
+        Self {
+            parent: (0..n).collect(),
+        }
+    }
+
+    pub fn find(&mut self, mut x: usize) -> usize {
+        if self.parent[x] != x {
+            self.parent[x] = self.find(self.parent[x]);
+        }
+        self.parent[x]
+    }
+
+    pub fn union(&mut self, x: usize, y: usize) {
+        let root_x = self.find(x);
+        let root_y = self.find(y);
+        if root_x != root_y {
+            self.parent[root_x] = root_y;
+        }
+    }
+}
+
+pub fn find_redundant_connection(edges: Vec<Vec<i32>>) -> Vec<i32> {
+    let n = edges.len();
+
+    let mut uf = UnionFind::new(n);
+
+    let mut redundant = vec![];
+
+    for edge in edges {
+        let x = edge[0] as usize;
+        let y = edge[1] as usize;
+
+        let parent_x = uf.find(x);
+        let parent_y = uf.find(y);
+
+        if parent_x != parent_y {
+            uf.union(parent_x, parent_y);
+        } else {
+            redundant = vec![x as i32, y as i32];
+            break;
+        }
+    }
+
+    redundant
+}
+
+pub fn can_jump(nums: Vec<i32>) -> bool {
+    let n = nums.len();
+    let mut end = 0;
+    for i in 0..n {
+        if i <= end {
+            end = end.max(i + nums[i] as usize)
+        }
+        if end >= n - 1 {
+            return true;
+        }
+    }
+    false
+}
 
 pub fn alternate_digit_sum(n: i32) -> i32 {
     let n = n.to_string();
