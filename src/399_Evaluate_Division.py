@@ -55,6 +55,57 @@ from typing import List
 
 # 拓扑排序是对有向无环图（DAG）的一种重要操作，它的主要应用场景包括任务调度、代码编译等，都需要利用拓扑排序来确定执行或处理的顺序。
 
+# 输入：equations = [["a","b"],["b","c"],["bc","cd"]], values = [1.5,2.5,5.0], queries = [["a","c"],["c","b"],["bc","cd"],["cd","bc"]]
+# 输出：[3.75000,0.40000,5.00000,0.20000]
+
+# 一边查询一边修改结点指向是并查集的特色。
 class Solution:
     def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
+        nodes = []
+        for equation in equations:
+            if equation[0] not in nodes:
+                nodes.append(equation[0])
+            if equation[1] not in nodes:
+                nodes.append(equation[1])
+                
+        n = len(nodes)
+        map = [[0] * n for _ in range(n)]
+        def findIdxByEqution(name):
+            for i in range(n):
+                if nodes[i] == name:
+                    return i
+            return -1
+        
+        for i in range(len(values)):
+            x = findIdxByEqution(equations[i][0])
+            y = findIdxByEqution(equations[i][1])
+            val = values[i]
+            map[x][y] = val
+            map[y][x] = 1/val
+        
+        def dfs(s, t, val):
+            if s == t:
+                return val
+            
+            for i in range(n):
+                if map[s][i] != 0:
+                    tmp = map[s][i]
+                    map[s][i] = 0
+                    res = dfs(i, t, val * tmp)
+                    map[s][i] = tmp
+                    if res != -1:
+                        return res
+                    
+            return -1
+        
+        ans = []
+        for query in queries:
+            x = findIdxByEqution(query[0])
+            y = findIdxByEqution(query[1])
+            if x == -1 or y == -1:
+                ans.append(-1.0)
+            else:
+                ans.append(dfs(x,y,1.0))
+            
+        return ans
         
