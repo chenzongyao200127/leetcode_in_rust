@@ -82,6 +82,7 @@ class Solution {
             res.add(new ArrayList<>(path));
             return;
         }
+        
         for (String precursor : from.get(cur)) {
             path.addFirst(precursor);
             backtrack(from, path, beginWord, precursor, res);
