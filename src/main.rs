@@ -1,6 +1,7 @@
 use std::collections::{HashSet, VecDeque};
 use itertools::iproduct;
-
+use std::collections::BinaryHeap;
+use std::cmp::Reverse;
 // 这是一个类似于深度优先搜索（DFS）的问题，
 // 因为我们需要尝试所有可能的球的插入方式，直到找到一个成功的方案。在这个问题中，我们可以使用递归和回溯的方法来实现。
 // 首先，我们需要实现一个方法来模拟球的插入和移除过程。
@@ -133,11 +134,6 @@ pub fn max_area_of_island(grid: Vec<Vec<i32>>) -> i32 {
 
     ans
 }
-
-
-
-use std::collections::BinaryHeap;
-use std::cmp::Reverse;
 
 pub fn find_crossing_time(n: i32, k: i32, time: Vec<Vec<i32>>) -> i32 {
     // 将每个工人的编号附加到 time 列表中，以便追踪
@@ -277,6 +273,55 @@ pub fn can_jump(nums: Vec<i32>) -> bool {
     }
     false
 }
+
+
+// 这段代码的行为与原来的Python代码基本一致。不过由于Rust中元组的比较是从左到右进行的，
+// 因此我们将区间长度和右边界的顺序颠倒，使得堆优先按照区间长度进行排序。
+// 如果长度相同，再按照右边界排序。
+// 此外，由于Rust中没有Python的列表解析，所以我们使用into_iter().enumerate().collect()来代替Python中的列表解析。
+
+
+// 在Rust中，元组的比较是从左到右进行的，也就是说，
+// 首先比较元组的第一个元素，如果它们相等，再比较第二个元素，依此类推。
+// 因此，当我们把一个元组插入到堆中时，堆会先按照元组的第一个元素进行排序。
+// 如果第一个元素相同，再按照第二个元素排序，以此类推。
+// 所以，我们把区间长度放在元组的第一个位置，右边界放在第二个位置，这样就能保证堆优先按照区间长度进行排序，如果长度相同，再按照右边界排序。
+
+// 至于Reverse，这是Rust中的一个包装器类型，用来改变某个值的排序顺序。
+// 默认情况下，BinaryHeap是一个最大堆，也就是说，它总是把最大的元素放在堆顶。
+// 但在这个问题中，我们需要一个最小堆，也就是总是把最小的元素放在堆顶。
+// Rust的BinaryHeap并没有提供直接创建最小堆的方法，但我们可以通过Reverse包装器来实现这个功能。
+// Reverse包装器会把它包装的值的排序顺序翻转，所以我们把区间长度和右边界都包装在Reverse中，再插入到堆中，就能得到一个最小堆。
+pub fn min_interval(intervals: Vec<Vec<i32>>, queries: Vec<i32>) -> Vec<i32> {
+    let mut intervals = intervals;
+    intervals.sort_by_key(|v| (v[0], -v[1]));
+
+    let mut queries: Vec<(usize, i32)> = queries.into_iter().enumerate().collect();
+    queries.sort_by_key(|&(_, x)| x);
+
+    let mut heap = BinaryHeap::new();
+    let mut res = vec![-1; queries.len()];
+    let mut j = 0;
+    for (i, qi) in queries {
+        while j < intervals.len() && intervals[j][0] <= qi {
+            let len = intervals[j][1] - intervals[j][0] + 1;
+            heap.push((Reverse(len), Reverse(intervals[j][1])));
+            j += 1;
+        }
+        while let Some((_, Reverse(right))) = heap.peek() {
+            if *right < qi {
+                heap.pop();
+            } else {
+                break;
+            }
+        }
+        if let Some((Reverse(len), _)) = heap.peek() {
+            res[i] = *len;
+        }
+    }
+    res
+}
+
 
 pub fn alternate_digit_sum(n: i32) -> i32 {
     let n = n.to_string();
