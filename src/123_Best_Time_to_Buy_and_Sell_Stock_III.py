@@ -31,6 +31,61 @@ from typing import List
 # 输入：prices = [1]
 # 输出：0
 
+# 未进行过任何操作；
+# 只进行过一次买操作；
+# 进行了一次买操作和一次卖操作，即完成了一笔交易；
+# 在完成了一笔交易的前提下，进行了第二次买操作；
+# 完成了全部两笔交易。
+
+# i 代表第几天（0 到 n-1，其中 n 是天数）
+# j 代表是否持有股票（0 代表不持有，1 代表持有）
+# k 代表已经进行过几次交易（0, 1, 2，其中 2 代表至多交易两次）
+# 因此，dp[i][j][k] 表示在第 i 天，是否持有股票，已经交易 k 次后的最大利润。
+
+# 初始化 DP 表：
+# 对于 dp[0][0][0]，即第 0 天，不持有股票，且没有进行过交易，此时的最大利润为 0；
+# 对于 dp[0][0][1]，dp[0][0][2]，即第 0 天，不持有股票，但已经进行过 1 次或 2 次交易，这种情况是不存在的，初始化为负无穷大；
+# 对于 dp[0][1][0]，即第 0 天，持有股票，但还没有进行过交易，也是不存在的，初始化为负无穷大；
+# 对于 dp[0][1][1]，dp[0][1][2]，即第 0 天，持有股票，且已经进行过 1 次或 2 次交易，此时的最大利润应该就是负的第 0 天的股票价格。
+
+# dp[i][0][0]：没有交易过，所以一直是 0；
+# dp[i][0][1]：可能是今天卖出或者之前就卖出的，取最大值即可，dp[i][0][1] = max(dp[i-1][0][1], dp[i-1][1][1] + prices[i])；
+# dp[i][0][2]：可能是今天卖出或者之前就卖出的，取最大值即可，dp[i][0][2] = max(dp[i-1][0][2], dp[i-1][1][2] + prices[i])；
+# dp[i][1][0]：没有交易过但却有股票，这种情况是不可能出现的，所以还是负无穷；
+# dp[i][1][1]：可能是今天买入，也可能是之前就买入的，取最大值即可，dp[i][1][1] = max(dp[i-1][1][1], dp[i-1][0][0] - prices[i])；
+# dp[i][1][2]：可能是今天买入，也可能是之前就买入的，取最大值即可，dp[i][1][2] = max(dp[i-1][1][2], dp[i-1][0][1] - prices[i])。
+
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:
-        
+        n = len(prices)
+        dp = [[[0]*3 for _ in range(2)] for _ in range(n)]
+        dp[0][0][0], dp[0][0][1], dp[0][0][2] = 0, float('-inf'), float('-inf')
+        dp[0][1][0], dp[0][1][1], dp[0][1][2] = float('-inf'), -prices[0], float('-inf')
+
+        for i in range(1, n):
+            dp[i][0][0] = dp[i-1][0][0]
+            dp[i][0][1] = max(dp[i-1][0][1], dp[i-1][1][1] + prices[i])
+            dp[i][0][2] = max(dp[i-1][0][2], dp[i-1][1][2] + prices[i])
+            dp[i][1][0] = dp[i-1][1][0]
+            dp[i][1][1] = max(dp[i-1][1][1], dp[i-1][0][0] - prices[i])
+            dp[i][1][2] = max(dp[i-1][1][2], dp[i-1][0][1] - prices[i])
+
+        return max(dp[n-1][0][0], dp[n-1][0][1], dp[n-1][0][2])
+
+
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        first_purchase = -float('inf')
+        first_sell = 0
+        second_purchase = -float('inf')
+        second_sell = 0
+        for price in prices:
+            if -price > first_purchase:
+                first_purchase = -price
+            if price + first_purchase > first_sell:
+                first_sell = price + first_purchase
+            if first_sell - price > second_purchase:
+                second_purchase = first_sell - price
+            if price + second_purchase > second_sell:
+                second_sell = price + second_purchase
+        return max(second_sell, first_sell, 0)
