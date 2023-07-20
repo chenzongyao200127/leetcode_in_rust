@@ -186,27 +186,26 @@ pub fn find_crossing_time(n: i32, k: i32, time: Vec<Vec<i32>>) -> i32 {
 }
 
 
-pub fn max_alternating_sum(nums: Vec<i32>) -> i64 {
-    // find max 
-    let n = nums.len();
-    let mut max_idx = 0;
-    let mut max_val = 0;
-    for i in 0..n {
-        if nums[i] > max_val {
-            max_idx = i;
-            max_val = max_val.max(nums[i])
-        }
+fn max_subarray_sum_circular(nums: Vec<i32>) -> i32 {
+    let mut total = 0;
+    let mut max_sum = nums[0];
+    let mut min_sum = nums[0];
+    let mut curr_max = 0;
+    let mut curr_min = 0;
+
+    for num in nums {
+        curr_max = (curr_max + num).max(num);
+        max_sum = max_sum.max(curr_max);
+        curr_min = (curr_min + num).min(num);
+        min_sum = min_sum.min(curr_min);
+        total += num;
     }
-    println!("{:?}", (max_idx, max_val));
-    let mut ans = max_val as i64;
-    let mut cur_idx = max_idx;
-    let mut next_min_idx = max_idx;
-    let mut next_max_idx = max_idx;
-    while cur_idx < n {
-        
+    if max_sum > 0 {
+        [max_sum, total - min_sum].into_iter().max().unwrap()
+    } else {
+        max_sum
     }
-    ans
-}
+}   
 
 pub struct UnionFind {
     parent: Vec<usize>,
