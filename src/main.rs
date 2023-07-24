@@ -269,9 +269,87 @@ pub fn num_squares(n: i32) -> i32 {
     dp[n as usize]
 }
 
+pub fn change(amount: i32, mut coins: Vec<i32>) -> i32 {
+    let mut dp = vec![vec![0; amount as usize + 1]; coins.len()];
+    coins.sort_unstable();
+    for i in 0..dp.len() {
+        dp[i][0] = 0;
+    }
+    for a in 1..=amount as usize {
+        if a % coins[0] as usize == 0 {
+            dp[0][a] += 1;
+        }
+    }
+
+    for i in 1..coins.len() {
+        for a in 1..=amount as usize {
+            if a < coins[i] as usize {
+                dp[i][a] = dp[i-1][a];
+            } else if a == coins[i] as usize {
+                dp[i][a] = dp[i-1][a] + 1;
+            } else {
+                dp[i][a] = dp[i-1][a] + dp[i][a - coins[i] as usize];
+            }
+        }
+    }
+
+    dp[coins.len()-1][amount as usize]
+}
+
+use::std::cmp::max;
+// 输入：strs = ["10", "0001", "111001", "1", "0"], m = 5, n = 3
+// 输出：4
+// 解释：最多有 5 个 0 和 3 个 1 的最大子集是 {"10","0001","1","0"} ，因此答案是 4 。
+// 其他满足题意但较小的子集包括 {"0001","1"} 和 {"10","1","0"} 。{"111001"} 不满足题意，因为它含 4 个 1 ，大于 n 的值 3 。
+
+pub fn find_max_form(strs: Vec<String>, m: i32, n: i32) -> i32 {
+    let mut new_strs = vec![];
+
+    for s in strs {
+        new_strs.push(str2vec(s));
+    }
+
+    let len = new_strs.len();
+
+    let mut dp = vec![vec![vec![0; n as usize + 1]; m as usize + 1]; len + 1];
+
+    for i in 0..=m as usize {
+        for j in 0..=n as usize {
+            dp[0][i][j] = 0;
+        }
+    }
+
+    for i in 1..=new_strs.len() {
+        for x in 0..=m as usize {
+            for y in 0..=n as usize {
+                let zeros = new_strs[i-1][0];
+                let ones = new_strs[i-1][1];
+                dp[i][x][y] = dp[i-1][x][y];
+                if x >= zeros && y >= ones {
+                    dp[i][x][y] = max(dp[i][x][y], dp[i-1][x-zeros][y-ones] + 1);
+                }
+            }
+        }
+    }
+
+    dp[dp.len()-1][m as usize][n as usize]
+}
+
+pub fn str2vec(s: String) -> Vec<usize> {
+    let mut ans = vec![0; 2];
+    s.chars().into_iter().for_each(|c| {
+        if c == '0' {
+            ans[0] += 1;
+        } else {
+            ans[1] += 1;
+        }
+    });
+
+    ans
+}
 
 fn main() {
-    let ans = num_squares(13);
-    assert_eq!(ans, 2);
+    let ans = find_max_form(vec!["10".to_string(), "0001".to_string(), "111001".to_string(), "1".to_string(), "0".to_string()],5,3);
+    assert_eq!(ans, 4);
 }
 
