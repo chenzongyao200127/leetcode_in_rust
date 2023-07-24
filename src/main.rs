@@ -251,8 +251,27 @@ pub fn largest_divisible_subset(nums: Vec<i32>) -> Vec<i32> {
     ans
 }
 
+pub fn num_squares(n: i32) -> i32 {
+    let mut dp = vec![1000; n as usize + 1];
+    dp[0] = 0;
+    let mut i = 1;
+    while i * i <= n {
+        dp[(i*i) as usize] = 1;
+        i += 1;
+    }
+    for i in 1..=n as usize {
+        if dp[i] == 1000 {
+            for j in 1..i/2 {
+                dp[i] = dp[i].min(dp[i-j] + dp[j])
+            }
+        }
+    }
+    dp[n as usize]
+}
+
+
 fn main() {
-    let ans = number_of_arithmetic_slices(vec![0,2000000000,-294967296]);
+    let ans = num_squares(13);
     assert_eq!(ans, 2);
 }
 
