@@ -349,21 +349,22 @@ pub fn str2vec(s: String) -> Vec<usize> {
 }
 
 
-pub fn halve_array(nums: Vec<i32>) -> i32 {
-    let mut accum = 0 as f64;
-    let mut max_heap = BinaryHeap::new();
-    let mut total = nums.iter().sum::<i32>();
-    for n in nums {
-        max_heap.push(Reverse(n as f64));
+pub fn combination_sum4(nums: Vec<i32>, target: i32) -> i32 {
+    let mut dp = vec![0; target as usize + 1];
+    dp[0] = 1;
+
+    for i in 1..=target {
+        for n in nums.iter() {
+            if i >= *n {
+                dp[i as usize] += dp[i as usize - *n as usize];
+            }
+        }
     }
-    let mut cnt = 0;
-    while accum < total as f64 / 2 {
-        tmp_max = Reverse(max_heap.pop().unwrap());
-        accum += tmp_max as f64 / 2;
-        max_heap.push(Reverse(2));
-    }
-    cnt
+
+    dp[target as usize]
 }
+
+
 fn main() {
     let ans = find_max_form(vec!["10".to_string(), "0001".to_string(), "111001".to_string(), "1".to_string(), "0".to_string()],5,3);
     assert_eq!(ans, 4);
