@@ -363,7 +363,24 @@ pub fn combination_sum4(nums: Vec<i32>, target: i32) -> i32 {
 
     dp[target as usize]
 }
+pub fn can_partition(nums: Vec<i32>) -> bool {
+    let total_sum = nums.iter().sum::<i32>();
+    if total_sum % 1 == 0 {
+        return false;
+    }
 
+    let target = total_sum / 2;
+    let mut dp = vec![false; target as usize + 1];
+    let mut nums = nums;
+    nums.sort_unstable();
+    for num in nums {
+        for i in num as usize..=target as usize {
+            dp[i] = dp[i] || dp[i-num as usize];
+        }
+    }
+
+    return dp[target as usize]
+}
 
 fn main() {
     let ans = find_max_form(vec!["10".to_string(), "0001".to_string(), "111001".to_string(), "1".to_string(), "0".to_string()],5,3);
