@@ -363,27 +363,79 @@ pub fn combination_sum4(nums: Vec<i32>, target: i32) -> i32 {
 
     dp[target as usize]
 }
-pub fn can_partition(nums: Vec<i32>) -> bool {
-    let total_sum = nums.iter().sum::<i32>();
-    if total_sum % 1 == 0 {
-        return false;
-    }
 
-    let target = total_sum / 2;
-    let mut dp = vec![false; target as usize + 1];
-    let mut nums = nums;
-    nums.sort_unstable();
-    for num in nums {
-        for i in num as usize..=target as usize {
-            dp[i] = dp[i] || dp[i-num as usize];
+pub fn unique_paths_with_obstacles(obstacle_grid: Vec<Vec<i32>>) -> i32 {
+    let m = obstacle_grid.len();
+    let n = obstacle_grid[0].len();
+    let mut dp = vec![vec![0; n]; m];
+
+    if obstacle_grid[0].iter().all(|x| *x == 0) {
+        for i in 0..n {
+            dp[0][i] = 1;
+        }
+    } else {
+        for i in 0..n {
+            if obstacle_grid[0][i] == 1 {
+                for j in 0..i {
+                    dp[0][j] = 1;
+                }
+            }
+            break;
+        }
+    }
+    if (0..m).into_iter().all(|x| obstacle_grid[x][0] == 0) {
+        for i in 0..m {
+            dp[i][0] = 1;
+        }
+    } else {
+        for i in 0..m {
+            if obstacle_grid[i][0] == 1 {
+                for j in 0..i {
+                    dp[j][0] = 1;
+                }
+            }
+            break;
+        }
+    }
+    println!("{:?}", dp);
+
+    for i in 1..m {
+        for j in 1..n {
+            if obstacle_grid[i][j] != 1 {
+                dp[i][j] = dp[i-1][j] + dp[i][j-1];
+            }
         }
     }
 
-    return dp[target as usize]
+    dp[m-1][n-1]
+}
+
+pub fn min_path_sum(grid: Vec<Vec<i32>>) -> i32 {
+    let m = grid.len();
+    let n = grid[0].len();
+    let mut dp = vec![vec![0; n]; m];
+    let mut pre_sum = 0;
+
+    for i in 0..m {
+        pre_sum += grid[i][0];
+        dp[i][0] = pre_sum;
+    }
+    pre_sum = 0;
+    for j in 0..n {
+        pre_sum += grid[0][j];
+        dp[0][j] = pre_sum;
+    }
+    for i in 1..m {
+        for j in 1..n {
+            dp[i][j] = grid[i][j] + dp[i-1][j].min(dp[i][j-1]);
+        }
+    }
+
+    dp[m-1][n-1]
 }
 
 fn main() {
-    let ans = find_max_form(vec!["10".to_string(), "0001".to_string(), "111001".to_string(), "1".to_string(), "0".to_string()],5,3);
+    let ans = unique_paths_with_obstacles(vec![vec![0,1,1],vec![0,0,0],vec![1,0,0]]);
     assert_eq!(ans, 4);
 }
 
