@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 pub fn minimum_time(n: i32, relations: Vec<Vec<i32>>, time: Vec<i32>) -> i32 {
 
     let mut prev: Vec<Vec<i32>> = vec![vec![]; n as usize + 1];
@@ -204,4 +204,37 @@ fn merge(mut head1: Option<Box<ListNode>>, mut head2: Option<Box<ListNode>>) ->O
     }
 
     head1
+}
+
+pub fn longest_increasing_path(matrix: Vec<Vec<i32>>) -> i32 {
+    let mut ans = 0;
+
+    #[inline]
+    fn dfs(matrix: &Vec<Vec<i32>>, cur_x: i32, cur_y: i32, length: i32, memo: &mut HashSet<(i32, i32)>) -> i32 {
+        let dirs = vec![(1,0), (0,1), (-1,0), (0,-1)];
+        let mut max_length = length;
+        for (dx, dy) in dirs {
+            let new_x = cur_x + dx;
+            let new_y = cur_y + dy;
+
+            if new_x >= 0 && new_x < matrix.len() as i32 && new_y >= 0 && new_y < matrix[0].len() as i32 
+                    && !memo.contains(&(new_x, new_y)) 
+                    && matrix[new_x as usize][new_y as usize] > matrix[cur_x as usize][cur_y as usize] {
+                memo.insert((new_x, new_y));
+                max_length = max_length.max(dfs(matrix, new_x, new_y, length + 1, memo));
+                memo.remove(&(new_x, new_y));
+            }
+        }
+        max_length
+    }
+
+    for i in 0..matrix.len() {
+        for j in 0..matrix[0].len() {
+            let mut memo: HashSet<(i32, i32)> = HashSet::new();
+            memo.insert((i as i32, j as i32));
+            ans = ans.max(dfs(&matrix, i as i32, j as i32, 1, &mut memo));
+        }
+    }
+
+    ans
 }
