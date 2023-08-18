@@ -20,14 +20,20 @@
 impl Solution {
     pub fn search_insert(nums: Vec<i32>, target: i32) -> i32 {
         let mut l = 0;
-        let mut r = nums.len();
-        let mut mid = (l + r) >> 1;
-        while nums[mid] != target {
-            if nums[mid] < target {
-                r = mid 
+        let mut r = nums.len() as i32 - 1;
+        let mut mid = l + (r - l) / 2;
+
+        while l <= r {
+            if nums[mid as usize] == target {
+                return mid;
+            } else if nums[mid as usize] < target {
+                l = mid + 1;
             } else {
-                l = mid + 1
+                r = mid - 1;
             }
+            mid = l + (r - l) / 2;
         }
+
+        l
     }
 }
