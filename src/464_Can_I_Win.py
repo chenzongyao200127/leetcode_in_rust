@@ -38,3 +38,96 @@
 
 # 1 <= maxChoosableInteger <= 20
 # 0 <= desiredTotal <= 300
+
+
+# 这是一个博弈论的问题。对于给定的maxChoosableInteger和desiredTotal，
+# 我们需要确定对于先手玩家是否有稳赢的策略。这可以通过递归或记忆化搜索来解决。
+
+# 递归函数的核心思路是考虑当前可选整数集合state和当前的累计和total，
+# 返回当前玩家是否可以赢。
+
+# 为了优化递归的效率，我们使用记忆化搜索，
+# 即用一个字典memo来记录已经计算过的(state, total)对应的结果。
+
+# 具体代码如下：
+
+
+def canIWin(maxChoosableInteger, desiredTotal):
+    # 如果可选择的整数总和小于desiredTotal，则先手玩家必输
+    if (1 + maxChoosableInteger) * maxChoosableInteger / 2 < desiredTotal:
+        return False
+    
+    if desiredTotal <= 0:
+        return True
+
+    def helper(state, total, memo):
+        if total <= 0:
+            return False
+        
+        if state in memo:
+            return memo[state]
+        
+        for i in range(1, maxChoosableInteger + 1):
+            if not state & (1 << i) and not helper(state | (1 << i), total - i, memo):
+                    memo[state] = True
+                    return True
+        memo[state] = False
+        return False
+
+    return helper(0, desiredTotal, {})
+
+# 示例
+print(canIWin(10, 11))  # 输出：false
+print(canIWin(10, 0))  # 输出：true
+print(canIWin(10, 1))  # 输出：true
+
+
+# 注意：state用位操作表示整数集合
+# 例如当maxChoosableInteger为10时，
+# 如果state的第3位和第5位是1，则表示整数3和5已经被选择过了。
+
+
+def canIWin(maxChoosableInteger, desiredTotal):
+    if maxChoosableInteger >= desiredTotal: return True
+    if (1 + maxChoosableInteger) * maxChoosableInteger / 2 < desiredTotal: return False
+
+    memo = {}
+
+    # 递归函数
+    def dp(state, total):
+        if state in memo: 
+            return memo[state]
+        
+        for i in range(maxChoosableInteger, 0, -1):
+            # 检查当前数字是否已被选择
+            if not (state & (1 << (i - 1))):
+                # 如果选择这个数字使得总和达到或超过desiredTotal，或者选择这个数字后，对手输了
+                # 那么当前玩家将赢得比赛
+                if total + i >= desiredTotal or not dp(state | (1 << (i - 1)), total + i):
+                    memo[state] = True
+                    return True
+        
+        memo[state] = False
+        return False
+
+    return dp(0, 0)
+
+# 示例
+print(canIWin(10, 11))  # 输出：false
+print(canIWin(10, 0))  # 输出：true
+print(canIWin(10, 1))  # 输出：
+
+
+# 官解
+class Solution:
+    def canIWin(self, maxChoosableInteger: int, desiredTotal: int) -> bool:
+        @cache
+        def dfs(usedNumbers: int, currentTotal: int) -> bool:
+            for i in range(maxChoosableInteger):
+                if (usedNumbers >> i) & 1 == 0:
+                    if currentTotal + i + 1 >= desiredTotal or \
+                        not dfs(usedNumbers | (1 << i), currentTotal + i + 1):
+                        return True
+            return False
+
+        return (1 + maxChoosableInteger) * maxChoosableInteger // 2 >= desiredTotal and dfs(0, 0)

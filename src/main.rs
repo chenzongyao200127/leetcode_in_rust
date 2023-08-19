@@ -85,3 +85,50 @@ pub fn longest_common_substring<'a>(s1: &'a str, s2: &'a str) -> Option<&'a str>
 pub fn remove_substring_from(s: &str, sub: &str) -> String {
     s.replace(sub, "")
 }
+
+
+use std::collections::HashMap;
+
+pub fn can_i_win(max_choosable_integer: i32, desired_total: i32) -> bool {
+    if (max_choosable_integer + 1) * max_choosable_integer / 2 < desired_total {
+        return false;
+    }
+
+    if desired_total <= max_choosable_integer {
+        return true;
+    }
+
+    fn dfs(
+        state: i32, 
+        cur_total: i32, 
+        max_choosable_integer: i32, 
+        desired_total: i32, 
+        memo: &mut HashMap<i32, bool>
+    ) -> bool {
+        if let Some(&v) = memo.get(&state) {
+            return v;
+        }
+
+        for i in (1..=max_choosable_integer).rev() {
+            if (state & (1 << (i - 1))) == 0 {
+                if cur_total + i >= desired_total 
+                    || !dfs(
+                        state | (1 << (i - 1)), 
+                        cur_total + i, 
+                        max_choosable_integer, 
+                        desired_total, 
+                        memo
+                    ) {
+                    memo.insert(state, true);
+                    return true;
+                }
+            }
+        }
+
+        memo.insert(state, false);
+        return false;
+    }
+
+    let mut memo = HashMap::new();
+    dfs(0, 0, max_choosable_integer, desired_total, &mut memo)
+}
