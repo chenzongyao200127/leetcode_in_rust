@@ -132,3 +132,31 @@ pub fn can_i_win(max_choosable_integer: i32, desired_total: i32) -> bool {
     let mut memo = HashMap::new();
     dfs(0, 0, max_choosable_integer, desired_total, &mut memo)
 }
+
+
+
+pub fn max_dist_to_closest(seats: Vec<i32>) -> i32 {
+    let n = seats.len();
+    let mut l: Option<usize> = None; // Initialize l as None.
+    let mut max_distance = 0;
+
+    for i in 0..n {
+        if seats[i] == 1 {
+            if l.is_none() { // Check if l is None.
+                max_distance = i as i32;
+            } else {
+                // Unwrap safely because we checked with is_none().
+                max_distance = max_distance.max((i - l.unwrap()) as i32 / 2);
+            }
+            l = Some(i);
+        }
+    }
+
+    // For the case where the last seated person is not at the end.
+    if seats[n-1] == 0 {
+        max_distance = max_distance.max((n - 1 - l.unwrap()) as i32);
+    }
+
+    max_distance
+}
+
