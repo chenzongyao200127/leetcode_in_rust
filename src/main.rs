@@ -1,7 +1,3 @@
-fn main() {
-    assert_eq!(num_distinct("babgbag".to_string(), "bag".to_string()), 5);
-    assert_eq!(num_distinct("rabbbit".to_string(), "rabbit".to_string()), 3);
-}
 
 
 pub fn num_distinct(s: String, t: String) -> i32 {
@@ -160,3 +156,56 @@ pub fn max_dist_to_closest(seats: Vec<i32>) -> i32 {
     max_distance
 }
 
+
+struct Solution;
+
+impl Solution {
+    pub fn min_operations(nums: Vec<i32>, target: i32) -> i32 {
+        let sum: i64 = nums.iter().map(|&x| x as i64).sum();
+        if sum < target as i64 {
+            return -1;
+        }
+
+        let mut count = HashMap::new();
+        for &num in &nums {
+            *count.entry(num).or_insert(0) += 1;
+        }
+
+        let mut operations: i64 = 0;
+        let mut total_sum: i64 = 0;
+
+        for i in 0..31 {
+            total_sum += *count.get(&(1 << i)).unwrap_or(&0) as i64 * (1 << i) as i64;
+
+            if (target >> i & 1) == 0 {
+                continue;
+            }
+
+            total_sum -= (1 << i) as i64;
+
+            if total_sum >= 0 {
+                continue;
+            }
+
+            for j in (i + 1)..31 {
+                if let Some(cnt) = count.get_mut(&(1 << j)) {
+                    if *cnt > 0 {
+                        operations += j as i64 - i as i64;
+                        *cnt -= 1;
+                        total_sum += (1 << j) as i64;
+                        break;
+                    }
+                }
+            }
+        }
+
+        operations as i32
+    }
+}
+
+fn main() {
+    // Test the function here
+    let nums = vec![64,1,16384,16384,1024,1,2,4096,2,2,65536,1,65536,4,4,256,4,16384,16384,8388608,16384,4,2,4096,4,1073741824,16777216,4,2,256,1,4,256,16384,1073741824,4096,1,4096,4,16384,4,4];
+    let target = 42;
+    println!("{}", Solution::min_operations(nums, target));
+}
