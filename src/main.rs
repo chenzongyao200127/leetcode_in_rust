@@ -203,9 +203,48 @@ impl Solution {
     }
 }
 
+
+pub fn min_stickers(stickers: Vec<String>, target: String) -> i32 {
+    let n = target.len();
+    let states = 1 << n;
+    let mut dp = vec![i32::MAX; states as usize];
+    let target_ch: Vec<char> = target.chars().collect();
+    dp[0] = 0;
+
+    for s in 0..states as usize {
+        if dp[s] == i32::MAX {
+            continue;
+        }
+
+        for strick in stickers.iter() {
+            let mut nxt = s;
+            for ch in strick.chars() {
+                for k in 0..n {
+                    if ch == target_ch[k] && s & (1 << k) == 0 {
+                        nxt |= 1 << k;
+                        println!("{:?}", nxt);
+                        break;
+                    }
+                }
+            }
+
+            dp[nxt] = dp[nxt].min(dp[s] + 1);
+        }
+    }
+
+
+    if dp[dp.len() - 1] == i32::MAX {
+        -1
+    } else {
+        dp[dp.len() - 1]
+    }
+}
+
+
 fn main() {
     // Test the function here
-    let nums = vec![64,1,16384,16384,1024,1,2,4096,2,2,65536,1,65536,4,4,256,4,16384,16384,8388608,16384,4,2,4096,4,1073741824,16777216,4,2,256,1,4,256,16384,1073741824,4096,1,4096,4,16384,4,4];
-    let target = 42;
-    println!("{}", Solution::min_operations(nums, target));
+    let nums = vec!["summer","sky","cent","bright","kill","forest","neighbor","capital","tall"];
+    let nums = nums.into_iter().map(|x| x.to_string()).collect();
+    let target = "originalchair".to_string();
+    println!("{}", min_stickers(nums, target));
 }
