@@ -157,9 +157,7 @@ pub fn max_dist_to_closest(seats: Vec<i32>) -> i32 {
 }
 
 
-struct Solution;
 
-impl Solution {
     pub fn min_operations(nums: Vec<i32>, target: i32) -> i32 {
         let sum: i64 = nums.iter().map(|&x| x as i64).sum();
         if sum < target as i64 {
@@ -201,7 +199,7 @@ impl Solution {
 
         operations as i32
     }
-}
+
 
 
 pub fn min_stickers(stickers: Vec<String>, target: String) -> i32 {
@@ -307,12 +305,26 @@ fn can_partition(nums: &Vec<i32>, visited: &mut Vec<bool>, start: usize, k: i32,
     false
 }
 
-fn main() {
-    let nums1 = vec![4, 3, 2, 3, 5, 2, 1];
-    let k1 = 4;
-    println!("{}", can_partition_k_subsets(nums1, k1)); // True
+pub fn ways_to_buy_pens_pencils(total: i32, cost1: i32, cost2: i32) -> i64 {
+    let total = total as i64;
+    let cost1 = cost1 as i64;
+    let cost2 = cost2 as i64;
+    let mut ans = 0;
+    let mut cnt = 0;
 
-    let nums2 = vec![1, 2, 3, 4];
-    let k2 = 3;
-    println!("{}", can_partition_k_subsets(nums2, k2)); // False
+    while cnt * cost1 <= total {
+        let t = total - cost1 * cnt;
+        if t < cost2 {
+            ans += 1
+        } else {
+            ans += t / cost2 + 1;
+        }
+        cnt += 1;
+    }
+
+    ans
+}
+
+fn main() {
+    println!("{}", ways_to_buy_pens_pencils(100, 1, 1)); // True
 }
