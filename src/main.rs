@@ -325,6 +325,170 @@ pub fn ways_to_buy_pens_pencils(total: i32, cost1: i32, cost2: i32) -> i64 {
     ans
 }
 
+pub fn minimum_operations(num: String) -> i32 {
+    // Function to find the last occurrences of two target characters
+    fn find_last_two_indices(num: &str, target1: char, target2: char) -> (i32, i32) {
+        let idx2 = num.rfind(target2).unwrap_or(usize::MAX);
+        if idx2 == usize::MAX {
+            return (-1, -1);
+        }
+        let idx1 = num[..idx2 as usize].rfind(target1).unwrap_or(usize::MAX);
+        (idx1 as i32, idx2 as i32)
+    }
+
+    // Function to count deletions required to ensure no other characters between idx1 and idx2
+    fn count_deletions(num_len: usize, idx1: i32, idx2: i32) -> i32 {
+        if idx1 == -1 || idx2 == -1 {
+            return std::i32::MAX;
+        }
+        ((num_len - 1) as i32 - idx2 + idx2 - idx1 - 1) as i32
+    }
+
+    let num_len = num.len();
+    
+    // For a single character string
+    if num_len == 1 {
+        return if num != "0" { 1 } else { 0 };
+    }
+
+    // Special case for a single '0' in the string
+    let single_zero = if num.contains('0') {
+        (num_len - 1) as i32
+    } else {
+        std::i32::MAX
+    };
+
+    // Find the indices for the combinations '00', '25', '50', and '75'
+    let idx00 = find_last_two_indices(&num, '0', '0');
+    let idx25 = find_last_two_indices(&num, '2', '5');
+    let idx50 = find_last_two_indices(&num, '5', '0');
+    let idx75 = find_last_two_indices(&num, '7', '5');
+
+    // Return the minimum of all the scenarios
+    [
+        single_zero,
+        count_deletions(num_len, idx00.0, idx00.1),
+        count_deletions(num_len, idx25.0, idx25.1),
+        count_deletions(num_len, idx50.0, idx50.1),
+        count_deletions(num_len, idx75.0, idx75.1),
+        num_len as i32,
+    ]
+    .iter()
+    .cloned()
+    .min()
+    .unwrap()
+}
+
+pub fn count_interesting_subarrays(nums: Vec<i32>, modulo: i32, k: i32) -> i32 {
+    let nums: Vec<i64> = nums.into_iter().map(|x| x as i64).collect();
+    let modulo = modulo as i64;
+    let k = k as i64;
+    
+    // Initialize a vector to store the prefix sums.
+    let mut prefix = vec![0; nums.len() + 1];
+    
+    // Initialize a HashMap to count occurrences of prefix sums modulo the given value.
+    let mut count: HashMap<i64, i64> = HashMap::new();
+    count.insert(0, 1);
+    
+    let mut res = 0;
+
+    for i in 0..nums.len() {
+        // If the current number modulo is k, then increment the prefix sum.
+        if nums[i] % modulo == k {
+            prefix[i + 1] = prefix[i] + 1;
+        } else {
+            prefix[i + 1] = prefix[i];
+        }
+        
+        // Calculate the target value we expect to have seen in previous prefix sums.
+        let target = (prefix[i + 1] - k).rem_euclid(modulo);
+        
+        // If the target value has been seen before, add its count to the result.
+        res += *count.get(&target).unwrap_or(&0);
+        
+        // Increment the count of the current prefix sum modulo.
+        let entry = count.entry(prefix[i + 1].rem_euclid(modulo)).or_insert(0);
+        *entry += 1;
+    }
+
+    res as i32
+}
+
+use std::rc::Rc;
+use std::cell::RefCell;
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct TreeNode {
+    pub val: i32,
+    pub left: Option<Rc<RefCell<TreeNode>>>,
+    pub right: Option<Rc<RefCell<TreeNode>>>,
+}
+
+impl TreeNode {
+    #[inline]
+    pub fn new(val: i32) -> Self {
+        TreeNode {
+            val,
+            left: None,
+            right: None
+        }
+    }
+}
+
+struct Codec {
+    
+}
+
+impl Codec {
+    fn new() -> Self {
+        Codec {}
+    }
+
+    fn serialize(&self, root: Option<Rc<RefCell<TreeNode>>>) -> String {
+        let mut res = String::new();
+        self._serialize(root, &mut res);
+        res
+    }
+    
+    fn _serialize(&self, node: Option<Rc<RefCell<TreeNode>>>, res: &mut String) {
+        if let Some(n) = node {
+            res.push_str(&n.borrow().val.to_string());
+            res.push(',');
+            self._serialize(n.borrow().left.clone(), res);
+            self._serialize(n.borrow().right.clone(), res);
+        }
+    }
+
+    fn deserialize(&self, data: String) -> Option<Rc<RefCell<TreeNode>>> {
+        let mut vals: Vec<i32> = data.split(',')
+            .filter(|s| !s.is_empty())
+            .map(|s| s.parse().unwrap())
+            .collect();
+        self._deserialize(&mut vals, i32::MIN, i32::MAX)
+    }
+    
+    fn _deserialize(&self, vals: &mut Vec<i32>, lower: i32, upper: i32) -> Option<Rc<RefCell<TreeNode>>> {
+        if vals.is_empty() {
+            return None;
+        }
+
+        let val = *vals.first().unwrap();
+        if val < lower || val > upper {
+            return None;
+        }
+        
+        vals.remove(0);
+        let root = Rc::new(RefCell::new(TreeNode::new(val)));
+        root.borrow_mut().left = self._deserialize(vals, lower, val);
+        root.borrow_mut().right = self._deserialize(vals, val, upper);
+        
+        Some(root)
+    }
+}
+
+
+
 fn main() {
     println!("{}", ways_to_buy_pens_pencils(100, 1, 1)); // True
 }
