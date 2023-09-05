@@ -487,8 +487,30 @@ impl Codec {
     }
 }
 
+use::std::cmp::max;
+
+pub fn max_coins(mut nums: Vec<i32>) -> i32 {
+    let mut new_nums = vec![1];
+    new_nums.append(&mut nums);
+    new_nums.push(1);
+    println!("{:?}", new_nums);
+    let l = new_nums.len();
+
+    let mut dp = vec![vec![0; l]; l];
+
+    for gap in 2..l {
+        for i in 0..l-gap {
+            let j = i + gap;
+            for k in i+1..j {
+                dp[i][j] = max(dp[i][j], dp[i][k] + dp[k][j] + new_nums[i] * new_nums[k] * new_nums[j]);
+            }
+        }
+    }
+
+    dp[0][l-1]
+}
 
 
 fn main() {
-    println!("{}", ways_to_buy_pens_pencils(100, 1, 1)); // True
+    println!("{}", max_coins(vec![3,1,5,8])); // True
 }
