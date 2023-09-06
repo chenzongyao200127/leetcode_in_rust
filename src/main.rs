@@ -415,26 +415,6 @@ pub fn count_interesting_subarrays(nums: Vec<i32>, modulo: i32, k: i32) -> i32 {
     res as i32
 }
 
-use std::rc::Rc;
-use std::cell::RefCell;
-
-#[derive(Debug, PartialEq, Eq)]
-pub struct TreeNode {
-    pub val: i32,
-    pub left: Option<Rc<RefCell<TreeNode>>>,
-    pub right: Option<Rc<RefCell<TreeNode>>>,
-}
-
-impl TreeNode {
-    #[inline]
-    pub fn new(val: i32) -> Self {
-        TreeNode {
-            val,
-            left: None,
-            right: None
-        }
-    }
-}
 
 struct Codec {
     
@@ -510,6 +490,47 @@ pub fn max_coins(mut nums: Vec<i32>) -> i32 {
     dp[0][l-1]
 }
 
+use std::rc::Rc;
+use std::cell::RefCell;
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct TreeNode {
+    pub val: i32,
+    pub left: Option<Rc<RefCell<TreeNode>>>,
+    pub right: Option<Rc<RefCell<TreeNode>>>,
+}
+
+impl TreeNode {
+    #[inline]
+    pub fn new(val: i32) -> Self {
+        TreeNode {
+            val,
+            left: None,
+            right: None
+        }
+    }
+}
+
+pub fn rob(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
+    #[inline]
+    fn dfs(node: &Option<Rc<RefCell<TreeNode>>>) -> (i32, i32) {
+        if let Some(node) = node {
+            let node = node.borrow();
+
+            let (l_rob, l_not_rob) = dfs(&node.left);
+            let (r_rob, r_not_rob) = dfs(&node.right);
+            
+            let rob = l_not_rob + r_not_rob + node.val;
+            let not_rob = l_rob.max(l_not_rob) + r_rob.max(r_not_rob);
+            
+            (rob, not_rob)
+        } else {
+            (0, 0)
+        }
+    }
+
+    dfs(&root).0.max(dfs(&root).1)
+}
 
 fn main() {
     println!("{}", max_coins(vec![3,1,5,8])); // True

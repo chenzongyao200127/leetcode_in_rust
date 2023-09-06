@@ -25,6 +25,8 @@
 # 示例 3：
 # 输入：boxes = [1]
 # 输出：1
+
 from typing import List
 class Solution:
     def removeBoxes(self, boxes: List[int]) -> int:
+        
