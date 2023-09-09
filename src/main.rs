@@ -532,6 +532,33 @@ pub fn rob(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
     dfs(&root).0.max(dfs(&root).1)
 }
 
+pub fn repair_cars(ranks: Vec<i32>, cars: i32) -> i64 {
+    fn can_fixed(time: i64, ranks: &Vec<i32>, cars: i32) -> bool {
+        let mut tmp = 0;
+        for &r in ranks {
+            tmp += ((time / r as i64) as f64).sqrt().floor() as i32;
+        }
+        tmp >= cars
+    }
+    
+    let mut ranks = ranks;
+    ranks.sort();
+    
+    let mut l = 0;
+    let mut r = (ranks[ranks.len() - 1] as i64) * (cars as i64) * (cars as i64) + 1;
+    while l < r {
+        let mid = (l + r) / 2;
+        if can_fixed(mid, &ranks, cars) {
+            r = mid;
+        } else {
+            l = mid + 1;
+        }
+    }
+    l
+}
+
+
+
 fn main() {
     println!("{}", max_coins(vec![3,1,5,8])); // True
 }
