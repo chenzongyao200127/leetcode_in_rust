@@ -558,7 +558,50 @@ pub fn repair_cars(ranks: Vec<i32>, cars: i32) -> i64 {
 }
 
 
+use std::collections::VecDeque;
+
+pub fn find_order(num_courses: i32, prerequisites: Vec<Vec<i32>>) -> Vec<i32> {
+    let mut prereq_cnts = vec![0; num_courses as usize];
+
+    let mut course_map = HashMap::new();
+
+    for pair in &prerequisites {
+        let (course, prereq_course) = (pair[0] as usize, pair[1] as usize);
+        prereq_cnts[course] += 1;
+        course_map.entry(prereq_course).or_insert(vec![]).push(course);
+    }
+
+    let mut queue = VecDeque::new();
+
+    for (i, &cnt) in prereq_cnts.iter().enumerate() {
+        if cnt == 0 {
+            queue.push_back(i);
+        }
+    }
+
+    let mut res = vec![];
+
+    while let Some(course) = queue.pop_front() {
+        res.push(course as i32);
+
+        if let Some(next_course_seqs) = course_map.get(&course) {
+            for &next_course in next_course_seqs {
+                prereq_cnts[next_course] -= 1;
+                if prereq_cnts[next_course] == 0 {
+                    queue.push_back(next_course);
+                }
+            }
+        }
+    }
+
+    if res.len() == num_courses as usize {
+        res
+    } else {
+        vec![]
+    }
+}
+
 
 fn main() {
-    println!("{}", max_coins(vec![3,1,5,8])); // True
+    println!("{:?}", find_order(4, vec![vec![1,0],vec![2,0],vec![3,1],vec![3,2]])); // True
 }
