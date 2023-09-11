@@ -601,7 +601,78 @@ pub fn find_order(num_courses: i32, prerequisites: Vec<Vec<i32>>) -> Vec<i32> {
     }
 }
 
+use std::collections::BinaryHeap;
+pub fn schedule_course(courses: Vec<[i32; 2]>) -> usize {
+    // 过滤并排序课程
+    let mut courses: Vec<[i32; 2]> = courses.into_iter()
+        .filter(|course| course[0] <= course[1])
+        .collect();
+    courses.sort_by_key(|c| c[1]);
+
+    if courses.is_empty() {
+        return 0;
+    }
+
+    let mut cur_time = 0;
+    let mut pq = BinaryHeap::new();  // 最大堆
+
+    for course in courses {
+        let (duration, ddl) = (course[0], course[1]);
+        if cur_time + duration <= ddl {
+            cur_time += duration;
+            pq.push(duration);
+        } else {
+            if let Some(&d) = pq.peek() {
+                if duration < d {
+                    cur_time = cur_time - d + duration;
+                    pq.pop();
+                    pq.push(duration);
+                }
+            }
+        }
+    }
+
+    pq.len()
+}
+
+
+
+pub fn remove_boxes(boxes: Vec<i32>) -> i32 {
+    let mut dp = [[[0; 100]; 100]; 100];
+
+    fn calculate_points(boxes: &[i32], l: usize, r: isize, k: usize, dp: &mut [[[i32; 100]; 100]; 100]) -> i32 {
+        if l as isize > r {
+            return 0;
+        }
+
+        if dp[l][r as usize][k] == 0 {
+            dp[l][r as usize][k] = calculate_points(boxes, l, r - 1, 0, dp) + ((k + 1) * (k + 1)) as i32;
+
+            for i in l..r as usize {
+                if boxes[i] == boxes[r as usize] {
+                    dp[l][r as usize][k] = dp[l][r as usize][k].max(
+                        calculate_points(boxes, l, i as isize, k+1, dp) + 
+                        calculate_points(boxes, i+1, r - 1, 0, dp)
+                    );
+                }
+            }
+        }
+
+        dp[l][r as usize][k]
+    }
+
+    if boxes.is_empty() {
+        return 0;
+    }
+    
+    calculate_points(&boxes, 0, boxes.len() as isize - 1, 0, &mut dp);
+    dp[0][(boxes.len() as isize - 1) as usize][0]
+}
+
+
+
 
 fn main() {
-    println!("{:?}", find_order(4, vec![vec![1,0],vec![2,0],vec![3,1],vec![3,2]])); // True
+    let courses = vec![[100, 200], [200, 1300], [1000, 1250], [2000, 3200]];
+    println!("{}", schedule_course(courses));  // 输出: 3
 }

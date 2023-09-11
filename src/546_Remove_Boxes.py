@@ -27,6 +27,41 @@
 # 输出：1
 
 from typing import List
+
 class Solution:
     def removeBoxes(self, boxes: List[int]) -> int:
+        dp = [[[0] * 100 for _ in range(100)] for _ in range(100)]
         
+        def calculatePoints(boxes, l, r, k):
+            if l > r:
+                return 0
+            
+            if dp[l][r][k] == 0:
+                dp[l][r][k] = calculatePoints(boxes, l, r - 1, 0) + (k + 1) * (k + 1)
+            
+                for i in range(l, r):
+                    if boxes[i] == boxes[r]:
+                        dp[l][r][k] = max(dp[l][r][k], calculatePoints(boxes, l, i, k+1) + calculatePoints(boxes, i+1, r-1, 0))
+                        
+            return dp[l][r][k]
+            
+        
+        calculatePoints(boxes, 0, len(boxes) - 1, 0)
+        return dp[0][len(boxes)-1][0]    
+        
+        
+        
+        
+s = Solution()
+ans = s.removeBoxes([1,3,2,2,2,3,4,3,1])
+print(ans)        
+
+
+s = Solution()
+ans = s.removeBoxes([1,1,1])
+print(ans)
+
+
+s = Solution()
+ans = s.removeBoxes([1])
+print(ans)
