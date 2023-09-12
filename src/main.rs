@@ -669,10 +669,80 @@ pub fn remove_boxes(boxes: Vec<i32>) -> i32 {
     dp[0][(boxes.len() as isize - 1) as usize][0]
 }
 
+pub fn num_dup_digits_at_most_n(n: i32) -> i32 {
+    let n_str = n.to_string();
+    let len = n_str.len();
+    
+    // Helper recursive function for counting numbers without repeated digits.
+    fn count_numbers_without_repeated_digits(
+        index: usize,
+        used_digits_mask: i32,
+        is_limit: bool,
+        has_started: bool,
+        n_str: &str,
+        memo: &mut Vec<Vec<Vec<Vec<i32>>>>,
+    ) -> i32 {
+        if index == n_str.len() {
+            return if has_started { 1 } else { 0 };
+        }
+
+        if memo[index][used_digits_mask as usize][is_limit as usize][has_started as usize] != -1 {
+            return memo[index][used_digits_mask as usize][is_limit as usize][has_started as usize];
+        }
+
+        let mut total_count = 0;
+
+        if !has_started {
+            total_count = count_numbers_without_repeated_digits(index + 1, used_digits_mask, false, false, &n_str, memo);
+        }
+
+        let start_digit = if has_started { 0 } else { 1 };
+        let end_digit = if is_limit { n_str.chars().nth(index).unwrap().to_digit(10).unwrap() as i32 } else { 9 };
+
+        for digit in start_digit..=end_digit {
+            if used_digits_mask >> digit & 1 == 0 {
+                total_count += count_numbers_without_repeated_digits(index + 1, used_digits_mask | (1 << digit), is_limit && digit == end_digit, true, &n_str, memo);
+            }
+        }
+
+        memo[index][used_digits_mask as usize][is_limit as usize][has_started as usize] = total_count;
+        
+        total_count
+    }
+
+    // Initialize the memoization table
+    let mut memo = vec![vec![vec![vec![-1; 2]; 2]; 1024]; len];
+
+    n - count_numbers_without_repeated_digits(0, 0, true, false, &n_str, &mut memo)
+}
 
 
+pub fn min_score_triangulation(values: Vec<i32>) -> i32 {
+    let mut map: HashMap<(usize, usize), i32> = HashMap::new();
+
+    #[inline]
+    fn dfs(values: &Vec<i32>, l: usize, r: usize, map: &mut HashMap<(usize, usize), i32>) -> i32 {
+        if r - l + 1 < 3 {
+            return 0
+        }
+
+        if let Some(&val) = map.get(&(l, r)) {
+            return val
+        }
+        
+        let mut min_val = i32::MAX;
+        for k in l+1..r {
+            let cur_val = values[l] * values[k] * values[r];
+            min_val = min_val.min(dfs(values, l, k, map) + cur_val + dfs(values, k, r, map))
+        }
+        
+        map.insert((l, r), min_val);
+        return min_val
+    }
+
+    dfs(&values, 0, values.len()-1, &mut map)
+}
 
 fn main() {
-    let courses = vec![[100, 200], [200, 1300], [1000, 1250], [2000, 3200]];
-    println!("{}", schedule_course(courses));  // 输出: 3
+    assert_eq!(min_score_triangulation(vec![1,3,1,4,1,5]), 758);
 }
