@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap};
 
 
 pub fn shopping_offers(price: Vec<i32>, mut special: Vec<Vec<i32>>, needs: Vec<i32>) -> i32 {
@@ -49,7 +49,71 @@ pub fn shopping_offers(price: Vec<i32>, mut special: Vec<Vec<i32>>, needs: Vec<i
     shopping(needs, l, &price, &special, &mut memo)
 }
 
+pub fn check_valid_grid(grid: Vec<Vec<i32>>) -> bool {
+    if grid[0][0] != 0 {
+        return false;
+    }
+
+    #[inline]
+    fn dfs(x: usize, y: usize, g: &Vec<Vec<i32>>, cur_value: i32) -> bool {
+        if cur_value == (g.len() * g.len() - 1) as i32 {
+            return true;
+        }
+
+        let dirs = vec![(-1, -2), (-2, -1), (-1, 2), (-2, 1), (1, 2), (2, 1), (1, -2), (2, -1)];
+        let mut flag = false;
+        for dir in dirs {
+            let (dx, dy) = dir;
+            let new_x = x as i32 + dx;
+            let new_y = y as i32 + dy;
+            if new_x >= 0 && new_x < g.len() as i32 && new_y >= 0 && new_y < g.len() as i32 {
+                if g[new_x as usize][new_y as usize] == cur_value + 1 {
+                    flag |= dfs(new_x as usize, new_y as usize, g, cur_value + 1);
+                }
+            }
+        }
+
+        flag
+    }
+
+    dfs(0, 0, &grid, 0)
+}
+
+pub fn makesquare(mut matchsticks: Vec<i32>) -> bool {
+    let n = matchsticks.len();
+
+    matchsticks.sort_unstable();
+
+    let total = matchsticks.iter().sum::<i32>();
+    
+    if total % 4 != 0 {
+        return false;
+    }
+
+    let target = total / 4;
+
+    let mut dp = vec![-1; 1 << n];
+
+    dp[0] = 0;
+
+    for mask in 0..1 << n {
+        if dp[mask as usize] == -1 {
+            continue;
+        }
+
+        for j in 0..n {
+            let new_mask = mask | (1 << j);
+            if mask & (1 << n) != 1 && dp[mask] + matchsticks[j] <= target {
+                dp[new_mask] = (dp[mask] + matchsticks[j]) % target;
+            }
+
+        }
+    }
+
+    println!("{:?}", dp);
+    dp[(1 << n) - 1] == 0
+}
 
 fn main() {
-    println!("hello");
+    assert_eq!(makesquare(vec![5,5,5,5,4,4,4,4,3,3,3,3]), true)
 }
