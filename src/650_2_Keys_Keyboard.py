@@ -23,3 +23,18 @@
 
 # How many characters may be there in the clipboard at the last step if n = 3? n = 7? n = 10? n = 24?
 # n=3 - 3 n=7 - 7
+
+class Solution:
+    def minSteps(self, n: int) -> int:
+        dp = [0] * n + 1
+        for i in range(2, n+1):
+            dp[i] = i
+            for j in range(2, int(i ** 0.5) + 1):
+                if i % j == 0:
+                    dp[i] = min(dp[i], dp[j] + i // j)
+                    dp[i] = min(dp[i], dp[i//j] + j)
+        
+        return dp[-1]
+                    
+            
+        

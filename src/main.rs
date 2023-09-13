@@ -114,6 +114,33 @@ pub fn makesquare(mut matchsticks: Vec<i32>) -> bool {
     dp[(1 << n) - 1] == 0
 }
 
+
+
+pub fn predict_the_winner(nums: Vec<i32>) -> bool {
+    let mut memo: HashMap<(usize, usize), i32> = HashMap::new();
+
+    #[inline]
+    fn dfs(l: usize, r: usize, nums: &Vec<i32>, memo: &mut HashMap<(usize, usize), i32>) -> i32 {
+        if l == r {
+            return nums[l];
+        }
+        
+        if let Some(&res) = memo.get(&(l, r)) {
+            return res;
+        }
+        
+        let pick_first = nums[l] - dfs(l + 1, r, nums, memo);
+        let pick_last = nums[r] - dfs(l, r - 1, nums, memo);
+
+        let res = pick_first.max(pick_last);
+        
+        memo.insert((l, r), res);
+        res
+    }
+
+    dfs(0, nums.len()-1, &nums, &mut memo) >= 0
+}
+
 fn main() {
     assert_eq!(makesquare(vec![5,5,5,5,4,4,4,4,3,3,3,3]), true)
 }
