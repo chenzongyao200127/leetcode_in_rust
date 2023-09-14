@@ -1,4 +1,4 @@
-use std::{collections::HashMap};
+use std::{collections::HashMap, vec};
 
 
 pub fn shopping_offers(price: Vec<i32>, mut special: Vec<Vec<i32>>, needs: Vec<i32>) -> i32 {
@@ -141,6 +141,46 @@ pub fn predict_the_winner(nums: Vec<i32>) -> bool {
     dfs(0, nums.len()-1, &nums, &mut memo) >= 0
 }
 
+// Input: queens = [[0,1],[1,0],[4,0],[0,4],[3,3],[2,4]], king = [0,0]
+// Output: [[0,1],[1,0],[3,3]]
+
+// Input: queens = [[0,0],[1,1],[2,2],[3,4],[3,5],[4,4],[4,5]], king = [3,3]
+// Output: [[2,2],[3,4],[4,4]]
+
+use std::collections::HashSet;
+
+pub fn queens_attackthe_king(queens: Vec<Vec<i32>>, king: Vec<i32>) -> Vec<Vec<i32>> {
+    #[inline]
+    fn is_valid(x: i32, y: i32) -> bool {
+        x < 8 && y < 8 && x >= 0 && y >= 0
+    }
+
+    let mut ans = vec![];
+
+    let x_king = king[0];
+    let y_king = king[1];
+
+    let queen_set: HashSet<(i32, i32)> = queens.into_iter().map(|q| (q[0], q[1])).collect();
+     
+    let dirs: [(i32, i32); 8] = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)];
+    
+    for (dx, dy) in dirs.iter() {
+        let mut new_x = x_king + dx;
+        let mut new_y = y_king + dy;
+        while is_valid(new_x, new_y) {
+            if queen_set.contains(&(new_x, new_y)) {
+                ans.push(vec![new_x, new_y]);
+                break;
+            }
+            new_x += dx;
+            new_y += dy;
+        }
+    }
+
+    ans
+}
+
+
 fn main() {
-    assert_eq!(makesquare(vec![5,5,5,5,4,4,4,4,3,3,3,3]), true)
+    queens_attackthe_king(vec![vec![0,1],vec![1,0],vec![4,0],vec![0,4],vec![3,3],vec![2,4]], vec![0,0]);
 }
