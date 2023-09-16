@@ -1,3 +1,4 @@
+use std::clone;
 use std::{collections::HashMap, vec};
 
 
@@ -149,6 +150,8 @@ pub fn predict_the_winner(nums: Vec<i32>) -> bool {
 
 use std::collections::HashSet;
 
+use rand::distributions::Bernoulli;
+
 pub fn queens_attackthe_king(queens: Vec<Vec<i32>>, king: Vec<i32>) -> Vec<Vec<i32>> {
     #[inline]
     fn is_valid(x: i32, y: i32) -> bool {
@@ -181,6 +184,95 @@ pub fn queens_attackthe_king(queens: Vec<Vec<i32>>, king: Vec<i32>) -> Vec<Vec<i
 }
 
 
+
+pub fn search_range(nums: Vec<i32>, target: i32) -> Vec<i32> {
+    let mut ans = vec![-1, -1];
+
+    let mut l = 0;
+    let mut r = nums.len() - 1;
+    let mut mid = l + (r - l) / 2;
+
+    if nums.is_empty() {
+        return ans;
+    }
+
+    if nums[0] > target {
+        return ans;
+    }
+
+    if nums[r] < target {
+        return ans;
+    }
+    
+    while l <= r {
+        if nums[mid] == target {
+            let mut tmp = mid as i32;
+            while tmp >= 0 && nums[tmp as usize] == target {
+                tmp -= 1;
+            }
+            ans[0] = tmp as i32 + 1;
+
+            tmp = mid as i32;
+            while tmp < nums.len() as i32 - 1 && nums[tmp as usize] == target {
+                tmp += 1;
+            }
+            if tmp as usize == mid {
+                ans[1] = tmp as i32;
+            } else {
+                if tmp == nums.len() as i32 - 1 && nums[tmp as usize] == target {
+                    ans[1] = tmp as i32;
+                } else {
+                    ans[1] = tmp as i32 - 1;
+                }
+            }
+            break;
+        } else if nums[mid] < target {
+            l = mid + 1;
+        } else {
+            r = mid - 1;
+        }
+
+        if r < l {
+            break;
+        }
+        mid = l + (r - l) / 2;
+    }
+
+    ans
+}
+
+pub fn single_non_duplicate(nums: Vec<i32>) -> i32 {
+    let mut l = 0;
+    let mut r = nums.len() as i32 - 1;
+    let mut mid = l + (r - l) / 2;
+    while l <= r {
+        if check(mid, &nums) {
+            return mid;
+        } else {
+            // let a1 = single_non_duplicate(nums[:l]);
+            // let a2 = single_non_duplicate(nums[r:]);
+            // return a1.max(a2);
+        }
+    }
+    return -1;
+}
+
+pub fn check(idx: i32, nums: &Vec<i32>) -> bool {
+    if idx - 1 >= 0 {
+        if nums[idx as usize] == nums[idx as usize - 1] {
+            return true
+        } 
+    }
+    if idx + 1 <= nums.len() as i32 - 1 {
+        if nums[idx as usize] == nums[idx as usize + 1] {
+            return true;
+        }
+    }
+    false
+}
+
+
 fn main() {
-    queens_attackthe_king(vec![vec![0,1],vec![1,0],vec![4,0],vec![0,4],vec![3,3],vec![2,4]], vec![0,0]);
+    let ans = search_range(vec![2, 2], 2);
+    println!("{:?}", ans);
 }
