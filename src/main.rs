@@ -73,7 +73,60 @@ pub fn count_seniors(details: Vec<String>) -> i32 {
            .count() as i32
 }
 
+pub fn num_rolls_to_target(n: i32, k: i32, target: i32) -> i32 {
+    const MOD: i32 = 1_000_000_007;
+
+    if target < n || target > k * n {
+        return 0;
+    }
+
+    let mut dp = vec![0; target as usize + 1];
+    let mut new_dp = vec![0; target as usize + 1];
+
+    
+    for i in 1..=k {
+        if i <= target {
+            dp[i as usize] = 1;
+        }
+    }
+
+    for _ in 2..=n {
+        for j in 1..=target as usize {
+            for t in 1..=k as usize {
+                if j >= t {
+                    new_dp[j] += dp[j-t];
+                    new_dp[j] %= MOD;
+                }
+            }
+        }
+        dp = new_dp.clone();
+        new_dp = vec![0; target as usize + 1];
+    }
+
+    dp[target as usize]
+}
+
+pub fn max_satisfaction(mut satisfaction: Vec<i32>) -> i32 {
+    let mut ans = 0;
+    let mut pre = 0;
+    satisfaction.sort_unstable_by(|a, b| b.cmp(a));
+    for (_, &v) in satisfaction.iter().enumerate() {
+        if pre + v >= 0 {
+            pre += v;
+            ans += pre;
+        } else {
+            break;
+        }
+    }
+
+    ans
+}
+
+// pub fn count_pairs(n: i32, edges: Vec<Vec<i32>>) -> i64 {
+    
+// }
+
 fn main() {
-    let ans = h_index(vec![0]);
-    assert_eq!(ans, 1)
+    let ans = max_satisfaction(vec![-1,-8,0,5,-7]);
+    assert_eq!(ans, 14)
 }
