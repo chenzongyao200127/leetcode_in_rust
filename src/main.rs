@@ -122,11 +122,54 @@ pub fn max_satisfaction(mut satisfaction: Vec<i32>) -> i32 {
     ans
 }
 
-// pub fn count_pairs(n: i32, edges: Vec<Vec<i32>>) -> i64 {
-    
+pub fn length_of_lis(nums: Vec<i32>) -> i32 {
+    let mut tails = vec![nums[0]];
+
+    for &n in &nums[1..] {
+        let mut l = 0;
+        let mut r = tails.len();
+        while l < r {
+            let mid = l + (r - l) / 2;
+            if tails[mid] < n {
+                l = mid + 1;
+            } else {
+                r = mid;
+            }
+        }
+
+        if l == tails.len() {
+            tails.push(n)
+        } else {
+            tails[l] = n
+        }
+    }   
+
+    tails.len() as i32    
+}
+
+// pub fn length_of_lis(nums: Vec<i32>) -> i32 {
+//     let mut tails = Vec::new();
+
+//     for &num in &nums {
+//         match tails.binary_search(&num) {
+//             Ok(pos) => {
+//                 tails[pos] = num;
+//             }
+//             Err(pos) => {
+//                 if pos == tails.len() {
+//                     tails.push(num);
+//                 } else {
+//                     tails[pos] = num;
+//                 }
+//             }
+//         }
+//     }
+
+//     tails.len() as i32
 // }
 
 fn main() {
-    let ans = max_satisfaction(vec![-1,-8,0,5,-7]);
-    assert_eq!(ans, 14)
+    let nums = vec![10, 9, 2, 5, 3, 7, 101, 18];
+    println!("{}", length_of_lis(nums));  // Expected output: 4
 }
+
