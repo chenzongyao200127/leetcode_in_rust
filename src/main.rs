@@ -1,3 +1,4 @@
+use core::num;
 use std::collections::HashSet;
 
 pub fn top_students(
@@ -147,26 +148,85 @@ pub fn length_of_lis(nums: Vec<i32>) -> i32 {
     tails.len() as i32    
 }
 
-// pub fn length_of_lis(nums: Vec<i32>) -> i32 {
-//     let mut tails = Vec::new();
+pub fn max_product(words: Vec<String>) -> i32 {
+    #[inline] 
+    fn str_to_set(str: &str) -> HashSet<char> {
+        let mut set = HashSet::new();
 
-//     for &num in &nums {
-//         match tails.binary_search(&num) {
-//             Ok(pos) => {
-//                 tails[pos] = num;
-//             }
-//             Err(pos) => {
-//                 if pos == tails.len() {
-//                     tails.push(num);
-//                 } else {
-//                     tails[pos] = num;
-//                 }
-//             }
-//         }
-//     }
+        for c in str.chars() {
+            set.insert(c);
+        }
 
-//     tails.len() as i32
-// }
+        set
+    }
+
+    let words_sets = words.iter().map(|s| {
+        str_to_set(&s)
+    }).collect::<Vec<_>>();
+
+    let mut ans = 0;
+    for i in 0..words_sets.len()-1 {
+        for j in i+1..words_sets.len() {
+            let intersection: HashSet<_> = words_sets[i].intersection(&words_sets[j]).collect();
+            if intersection.is_empty() {
+                ans = ans.max(words[i].len() * words[j].len());
+            }
+        }
+    }
+
+    ans as i32
+}
+
+
+struct TrieNode {
+    children: [Option<Box<TrieNode>>; 2],
+}
+
+impl TrieNode {
+    fn new() -> Self {
+        TrieNode {
+            children: [None, None],
+        }
+    }
+}
+
+pub fn find_maximum_xor(nums: Vec<i32>) -> i32 {
+    let mut root = TrieNode::new();
+    let mut max_xor = 0;
+
+    for &n in nums.iter() {
+        let mut node = &mut root;
+        for i in (0..32).rev() {
+            let bit = (n >> i) & 1;
+            if node.children[bit as usize].is_none() {
+                node.children[bit as usize] = Some(Box::new(TrieNode::new()));
+            }
+            node = node.children[bit as usize].as_mut().unwrap()    
+        }
+    }
+
+    for &n in nums.iter() {
+        let mut node = &root;
+        let mut cur_xor = 0;
+        for i in (0..32).rev() {
+            let bit = (n >> i) & 1;
+            let opposite_bit = bit ^ 1;
+
+            if let Some(opposite_child) = &node.children[opposite_bit as usize] {
+                cur_xor |= 1 << i;
+                node = opposite_child;
+            } else {
+                node = &node.children[bit as usize].as_ref().unwrap();
+            }
+        }
+
+        max_xor = max_xor.max(cur_xor)
+    }
+
+    max_xor
+}
+
+
 
 fn main() {
     let nums = vec![10, 9, 2, 5, 3, 7, 101, 18];
