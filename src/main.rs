@@ -1,5 +1,5 @@
-use core::num;
-use std::collections::HashSet;
+use std::vec;
+use std::{collections::HashSet, process::id};
 
 pub fn top_students(
     positive_feedback: Vec<String>,
@@ -226,10 +226,111 @@ pub fn find_maximum_xor(nums: Vec<i32>) -> i32 {
     max_xor
 }
 
+pub fn find_the_longest_balanced_substring(s: String) -> i32 {
+    let mut s: Vec<_> = s.chars().collect();
+    s.push('0');
+    let mut idx = 0;
+    while idx < s.len() && s[idx] != '0' {
+        idx += 1;
+    }
+
+    let mut cnts_0: Vec<i32> = vec![];
+    let mut cnts_1: Vec<i32> = vec![];
+    let mut len = 0;
+    let mut pre = '0';
+    while idx < s.len() {
+        if s[idx] == pre {
+            len += 1;
+        } else {
+            if pre == '0' {
+                cnts_1.push(len);
+            } else {
+                cnts_0.push(len);
+            }
+            len = 1
+        }
+        pre = s[idx];
+        idx += 1
+    }   
+
+    let mut ans = 0;
+    // println!("{:?}", (cnts_0.clone(),cnts_1.clone()));
+    for i in 0..cnts_0.len().min(cnts_1.len()) {
+        ans = ans.max(cnts_0[i].min(cnts_1[i]))
+    }
+    
+    ans
+}
+
+use std::collections::HashMap;
+pub fn distance(nums: Vec<i32>) -> Vec<i64> {
+    let mut map: HashMap<i32, Vec<usize>> = HashMap::new();
+    for (i, &n) in nums.iter().enumerate() {
+        map.entry(n).and_modify(|v| { v.push(i); }).or_insert_with(|| {
+            let mut v = vec![];
+            v.push(i);
+            v
+        });
+    }
+
+    let mut arr = vec![0; nums.len()];
+    for a in map.values() {
+        let len = a.len();
+        let mut s = 0;
+        for x in a {
+            s += x - a[0]
+        }
+        arr[a[0]] = s as i64;
+
+        for i in 1..len {
+            if i* 2 >= len {
+                s += (i * 2 - len) * (a[i] - a[i-1]);
+            } else {
+                s -= (len - i * 2) * (a[i] - a[i-1]);
+            }
+            arr[a[i]] = s as  i64
+        }
+    }
+
+    arr
+}
+
+// 超时
+// pub fn successful_pairs(spells: Vec<i32>, potions: Vec<i32>, success: i64) -> Vec<i32> {
+//     let mut ans = vec![];
+//     spells.iter().for_each(|&s| {
+//         ans.push(potions.iter().filter(|&p| (*p as i64 * s as i64) >= success).collect::<Vec<_>>().len() as i32);
+//     });
+
+//     ans
+// }
+
+
+pub fn successful_pairs(spells: Vec<i32>, mut potions: Vec<i32>, success: i64) -> Vec<i32> {
+    potions.sort_unstable();
+
+    #[inline]
+    fn search(potions: &Vec<i32>, spell: i32, success: i64) -> usize {
+        let mut l = 0;
+        let mut r = potions.len();
+        while l < r {
+            let mid = l + (r - l) / 2;
+            if (potions[mid] as i64 * spell as i64) < success {
+                l = mid + 1;
+            } else {
+                r = mid;
+            }
+        }
+
+        l
+    }
+
+    spells.iter().map(|&spell| (potions.len() - search(&potions, spell, success)) as i32).collect()
+}
 
 
 fn main() {
-    let nums = vec![10, 9, 2, 5, 3, 7, 101, 18];
-    println!("{}", length_of_lis(nums));  // Expected output: 4
+    let ans = successful_pairs(vec![9,39], vec![35,40,22,37,29,22], 320);
+    println!("{:?}", ans);
 }
 
