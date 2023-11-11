@@ -1,5 +1,6 @@
 use std::vec;
-use std::{collections::HashSet, process::id};
+use std::collections::HashSet;
+use std::collections::HashMap;
 
 pub fn top_students(
     positive_feedback: Vec<String>,
@@ -262,7 +263,6 @@ pub fn find_the_longest_balanced_substring(s: String) -> i32 {
     ans
 }
 
-use std::collections::HashMap;
 pub fn distance(nums: Vec<i32>) -> Vec<i64> {
     let mut map: HashMap<i32, Vec<usize>> = HashMap::new();
     for (i, &n) in nums.iter().enumerate() {
@@ -326,6 +326,29 @@ pub fn successful_pairs(spells: Vec<i32>, mut potions: Vec<i32>, success: i64) -
     }
 
     spells.iter().map(|&spell| (potions.len() - search(&potions, spell, success)) as i32).collect()
+}
+
+pub fn min_swaps_couples(row: Vec<i32>) -> i32 {
+    let mut position: HashMap<i32, usize> = row.iter().enumerate().map(|(i, &v)| (v, i)).collect();
+    let mut swaps = 0;
+
+    let mut row = row;
+    let n = row.len();
+
+    for i in (0..n).step_by(2) {
+        let x = row[i];
+        let y = if x % 2 == 0 { x + 1 } else { x - 1 };
+
+        if row[i + 1] != y {
+            let partner_idx = position[&y];
+            row.swap(i + 1, partner_idx);
+            position.insert(row[partner_idx], partner_idx);
+            position.insert(row[i + 1], i + 1);
+            swaps += 1;
+        }
+    }
+
+    swaps
 }
 
 
