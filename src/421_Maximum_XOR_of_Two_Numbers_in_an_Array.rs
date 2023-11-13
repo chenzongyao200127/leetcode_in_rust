@@ -66,6 +66,35 @@ pub fn find_maximum_xor(nums: Vec<i32>) -> i32 {
 }
 
 
+// https://leetcode.cn/problems/maximum-xor-of-two-numbers-in-an-array/solutions/2511644/tu-jie-jian-ji-gao-xiao-yi-tu-miao-dong-1427d/
+use std::collections::HashSet;
+
+impl Solution {
+    pub fn find_maximum_xor(nums: Vec<i32>) -> i32 {
+        let mx = *nums.iter().max().unwrap();
+        let high_bit = 31 - mx.leading_zeros() as i32;
+
+        let mut ans = 0;
+        let mut mask = 0;
+        let mut seen = HashSet::new();
+        for i in (0..=high_bit).rev() { // 从最高位开始枚举
+            seen.clear();
+            mask |= 1 << i;
+            let new_ans = ans | (1 << i); // 这个比特位可以是 1 吗？
+            for &x in &nums {
+                let x = x & mask; // 低于 i 的比特位置为 0
+                if seen.contains(&(new_ans ^ x)) {
+                    ans = new_ans; // 这个比特位可以是 1
+                    break;
+                }
+                seen.insert(x);
+            }
+        }
+        ans
+    }
+}
+
+
 use std::collections::HashSet;
 
 impl Solution {

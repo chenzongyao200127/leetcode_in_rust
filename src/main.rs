@@ -1,5 +1,6 @@
 use std::vec;
-use std::{collections::HashSet, process::id};
+use std::collections::HashSet;
+use std::collections::HashMap;
 
 pub fn top_students(
     positive_feedback: Vec<String>,
@@ -262,7 +263,6 @@ pub fn find_the_longest_balanced_substring(s: String) -> i32 {
     ans
 }
 
-use std::collections::HashMap;
 pub fn distance(nums: Vec<i32>) -> Vec<i64> {
     let mut map: HashMap<i32, Vec<usize>> = HashMap::new();
     for (i, &n) in nums.iter().enumerate() {
@@ -328,9 +328,99 @@ pub fn successful_pairs(spells: Vec<i32>, mut potions: Vec<i32>, success: i64) -
     spells.iter().map(|&spell| (potions.len() - search(&potions, spell, success)) as i32).collect()
 }
 
+pub fn min_swaps_couples(row: Vec<i32>) -> i32 {
+    let mut position: HashMap<i32, usize> = row.iter().enumerate().map(|(i, &v)| (v, i)).collect();
+    let mut swaps = 0;
+
+    let mut row = row;
+    let n = row.len();
+
+    for i in (0..n).step_by(2) {
+        let x = row[i];
+        let y = if x % 2 == 0 { x + 1 } else { x - 1 };
+
+        if row[i + 1] != y {
+            let partner_idx = position[&y];
+            row.swap(i + 1, partner_idx);
+            position.insert(row[partner_idx], partner_idx);
+            position.insert(row[i + 1], i + 1);
+            swaps += 1;
+        }
+    }
+
+    swaps
+}
+
+pub fn min_operations(mut nums1: Vec<i32>, nums2: Vec<i32>) -> i32 {
+    // Early return if the last elements are the max of their respective vectors
+    if nums1.last() == nums1.iter().max() && nums2.last() == nums2.iter().max() {
+        return 0;
+    }
+
+    // Function to calculate operations needed for a given configuration
+    fn calc_operations(nums1: &[i32], nums2: &[i32]) -> i32 {
+        let mut operations = 0;
+        let last_num1 = *nums1.last().unwrap();
+        let last_num2 = *nums2.last().unwrap();
+
+        for (&num1, &num2) in nums1.iter().zip(nums2.iter()).take(nums1.len() - 1) {
+            if num1 <= last_num1 && num2 <= last_num2 {
+                continue;
+            } else if num1 <= last_num2 && num2 <= last_num1 {
+                operations += 1;
+            } else {
+                return nums1.len() as i32;
+            }
+        }
+        operations
+    }
+
+    let operations_normal = calc_operations(&nums1, &nums2);
+
+    // Store the length in a variable to avoid simultaneous mutable and immutable borrows
+    let nums1_len = nums1.len();
+
+    // Swap the last elements of nums1 and nums2
+    nums1.swap(nums1_len - 1, nums2.len() - 1);
+
+    let operations_swapped = calc_operations(&nums1, &nums2) + 1;
+
+    let min_operations = operations_normal.min(operations_swapped);
+    
+    if min_operations == nums1.len() as i32 {
+        -1
+    } else {
+        min_operations
+    }
+}
+
+
+pub fn two_sum(mut nums: Vec<i32>, target: i32) -> Vec<i32> {
+    nums.sort_unstable();
+    let mut idx_map = HashMap::new();
+    for i in 0..nums.len() {
+        idx_map.insert(nums[i], i);
+    }
+
+    let mut l = 0;
+    let mut r = nums.len() - 1;
+
+    while l <= r {
+        let tmp = nums[l] + nums[r];
+        if tmp < target {
+            l += 1
+        } else if tmp > target {
+            r -= 1
+        } else {
+            break;
+        }
+    }
+
+    vec![*idx_map.get(&nums[l]).unwrap() as i32, *idx_map.get(&nums[r]).unwrap() as i32]
+}
 
 fn main() {
-    let ans = successful_pairs(vec![9,39], vec![35,40,22,37,29,22], 320);
+    let ans = min_operations(vec![2,3,4,5,9], vec![8,8,4,4,4]);
     println!("{:?}", ans);
 }
 
