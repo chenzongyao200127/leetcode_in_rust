@@ -41,7 +41,51 @@ impl NumArray {
     }
 }
 
+// https://leetcode.cn/problems/range-sum-query-mutable/
+struct NumArray {
+    nums: Vec<i32>,
+    tree: Vec<i32>,
+}
 
+impl NumArray {
+    fn new(nums: Vec<i32>) -> Self {
+        let mut tree = vec![0; nums.len() + 1];
+        for (i, &x) in nums.iter().enumerate() {
+            let j = i + 1;
+            tree[j] += x;
+            let nxt = j + (j as i32 & -(j as i32)) as usize; // 下一个关键区间的右端点
+            if nxt <= nums.len() {
+                tree[nxt] += tree[j];
+            }
+        }
+        Self { nums, tree }
+    }
+
+    fn update(&mut self, index: i32, val: i32) {
+        let index = index as usize;
+        let delta = val - self.nums[index];
+        self.nums[index] = val;
+        let mut i = index + 1;
+        while i < self.tree.len() {
+            self.tree[i] += delta;
+            i += (i as i32 & -(i as i32)) as usize;
+        }
+    }
+
+    fn prefix_sum(&self, i: i32) -> i32 {
+        let mut s = 0;
+        let mut i = i as usize;
+        while i > 0 {
+            s += self.tree[i];
+            i &= i - 1; // i -= i & -i 的另一种写法
+        }
+        s
+    }
+
+    fn sum_range(&self, left: i32, right: i32) -> i32 {
+        self.prefix_sum(right + 1) - self.prefix_sum(left)
+    }
+}
 /**
  * Your NumArray object will be instantiated and called as such:
  * let obj = NumArray::new(nums);
