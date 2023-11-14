@@ -419,47 +419,123 @@ pub fn two_sum(mut nums: Vec<i32>, target: i32) -> Vec<i32> {
     vec![*idx_map.get(&nums[l]).unwrap() as i32, *idx_map.get(&nums[r]).unwrap() as i32]
 }
 
+// pub fn find_the_city(n: i32, edges: Vec<Vec<i32>>, distance_threshold: i32) -> i32 {
+//     let mut graph = vec![vec![0; n as usize]; n as usize];
+//     let mut suss = vec![vec![]; n as usize];
+//     for i in 0..edges.len() {
+//         let f_node = edges[i][0];
+//         let t_node = edges[i][1];
+//         let weight = edges[i][2];
+
+//         graph[f_node as usize][t_node as usize] = weight;
+//         graph[t_node as usize][f_node as usize] = weight;
+//         suss[f_node as usize].push(t_node);
+//         suss[t_node as usize].push(f_node);
+//     }    
+
+//     println!("{:?}", graph);
+
+//     let mut memo: HashMap<(usize, usize, usize), usize> = HashMap::new();
+//     let mut neighbors: Vec<HashSet<usize>> = vec![HashSet::new(); n as usize];
+    
+//     #[inline]
+//     fn dfs(
+//         suss: &Vec<Vec<i32>>, 
+//         graph: &Vec<Vec<i32>>, 
+//         memo: &mut HashMap<(usize, usize, usize), usize>, 
+//         start_node: usize,
+//         from_ndoe: usize,
+//         distance_threshold: i32,
+//         neighbors: &mut Vec<HashSet<usize>>,
+//         visited: &mut HashSet<usize>,
+//     ) {
+//         println!("cur_node: {:?}", from_ndoe);
+//         println!("suss[from_ndoe]: {:?}", suss[from_ndoe]);
+//         println!("visited: {:?}", visited);
+//         println!("distance_threshold: {:?}", distance_threshold);
+//         for &next_node in suss[from_ndoe].iter() {
+//             let cur_d = graph[from_ndoe][next_node as usize];
+//             if !visited.contains(&(next_node as usize)) && cur_d <= distance_threshold {
+//                 neighbors[start_node].insert(next_node as usize);
+//                 visited.insert(next_node as usize);
+//                 let new_distance = distance_threshold - cur_d;
+//                 if new_distance < 0 {
+//                     return;
+//                 } else {
+//                     dfs(suss, graph, memo, start_node, next_node as usize, new_distance, neighbors, visited)   
+//                 }
+//             }
+//         }
+//     }
+
+//     for node in 0..n as usize {
+//         let mut visited = HashSet::new();
+//         visited.insert(node);
+//         dfs(&suss, &graph, &mut memo, node, node, distance_threshold, &mut neighbors, &mut visited);
+//         println!("==============");
+//     }
+
+//     println!("{:?}", neighbors);
+
+//     let mut neighbors = neighbors.iter().map(|s| s.len()).enumerate().collect::<Vec<_>>();
+//     neighbors.sort_by(|&a, &b| {
+//         if a.1 == b.1 {
+//             b.0.cmp(&a.0)
+//         } else {
+//             a.1.cmp(&b.1)
+//         }
+//     });
+
+//     neighbors[0].0 as i32
+// }
+
+
+pub fn find_the_city(n: i32, edges: Vec<Vec<i32>>, distance_threshold: i32) -> i32 {
+    let mut graph = vec![vec![i32::MAX; n as usize]; n as usize];
+
+    for edge in edges {
+        let (u, v, w) = (edge[0] as usize, edge[1] as usize, edge[2]);
+        graph[u][v] = w;
+        graph[v][u] = w;
+    }
+
+    // Initialize the graph with 0 distance to self
+    for i in 0..n as usize {
+        graph[i][i] = 0;
+    }
+
+    // Floyd-Warshall Algorithm to compute shortest paths
+    for k in 0..n as usize {
+        for i in 0..n as usize {
+            for j in 0..n as usize {
+                // Only perform the addition if neither distance is i32::MAX
+                if graph[i][k] != i32::MAX && graph[k][j] != i32::MAX {
+                    graph[i][j] = std::cmp::min(graph[i][j], graph[i][k] + graph[k][j]);
+                }
+            }
+        }
+    }
+    
+
+    // Count reachable cities for each city
+    let reachable_counts = graph.iter()
+        .map(|row| row.iter().filter(|&&d| d <= distance_threshold).count() - 1)
+        .enumerate()
+        .collect::<Vec<_>>();
+
+    // Find the city with the minimum number of reachable cities
+    reachable_counts.iter().min_by_key(|&&(i, count)| (count, -(i as i32))).unwrap().0 as i32
+}
+
+
+
 fn main() {
-    let ans = min_operations(vec![2,3,4,5,9], vec![8,8,4,4,4]);
+    let ans = find_the_city(4,vec![vec![0,1,3],vec![1,2,1],vec![1,3,4],vec![2,3,1]],4);
     println!("{:?}", ans);
-}
 
-
-struct NumArray {
-    nums: Vec<i32>,
-}
-
-
-/**
- * `&self` means the method takes an immutable reference.
- * If you need a mutable reference, change it to `&mut self` instead.
- */
-impl NumArray {
-
-    fn new(nums: Vec<i32>) -> Self {
-        NumArray {
-            nums,
-        }
-    }
+    let ans = find_the_city(5,vec![vec![0,1,2],vec![0,4,8],vec![1,2,3],vec![1,4,2],vec![2,3,1],vec![3,4,1]],2);
+    println!("{:?}", ans);
     
-    fn update(&mut self, index: i32, val: i32) {
-        if index < self.nums.len() as usize {
-            self.nums[index as usize] = val;
-        } else {
-            // Handle error: index out of bounds
-            // You can also choose to panic or return a Result type here
-            println!("Index out of bounds");
-        }
-    }
-    
-    fn sum_range(&self, left: i32, right: i32) -> i32 {
-        if left > right || right >= self.nums.len() as i32 {
-            // Handle error: invalid range
-            // You can also choose to panic or return a Result type here
-            println!("Invalid range");
-            0
-        } else {
-            self.nums[left as usize ..=right as usize].iter().sum()
-        }
-    }
+    let ans = find_the_city(6,vec![vec![0,1,10],vec![0,2,1],vec![2,3,1],vec![1,3,1],vec![1,4,1],vec![4,5,10]],20);
+    println!("{:?}", ans); // 5
 }
