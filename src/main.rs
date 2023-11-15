@@ -527,7 +527,14 @@ pub fn find_the_city(n: i32, edges: Vec<Vec<i32>>, distance_threshold: i32) -> i
     reachable_counts.iter().min_by_key(|&&(i, count)| (count, -(i as i32))).unwrap().0 as i32
 }
 
-
+pub fn maximize_sum(nums: Vec<i32>, k: i32) -> i32 {
+    let &max_n = nums.iter().max().unwrap();
+    let mut ans = 0;
+    for i in 0..k {
+        ans += max_n + i;
+    }
+    ans
+}
 
 fn main() {
     let ans = find_the_city(4,vec![vec![0,1,3],vec![1,2,1],vec![1,3,4],vec![2,3,1]],4);
