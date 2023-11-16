@@ -2,6 +2,8 @@ use std::vec;
 use std::collections::HashSet;
 use std::collections::HashMap;
 
+use itertools::Itertools;
+
 pub fn top_students(
     positive_feedback: Vec<String>,
     negative_feedback: Vec<String>,
@@ -419,130 +421,50 @@ pub fn two_sum(mut nums: Vec<i32>, target: i32) -> Vec<i32> {
     vec![*idx_map.get(&nums[l]).unwrap() as i32, *idx_map.get(&nums[r]).unwrap() as i32]
 }
 
-// pub fn find_the_city(n: i32, edges: Vec<Vec<i32>>, distance_threshold: i32) -> i32 {
-//     let mut graph = vec![vec![0; n as usize]; n as usize];
-//     let mut suss = vec![vec![]; n as usize];
-//     for i in 0..edges.len() {
-//         let f_node = edges[i][0];
-//         let t_node = edges[i][1];
-//         let weight = edges[i][2];
+pub fn find_closest_elements(arr: Vec<i32>, k: i32, x: i32) -> Vec<i32> {
+    let mut indexed_diff: Vec<_> = arr.iter()
+                                      .enumerate()
+                                      .map(|(idx, &n)| (idx, (n - x).abs()))
+                                      .collect();
 
-//         graph[f_node as usize][t_node as usize] = weight;
-//         graph[t_node as usize][f_node as usize] = weight;
-//         suss[f_node as usize].push(t_node);
-//         suss[t_node as usize].push(f_node);
-//     }    
+    // Partially sort the array to find the kth element
+    let kth = k as usize - 1;
+    indexed_diff.select_nth_unstable_by(kth, |a, b| {
+        a.1.cmp(&b.1).then_with(|| a.0.cmp(&b.0))
+    });
 
-//     println!("{:?}", graph);
+    // Extract the first k elements and sort them
+    let mut result: Vec<i32> = indexed_diff[..=kth].iter().map(|&(idx, _)| arr[idx]).collect();
+    result.sort_unstable();
 
-//     let mut memo: HashMap<(usize, usize, usize), usize> = HashMap::new();
-//     let mut neighbors: Vec<HashSet<usize>> = vec![HashSet::new(); n as usize];
-    
-//     #[inline]
-//     fn dfs(
-//         suss: &Vec<Vec<i32>>, 
-//         graph: &Vec<Vec<i32>>, 
-//         memo: &mut HashMap<(usize, usize, usize), usize>, 
-//         start_node: usize,
-//         from_ndoe: usize,
-//         distance_threshold: i32,
-//         neighbors: &mut Vec<HashSet<usize>>,
-//         visited: &mut HashSet<usize>,
-//     ) {
-//         println!("cur_node: {:?}", from_ndoe);
-//         println!("suss[from_ndoe]: {:?}", suss[from_ndoe]);
-//         println!("visited: {:?}", visited);
-//         println!("distance_threshold: {:?}", distance_threshold);
-//         for &next_node in suss[from_ndoe].iter() {
-//             let cur_d = graph[from_ndoe][next_node as usize];
-//             if !visited.contains(&(next_node as usize)) && cur_d <= distance_threshold {
-//                 neighbors[start_node].insert(next_node as usize);
-//                 visited.insert(next_node as usize);
-//                 let new_distance = distance_threshold - cur_d;
-//                 if new_distance < 0 {
-//                     return;
-//                 } else {
-//                     dfs(suss, graph, memo, start_node, next_node as usize, new_distance, neighbors, visited)   
-//                 }
-//             }
-//         }
-//     }
-
-//     for node in 0..n as usize {
-//         let mut visited = HashSet::new();
-//         visited.insert(node);
-//         dfs(&suss, &graph, &mut memo, node, node, distance_threshold, &mut neighbors, &mut visited);
-//         println!("==============");
-//     }
-
-//     println!("{:?}", neighbors);
-
-//     let mut neighbors = neighbors.iter().map(|s| s.len()).enumerate().collect::<Vec<_>>();
-//     neighbors.sort_by(|&a, &b| {
-//         if a.1 == b.1 {
-//             b.0.cmp(&a.0)
-//         } else {
-//             a.1.cmp(&b.1)
-//         }
-//     });
-
-//     neighbors[0].0 as i32
-// }
-
-
-pub fn find_the_city(n: i32, edges: Vec<Vec<i32>>, distance_threshold: i32) -> i32 {
-    let mut graph = vec![vec![i32::MAX; n as usize]; n as usize];
-
-    for edge in edges {
-        let (u, v, w) = (edge[0] as usize, edge[1] as usize, edge[2]);
-        graph[u][v] = w;
-        graph[v][u] = w;
-    }
-
-    // Initialize the graph with 0 distance to self
-    for i in 0..n as usize {
-        graph[i][i] = 0;
-    }
-
-    // Floyd-Warshall Algorithm to compute shortest paths
-    for k in 0..n as usize {
-        for i in 0..n as usize {
-            for j in 0..n as usize {
-                // Only perform the addition if neither distance is i32::MAX
-                if graph[i][k] != i32::MAX && graph[k][j] != i32::MAX {
-                    graph[i][j] = std::cmp::min(graph[i][j], graph[i][k] + graph[k][j]);
-                }
-            }
-        }
-    }
-    
-
-    // Count reachable cities for each city
-    let reachable_counts = graph.iter()
-        .map(|row| row.iter().filter(|&&d| d <= distance_threshold).count() - 1)
-        .enumerate()
-        .collect::<Vec<_>>();
-
-    // Find the city with the minimum number of reachable cities
-    reachable_counts.iter().min_by_key(|&&(i, count)| (count, -(i as i32))).unwrap().0 as i32
+    result
 }
 
-pub fn maximize_sum(nums: Vec<i32>, k: i32) -> i32 {
-    let &max_n = nums.iter().max().unwrap();
-    let mut ans = 0;
-    for i in 0..k {
-        ans += max_n + i;
+
+pub fn find_peak_element(nums: Vec<i32>) -> i32 {
+    if nums.len() == 1 {
+        return 0;
+    }       
+
+    let mut l = 0;
+    let mut r = nums.len() - 1;
+
+    while l < r {
+        let mid = l + (r - l) / 2;
+        if nums[mid] > nums[mid + 1] {
+            r = mid;
+        } else {
+            l = mid + 1;
+        }
     }
-    ans
+
+    l as i32
 }
 
 fn main() {
-    let ans = find_the_city(4,vec![vec![0,1,3],vec![1,2,1],vec![1,3,4],vec![2,3,1]],4);
-    println!("{:?}", ans);
+    // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
+    // println!("{:?}", ans);
 
-    let ans = find_the_city(5,vec![vec![0,1,2],vec![0,4,8],vec![1,2,3],vec![1,4,2],vec![2,3,1],vec![3,4,1]],2);
+    let ans = find_peak_element(vec![1,2,1,3,5,6,4]);
     println!("{:?}", ans);
-    
-    let ans = find_the_city(6,vec![vec![0,1,10],vec![0,2,1],vec![2,3,1],vec![1,3,1],vec![1,4,1],vec![4,5,10]],20);
-    println!("{:?}", ans); // 5
 }
