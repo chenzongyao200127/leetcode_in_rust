@@ -30,3 +30,29 @@ class Solution:
 s = Solution()
 ans = s.maximumSum([18,43,36,13,7])
 print(ans)
+
+
+class Solution:
+    def maximumSum(self, nums: List[int]) -> int:
+        def digit_sum(n):
+            return sum(map(int, str(n)))
+
+        max_nums = {}
+
+        ans = -1
+        for num in nums:
+            d_sum = digit_sum(num)
+            if d_sum not in max_nums:
+                max_nums[d_sum] = [num]
+            else:
+                if len(max_nums[d_sum]) < 2:
+                    max_nums[d_sum].append(num)
+                    if len(max_nums[d_sum]) == 2:
+                        ans = max(ans, sum(max_nums[d_sum]))
+                else:
+                    max_nums[d_sum].sort(reverse=True)
+                    if num > max_nums[d_sum][1]:
+                        max_nums[d_sum][1] = num
+                        ans = max(ans, sum(max_nums[d_sum]))
+
+        return ans
