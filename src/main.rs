@@ -461,6 +461,11 @@ pub fn find_peak_element(nums: Vec<i32>) -> i32 {
     l as i32
 }
 
+pub fn max_sum_of_three_subarrays(nums: Vec<i32>, k: i32) -> Vec<i32> {
+
+}
+
+
 fn main() {
     // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
     // println!("{:?}", ans);
