@@ -12,10 +12,9 @@ class MyCircularQueue:
     def __init__(self, k: int):
         self.cnt = 0
         self.capacity = k
-        self.dummy = Node(0)
+        self.dummy = Node(0)  # Initialize with a dummy node
         self.dummy.nxt = self.dummy
         self.dummy.pre = self.dummy
-        
 
     def enQueue(self, value: int) -> bool:
         if self.cnt == self.capacity:
@@ -35,9 +34,9 @@ class MyCircularQueue:
     def deQueue(self) -> bool:
         if self.cnt == 0:
             return False
-
+        
         second_node = self.dummy.nxt.nxt
-        self.dummy = second_node
+        self.dummy.nxt = second_node
         second_node.pre = self.dummy
         
         self.cnt -= 1
@@ -45,18 +44,21 @@ class MyCircularQueue:
         return True
 
     def Front(self) -> int:
+        if self.cnt == 0:
+            return -1
         return self.dummy.nxt.val
 
-
     def Rear(self) -> int:
+        if self.cnt == 0:
+            return -1
         return self.dummy.pre.val
-
 
     def isEmpty(self) -> bool:
         return self.cnt == 0
 
     def isFull(self) -> bool:
         return self.cnt == self.capacity
+
 
 
 
