@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/czy/Desktop/leetcode_in_rust/src",
-      "program": "/home/czy/Desktop/leetcode_in_rust/src/build/Debug/outDebug",
+      "cwd": "/disk2/chenzy/Android_Malware_Detection/leetcode_in_rust/src",
+      "program": "/disk2/chenzy/Android_Malware_Detection/leetcode_in_rust/src/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

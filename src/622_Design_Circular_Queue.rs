@@ -11,7 +11,6 @@ struct MyCircularQueue {
     capacity: usize,
 }
 
-
 impl MyCircularQueue {
     fn new(k: i32) -> Self {
         MyCircularQueue {

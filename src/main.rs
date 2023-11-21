@@ -461,6 +461,28 @@ pub fn find_peak_element(nums: Vec<i32>) -> i32 {
     l as i32
 }
 
+pub fn min_deletion(nums: Vec<i32>) -> i32 {
+    let mut l = 0;
+    let mut r = 1;
+    let mut ans = 0;
+    while r < nums.len() {
+        if nums[l] == nums[r] {
+            while r < nums.len() && nums[l] == nums[r] {
+                l += 1;
+                r += 1;
+            }
+        } else {
+            l += 2;
+            r += 2;
+        }
+    }
+    if l == nums.len() - 1 {
+        ans += 1
+    }
+    ans
+}
+
+
 fn main() {
     // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
     // println!("{:?}", ans);
