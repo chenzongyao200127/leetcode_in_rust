@@ -1,8 +1,10 @@
+use std::mem::swap;
 use std::vec;
 use std::collections::HashSet;
 use std::collections::HashMap;
 
 use itertools::Itertools;
+use rand::seq::index;
 
 pub fn top_students(
     positive_feedback: Vec<String>,
@@ -482,11 +484,51 @@ pub fn min_deletion(nums: Vec<i32>) -> i32 {
     ans
 }
 
+pub fn find_min(nums: Vec<i32>) -> i32 {
+    if nums.len() == 1 {
+        return nums[0];
+    }
+
+    if nums[0] < nums[nums.len()-1] {
+        return nums[0];
+    }
+
+    if nums[nums.len()-1] < nums[0] && nums[0] <= nums[nums.len()-2] {
+        return nums[nums.len()-1];
+    }
+
+    #[inline]
+    fn check(nums: &[i32], idx: usize) -> bool {
+        if nums[idx] >= nums[0] {
+            true
+        } else {
+            false
+        }
+    }
+
+    let mut l = 0;
+    let mut r = nums.len() - 1; 
+
+    while l < r {
+        let mid = l + (r - l) / 2;
+        println!("{:?}", (l, r, mid));
+        if check(&nums, mid) {
+            l = mid + 1;
+        } else {
+            r = mid;
+        }
+    }
+
+    return nums[l]
+}
+
+
+
 
 fn main() {
     // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
     // println!("{:?}", ans);
 
-    let ans = find_peak_element(vec![1,2,1,3,5,6,4]);
+    let ans = find_min(vec![3,1,2]);
     println!("{:?}", ans);
 }
