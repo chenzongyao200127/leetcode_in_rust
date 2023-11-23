@@ -522,7 +522,23 @@ pub fn find_min(nums: Vec<i32>) -> i32 {
     return nums[l]
 }
 
+// Quotation Mark: the entity is &quot; and symbol character is ".
+// Single Quote Mark: the entity is &apos; and symbol character is '.
+// Ampersand: the entity is &amp; and symbol character is &.
+// Greater Than Sign: the entity is &gt; and symbol character is >.
+// Less Than Sign: the entity is &lt; and symbol character is <.
+// Slash: the entity is &frasl; and symbol character is /.
 
+pub fn entity_parser(text: String) -> String {
+    let mut result = text;
+    result = result.replace("&quot;", "\"");
+    result = result.replace("&apos;", "'");
+    result = result.replace("&amp;", "&");
+    result = result.replace("&gt;", ">");
+    result = result.replace("&lt;", "<");
+    result = result.replace("&frasl;", "/");
+    result
+}
 
 
 fn main() {
