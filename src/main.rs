@@ -1,10 +1,7 @@
-use std::mem::swap;
 use std::vec;
 use std::collections::HashSet;
 use std::collections::HashMap;
 
-use itertools::Itertools;
-use rand::seq::index;
 
 pub fn top_students(
     positive_feedback: Vec<String>,
@@ -540,11 +537,45 @@ pub fn entity_parser(text: String) -> String {
     result
 }
 
+pub fn unique_letter_string(s: String) -> i32 {
+    let len = s.len();
+    let mut cnts = vec![];
+    let mut cur_cnt = vec![0; 26]; // 对于大写字母，数组大小为 26
+    
+    for byte in s.as_bytes() {
+        // 计算大写字母的索引
+        if *byte >= b'A' && *byte <= b'Z' {
+            let idx = *byte - b'A';
+            cur_cnt[idx as usize] += 1;
+            cnts.push(cur_cnt.clone());
+        }
+    }
+
+    let mut ans = 0;
+    for i in 0..len {
+        for j in i + 1..len {
+            let mut unique = true;
+            for idx in 0..26 {
+                // 检查是否有字符在子字符串中出现超过一次
+                if cnts[j][idx] - cnts[i][idx] > 1 {
+                    unique = false;
+                    break;
+                }
+            }
+            if unique {
+                ans += 1;
+            }
+        }
+    }
+
+    ans
+}
+
 
 fn main() {
     // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
     // println!("{:?}", ans);
 
-    let ans = find_min(vec![3,1,2]);
+    let ans = unique_letter_string("ABC".to_string());
     println!("{:?}", ans);
 }
