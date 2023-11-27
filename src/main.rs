@@ -571,11 +571,42 @@ pub fn unique_letter_string(s: String) -> i32 {
     ans
 }
 
+fn sum_subarray_mins(arr: Vec<i32>) -> i32 {
+    let len = arr.len();
+    let mod_val = 1_000_000_007;
+    let mut dp = vec![0; len];
+    let mut stack: Vec<usize> = vec![];
+
+    dp[0] = arr[0];
+    stack.push(0);
+
+    for i in 1..len {
+        while let Some(&j) = stack.last() {
+            if arr[j] > arr[i] {
+                stack.pop();
+            } else {
+                break;
+            }
+        }
+
+        let &j = stack.last().unwrap_or(&i);
+        if j == i {
+            dp[i] = arr[i] * (i+1) as i32;
+        } else {
+            dp[i] = (dp[j] + arr[i] * (i-j) as i32) % mod_val;
+        }
+
+        stack.push(i);
+    }
+
+    (dp.iter().sum::<i32>()) % mod_val
+}
+
 
 fn main() {
     // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
     // println!("{:?}", ans);
 
-    let ans = unique_letter_string("ABC".to_string());
+    let ans = sum_subarray_mins(vec![3,1,2,4]);
     println!("{:?}", ans);
 }
