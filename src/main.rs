@@ -679,6 +679,42 @@ impl FrontMiddleBackQueue {
     }
 }
 
+
+struct SmallestInfiniteSet {
+    queue: HashSet<i32>,
+}
+
+/**
+ * `&self` means the method takes an immutable reference.
+ * If you need a mutable reference, change it to `&mut self` instead.
+ */
+impl SmallestInfiniteSet {
+
+    fn new() -> Self {
+        SmallestInfiniteSet {
+            queue: HashSet::new()
+        }
+    }
+    
+    fn pop_smallest(&mut self) -> i32 {
+        for i in 1..usize::MAX {
+            if !self.queue.contains(&(i as i32)) {
+                self.queue.insert(i as i32);
+                return i as i32;
+            }
+        }
+        self.queue.insert(1);
+        1
+    }
+    
+    fn add_back(&mut self, num: i32) {
+        if self.queue.contains(&num) {
+            self.queue.remove(&num);
+        }
+    }
+}
+
+
 fn main() {
     // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
     // println!("{:?}", ans);
