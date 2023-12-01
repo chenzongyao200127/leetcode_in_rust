@@ -10,5 +10,3 @@ class Solution:
         cs, ct = Counter(s), Counter(t)
         return cs.keys() == ct.keys() and Counter(cs.values()) == Counter(ct.values())
     
-    
-    

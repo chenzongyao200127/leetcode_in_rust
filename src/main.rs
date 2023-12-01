@@ -714,11 +714,41 @@ impl SmallestInfiniteSet {
     }
 }
 
+pub fn first_complete_index(arr: Vec<i32>, mat: Vec<Vec<i32>>) -> i32 {
+    #[inline]
+    fn find_position(n: i32, position_map: &HashMap<i32, (usize, usize)>)-> (usize, usize) {
+        *position_map.get(&n).unwrap()
+    }
+
+    let mut row = vec![HashSet::new(); mat.len()];
+    let mut col = vec![HashSet::new(); mat[0].len()];
+    let mut position_map: HashMap<i32, (usize, usize)> = HashMap::new();
+
+    for i in 0..mat.len() {
+        for j in 0..mat[0].len() {
+            position_map.insert(mat[i][j], (i, j));
+        }
+    }
+
+    for i in 0..arr.len() {
+        let n = arr[i];
+        let (x, y) = find_position(n, &position_map);
+        row[x].insert(n);
+        col[y].insert(n);
+        // println!("{:?}", row[x]);
+        // println!("{:?}", low[y]);
+        if row[x].len() == mat[0].len() || col[y].len() == mat.len() {
+            return i as i32;
+        }
+    }
+
+    unimplemented!()
+}
 
 fn main() {
     // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
     // println!("{:?}", ans);
 
-    let ans = sum_subarray_mins(vec![3,1,2,4]);
+    let ans = first_complete_index(vec![1,4,5,2,6,3], vec![vec![4,3,5],vec![1,2,6]]);
     println!("{:?}", ans);
 }
