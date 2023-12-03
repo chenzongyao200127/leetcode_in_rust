@@ -572,148 +572,6 @@ pub fn unique_letter_string(s: String) -> i32 {
     ans
 }
 
-fn sum_subarray_mins(arr: Vec<i32>) -> i32 {
-    let len = arr.len();
-    let mod_val = 1_000_000_007;
-    let mut dp = vec![0; len];
-    let mut stack: Vec<usize> = vec![];
-
-    dp[0] = arr[0];
-    stack.push(0);
-
-    for i in 1..len {
-        while let Some(&j) = stack.last() {
-            if arr[j] > arr[i] {
-                stack.pop();
-            } else {
-                break;
-            }
-        }
-
-        let &j = stack.last().unwrap_or(&i);
-        if j == i {
-            dp[i] = arr[i] * (i+1) as i32;
-        } else {
-            dp[i] = (dp[j] + arr[i] * (i-j) as i32) % mod_val;
-        }
-
-        stack.push(i);
-    }
-
-    (dp.iter().sum::<i32>()) % mod_val
-}
-
-use std::collections::VecDeque;
-
-struct FrontMiddleBackQueue {
-    left: VecDeque<i32>,
-    right: VecDeque<i32>,
-}
-
-impl FrontMiddleBackQueue {
-    fn new() -> Self {
-        FrontMiddleBackQueue {
-            left: VecDeque::new(),
-            right: VecDeque::new(),
-        }
-    }
-
-    // 调整长度，保证 0 <= right.len() - left.len() <= 1
-    // 从而保证可以在正中间插入删除元素
-    fn balance(&mut self) {
-        if self.left.len() > self.right.len() {
-            self.right.push_front(self.left.pop_back().unwrap());
-        } else if self.right.len() > self.left.len() + 1 {
-            self.left.push_back(self.right.pop_front().unwrap());
-        }
-    }
-
-    fn push_front(&mut self, val: i32) {
-        self.left.push_front(val);
-        self.balance();
-    }
-
-    fn push_middle(&mut self, val: i32) {
-        if self.left.len() < self.right.len() {
-            self.left.push_back(val);
-        } else {
-            self.right.push_front(val);
-        }
-    }
-
-    fn push_back(&mut self, val: i32) {
-        self.right.push_back(val);
-        self.balance();
-    }
-
-    fn pop_front(&mut self) -> i32 {
-        if self.right.is_empty() { // 整个队列为空
-            return -1;
-        }
-        let val = if self.left.is_empty() {
-            self.right.pop_front().unwrap()
-        } else {
-            self.left.pop_front().unwrap()
-        };
-        self.balance();
-        val
-    }
-
-    fn pop_middle(&mut self) -> i32 {
-        if self.right.is_empty() { // 整个队列为空
-            return -1;
-        }
-        if self.left.len() == self.right.len() {
-            return self.left.pop_back().unwrap();
-        }
-        self.right.pop_front().unwrap()
-    }
-
-    fn pop_back(&mut self) -> i32 {
-        if self.right.is_empty() { // 整个队列为空
-            return -1;
-        }
-        let val = self.right.pop_back().unwrap();
-        self.balance();
-        val
-    }
-}
-
-
-struct SmallestInfiniteSet {
-    queue: HashSet<i32>,
-}
-
-/**
- * `&self` means the method takes an immutable reference.
- * If you need a mutable reference, change it to `&mut self` instead.
- */
-impl SmallestInfiniteSet {
-
-    fn new() -> Self {
-        SmallestInfiniteSet {
-            queue: HashSet::new()
-        }
-    }
-    
-    fn pop_smallest(&mut self) -> i32 {
-        for i in 1..usize::MAX {
-            if !self.queue.contains(&(i as i32)) {
-                self.queue.insert(i as i32);
-                return i as i32;
-            }
-        }
-        self.queue.insert(1);
-        1
-    }
-    
-    fn add_back(&mut self, num: i32) {
-        if self.queue.contains(&num) {
-            self.queue.remove(&num);
-        }
-    }
-}
-
 pub fn first_complete_index(arr: Vec<i32>, mat: Vec<Vec<i32>>) -> i32 {
     #[inline]
     fn find_position(n: i32, position_map: &HashMap<i32, (usize, usize)>)-> (usize, usize) {
@@ -744,6 +602,24 @@ pub fn first_complete_index(arr: Vec<i32>, mat: Vec<Vec<i32>>) -> i32 {
 
     unimplemented!()
 }
+
+
+pub fn max_score(card_points: Vec<i32>, k: i32) -> i32 {
+    let k = k as usize; // Convert k to usize for indexing
+    let total_points: i32 = card_points.iter().sum();
+    let window_size = card_points.len() - k;
+    let mut min_subarray_sum = card_points.iter().take(window_size).sum::<i32>();
+    let mut current_sum = min_subarray_sum;
+
+    for i in 0..k {
+        // Slide the window by one position
+        current_sum = current_sum - card_points[i] + card_points[i + window_size];
+        min_subarray_sum = min_subarray_sum.min(current_sum);
+    }
+
+    total_points - min_subarray_sum
+}
+
 
 fn main() {
     // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
