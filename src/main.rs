@@ -657,10 +657,83 @@ pub fn bst_to_gst(root: Option<Rc<RefCell<TreeNode>>>) -> Option<Rc<RefCell<Tree
     root
 }
 
+pub fn minimum_total_price(n: i32, edges: Vec<Vec<i32>>, price: Vec<i32>, trips: Vec<Vec<i32>>) -> i32 {
+    
+    let mut total_cnts = vec![0; n as usize];
+
+    let mut g = vec![vec![]; n as usize];
+    for e in &edges {
+        let x = e[0] as usize;
+        let y = e[1] as usize;
+        g[x].push(y); // 记录每个点的邻居
+        g[y].push(x);
+    }
+
+    let mut visited: HashSet<usize> = HashSet::new();
+
+    #[inline]
+    fn get_paths(start: usize, end: usize, g: &Vec<Vec<usize>>, cnts: &mut Vec<i32>, visited: &mut HashSet<usize>, total_cnts: &mut Vec<i32>) {
+        // Add the current node to the visited set
+        visited.insert(start);
+    
+        // Increment the count for the current node
+        cnts[start] += 1;
+    
+        // Base case: if the current node is the end node, return.
+        if start == end {
+            for (i, cnt) in cnts.iter().enumerate() {
+                total_cnts[i] += cnt;
+            }
+            return;
+        }
+    
+        // Explore neighbors
+        for &neig in &g[start] {
+            if !visited.contains(&neig) {
+                get_paths(neig, end, g, cnts, visited, total_cnts);
+            }
+        }
+    
+        // Decrement the count and remove the current node from the visited set on backtracking
+        cnts[start] -= 1;
+        visited.remove(&start);
+    }
+
+    for trip in trips.iter() {
+        let start = trip[0] as usize;
+        let end = trip[1] as usize;
+
+        visited.clear();
+        let mut local_cnts = vec![0; n as usize];
+        get_paths(start, end, &g, &mut local_cnts, &mut visited, &mut total_cnts);
+    }
+
+    #[inline]
+    fn dp(node: usize, parent: usize, price: &Vec<i32>, total_cnts: &Vec<i32>, g: &Vec<Vec<usize>>) -> (i32, i32) {
+        let mut res_with_halved = price[node] * total_cnts[node];
+        let mut res_without_halved = price[node] / 2 * total_cnts[node];
+
+        for &child in g[node].iter() {
+            if child == parent {
+                continue;
+            }
+
+            let (x, y) = dp(child, node, price, total_cnts, g);
+            res_with_halved += x.min(y);
+            res_without_halved += x;
+        }
+
+        return (res_with_halved, res_without_halved)
+    }
+    
+    let (x, y) = dp(0, usize::MAX, &price, &total_cnts, &g);
+    x.min(y)
+}
+
 fn main() {
     // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
     // println!("{:?}", ans);
 
-    let ans = first_complete_index(vec![1,4,5,2,6,3], vec![vec![4,3,5],vec![1,2,6]]);
+    let ans = minimum_total_price(4, vec![vec![0,1],vec![1,2],vec![1,3]], vec![2,2,10,6], vec![vec![0,3],vec![2,1],vec![2,3]]);
     println!("{:?}", ans);
 }
