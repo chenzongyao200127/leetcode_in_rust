@@ -1,4 +1,4 @@
-use std::process::id;
+
 use std::vec;
 use std::collections::HashSet;
 use std::collections::HashMap;
@@ -730,10 +730,52 @@ pub fn minimum_total_price(n: i32, edges: Vec<Vec<i32>>, price: Vec<i32>, trips:
     x.min(y)
 }
 
+
+pub fn min_reorder(n: i32, connections: Vec<Vec<i32>>) -> i32 {
+    let mut g = vec![vec![]; n as usize];
+    for c in &connections {
+        let (f, t) = (c[0] as usize, c[1] as usize);
+        g[f].push(t);
+        g[t].push(f);
+    }
+
+    // println!("{:?}", g);
+
+    let paths: HashSet<(i32, i32)> = connections.iter()
+        .flat_map(|x| vec![(x[0], x[1])])
+        .collect();
+
+    let mut ans = 0;
+    let mut visited: HashSet<usize> = HashSet::new();
+
+    fn dfs(node: usize, g: &[Vec<usize>], paths: &HashSet<(i32, i32)>, ans: &mut i32, visited: &mut HashSet<usize>) {
+        visited.insert(node);
+        // println!("{:?}", g[node]);
+        // println!("visited: {:?}", visited);
+        // println!("current node:{:?}", node);
+
+        for &n in &g[node] {
+            // println!("node -> n{:?}", (node, n));
+            if !visited.contains(&n) {
+                if paths.contains(&(node as i32, n as i32)) {
+                    *ans += 1;
+                }
+                
+                dfs(n, g, paths, ans, visited);
+            }
+        }
+    }
+
+    dfs(0, &g, &paths, &mut ans, &mut visited);
+    ans
+}
+
+
+
 fn main() {
     // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
     // println!("{:?}", ans);
 
-    let ans = minimum_total_price(4, vec![vec![0,1],vec![1,2],vec![1,3]], vec![2,2,10,6], vec![vec![0,3],vec![2,1],vec![2,3]]);
+    let ans = min_reorder(6, vec![vec![0,1],vec![1,3],vec![2,3],vec![4,0],vec![4,5]]);
     println!("{:?}", ans);
 }
