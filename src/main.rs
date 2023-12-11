@@ -655,79 +655,6 @@ pub fn bst_to_gst(root: Option<Rc<RefCell<TreeNode>>>) -> Option<Rc<RefCell<Tree
     root
 }
 
-pub fn minimum_total_price(n: i32, edges: Vec<Vec<i32>>, price: Vec<i32>, trips: Vec<Vec<i32>>) -> i32 {
-    
-    let mut total_cnts = vec![0; n as usize];
-
-    let mut g = vec![vec![]; n as usize];
-    for e in &edges {
-        let x = e[0] as usize;
-        let y = e[1] as usize;
-        g[x].push(y); // 记录每个点的邻居
-        g[y].push(x);
-    }
-
-    let mut visited: HashSet<usize> = HashSet::new();
-
-    #[inline]
-    fn get_paths(start: usize, end: usize, g: &Vec<Vec<usize>>, cnts: &mut Vec<i32>, visited: &mut HashSet<usize>, total_cnts: &mut Vec<i32>) {
-        // Add the current node to the visited set
-        visited.insert(start);
-    
-        // Increment the count for the current node
-        cnts[start] += 1;
-    
-        // Base case: if the current node is the end node, return.
-        if start == end {
-            for (i, cnt) in cnts.iter().enumerate() {
-                total_cnts[i] += cnt;
-            }
-            return;
-        }
-    
-        // Explore neighbors
-        for &neig in &g[start] {
-            if !visited.contains(&neig) {
-                get_paths(neig, end, g, cnts, visited, total_cnts);
-            }
-        }
-    
-        // Decrement the count and remove the current node from the visited set on backtracking
-        cnts[start] -= 1;
-        visited.remove(&start);
-    }
-
-    for trip in trips.iter() {
-        let start = trip[0] as usize;
-        let end = trip[1] as usize;
-
-        visited.clear();
-        let mut local_cnts = vec![0; n as usize];
-        get_paths(start, end, &g, &mut local_cnts, &mut visited, &mut total_cnts);
-    }
-
-    #[inline]
-    fn dp(node: usize, parent: usize, price: &Vec<i32>, total_cnts: &Vec<i32>, g: &Vec<Vec<usize>>) -> (i32, i32) {
-        let mut res_with_halved = price[node] * total_cnts[node];
-        let mut res_without_halved = price[node] / 2 * total_cnts[node];
-
-        for &child in g[node].iter() {
-            if child == parent {
-                continue;
-            }
-
-            let (x, y) = dp(child, node, price, total_cnts, g);
-            res_with_halved += x.min(y);
-            res_without_halved += x;
-        }
-
-        return (res_with_halved, res_without_halved)
-    }
-    
-    let (x, y) = dp(0, usize::MAX, &price, &total_cnts, &g);
-    x.min(y)
-}
-
 
 pub fn min_reorder(n: i32, connections: Vec<Vec<i32>>) -> i32 {
     let mut g = vec![vec![]; n as usize];
@@ -769,87 +696,77 @@ pub fn min_reorder(n: i32, connections: Vec<Vec<i32>>) -> i32 {
 }
 
 
-
 pub fn minimum_effort_path(heights: Vec<Vec<i32>>) -> i32 {
-    // construct a graph
-    let mut g: HashMap<(usize, usize), Vec<usize>> = HashMap::new();
+    let mut graph: HashMap<(usize, usize), Vec<((usize, usize), usize)>> = HashMap::new();
     let m = heights.len();
     let n = heights[0].len();
     let mut max_cost = 0;
 
     for i in 0..m {
         for j in 0..n {
-            // 上下左右
-            for (dx, dy) in &[(-1,0), (1,0), (0,1), (0,-1)] {
-                let di = i as i32 + dx;
-                let dj = j as i32 + dy;
-                let mut cost = usize::MAX;
-                if di >= 0 && di <= m as i32 - 1 && dj >= 0 && dj <= n as i32 - 1 {
-                    cost = (heights[di as usize][dj as usize] - heights[i][j]).abs() as usize;
+            for (dx, dy) in &[(-1, 0), (1, 0), (0, -1), (0, 1)] {
+                let ni = i as i32 + dx;
+                let nj = j as i32 + dy;
+                if ni >= 0 && ni < m as i32 && nj >= 0 && nj < n as i32 {
+                    let cost = (heights[i][j] - heights[ni as usize][nj as usize]).abs() as usize;
                     max_cost = max_cost.max(cost);
-                    g.entry((i, j)).and_modify(|v| v.push(cost)).or_insert(vec![cost]);
-                    continue;
+                    graph.entry((i, j)).or_insert_with(Vec::new).push(((ni as usize, nj as usize), cost));
                 }
-                g.entry((i, j)).and_modify(|v| v.push(cost)).or_insert(vec![cost]);
             }
         }
     }
 
-    // given threshold k check if available    
-    #[inline]
     fn is_available(
-        k: i32, 
-        m: usize, 
-        n: usize, 
-        curr_node: (usize, usize), 
-        g: &HashMap<(usize, usize), Vec<usize>>, 
-        visited: &mut HashSet<(usize, usize)>
+        k: usize,
+        m: usize,
+        n: usize,
+        node: (usize, usize),
+        graph: &HashMap<(usize, usize), Vec<((usize, usize), usize)>>,
+        visited: &mut HashSet<(usize, usize)>,
+        memo: &mut HashMap<((usize, usize), usize), bool>,
     ) -> bool {
-        if curr_node == (m-1, n-1) {
+        if node == (m - 1, n - 1) {
             return true;
         }
-    
-        if visited.contains(&curr_node) {
-            return false;
+        if let Some(&cached) = memo.get(&(node, k)) {
+            return cached;
         }
-    
-        visited.insert(curr_node);
-    
-        for (idx, (dx, dy)) in vec![(-1,0), (1,0), (0,1), (0,-1)].iter().enumerate() {
-            let next_node = ((curr_node.0 as i32 + dx) as usize, (curr_node.1 as i32 + dy) as usize);
-    
-            // Check for bounds and visited
-            if next_node.0 < m && next_node.1 < n && g.get(&curr_node).unwrap()[idx] < k as usize && !visited.contains(&next_node) {
-                if is_available(k, m, n, next_node, g, visited) {
-                    return true;
+
+        visited.insert(node);
+        if let Some(neighbors) = graph.get(&node) {
+            for &(next_node, cost) in neighbors {
+                if cost <= k && !visited.contains(&next_node) {
+                    if is_available(k, m, n, next_node, graph, visited, memo) {
+                        memo.insert((node, k), true);
+                        return true;
+                    }
                 }
             }
         }
-    
-        visited.remove(&curr_node); // Backtracking
+
+        visited.remove(&node);
+        memo.insert((node, k), false);
         false
     }
-    
 
-    // binary search
     let mut l = 0;
-    let mut r = max_cost + 1;
+    let mut r = max_cost;
     let mut visited = HashSet::new();
+    let mut memo = HashMap::new();
 
     while l < r {
         let mid = l + (r - l) / 2;
-        println!("{:?}", (l , r, mid));
-        if is_available(mid as i32, m, n, (0, 0), &g, &mut visited) {
+        visited.clear();
+
+        if is_available(mid, m, n, (0, 0), &graph, &mut visited, &mut memo) {
             r = mid;
         } else {
-            l = mid + 1
+            l = mid + 1;
         }
-        visited.clear()
     }
 
-    return l as i32;
+    l as i32
 }
-
 
 fn main() {
     // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
