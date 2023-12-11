@@ -1,5 +1,3 @@
-
-use std::vec;
 use std::collections::HashSet;
 use std::collections::HashMap;
 
@@ -772,10 +770,91 @@ pub fn min_reorder(n: i32, connections: Vec<Vec<i32>>) -> i32 {
 
 
 
+pub fn minimum_effort_path(heights: Vec<Vec<i32>>) -> i32 {
+    // construct a graph
+    let mut g: HashMap<(usize, usize), Vec<usize>> = HashMap::new();
+    let m = heights.len();
+    let n = heights[0].len();
+    let mut max_cost = 0;
+
+    for i in 0..m {
+        for j in 0..n {
+            // 上下左右
+            for (dx, dy) in &[(-1,0), (1,0), (0,1), (0,-1)] {
+                let di = i as i32 + dx;
+                let dj = j as i32 + dy;
+                let mut cost = usize::MAX;
+                if di >= 0 && di <= m as i32 - 1 && dj >= 0 && dj <= n as i32 - 1 {
+                    cost = (heights[di as usize][dj as usize] - heights[i][j]).abs() as usize;
+                    max_cost = max_cost.max(cost);
+                    g.entry((i, j)).and_modify(|v| v.push(cost)).or_insert(vec![cost]);
+                    continue;
+                }
+                g.entry((i, j)).and_modify(|v| v.push(cost)).or_insert(vec![cost]);
+            }
+        }
+    }
+
+    // given threshold k check if available    
+    #[inline]
+    fn is_available(
+        k: i32, 
+        m: usize, 
+        n: usize, 
+        curr_node: (usize, usize), 
+        g: &HashMap<(usize, usize), Vec<usize>>, 
+        visited: &mut HashSet<(usize, usize)>
+    ) -> bool {
+        if curr_node == (m-1, n-1) {
+            return true;
+        }
+    
+        if visited.contains(&curr_node) {
+            return false;
+        }
+    
+        visited.insert(curr_node);
+    
+        for (idx, (dx, dy)) in vec![(-1,0), (1,0), (0,1), (0,-1)].iter().enumerate() {
+            let next_node = ((curr_node.0 as i32 + dx) as usize, (curr_node.1 as i32 + dy) as usize);
+    
+            // Check for bounds and visited
+            if next_node.0 < m && next_node.1 < n && g.get(&curr_node).unwrap()[idx] < k as usize && !visited.contains(&next_node) {
+                if is_available(k, m, n, next_node, g, visited) {
+                    return true;
+                }
+            }
+        }
+    
+        visited.remove(&curr_node); // Backtracking
+        false
+    }
+    
+
+    // binary search
+    let mut l = 0;
+    let mut r = max_cost + 1;
+    let mut visited = HashSet::new();
+
+    while l < r {
+        let mid = l + (r - l) / 2;
+        println!("{:?}", (l , r, mid));
+        if is_available(mid as i32, m, n, (0, 0), &g, &mut visited) {
+            r = mid;
+        } else {
+            l = mid + 1
+        }
+        visited.clear()
+    }
+
+    return l as i32;
+}
+
+
 fn main() {
     // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
     // println!("{:?}", ans);
 
-    let ans = min_reorder(6, vec![vec![0,1],vec![1,3],vec![2,3],vec![4,0],vec![4,5]]);
+    let ans =minimum_effort_path(vec![vec![1,2,2],vec![3,8,2],vec![5,3,5]]);
     println!("{:?}", ans);
 }
