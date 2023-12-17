@@ -768,10 +768,67 @@ pub fn minimum_effort_path(heights: Vec<Vec<i32>>) -> i32 {
     l as i32
 }
 
+pub fn min_cost_climbing_stairs(cost: Vec<i32>) -> i32 {
+    let n = cost.len();
+    let mut dp = vec![0; n];
+
+    dp[0] = cost[0];
+    dp[1] = cost[1];
+
+    for i in 2..n {
+        dp[i] = cost[i] + dp[i - 1].min(dp[i - 2]);
+    }
+
+    dp[n - 1].min(dp[n - 2])
+}
+
+pub fn make_smallest_palindrome(s: String) -> String {
+    let mut cs: Vec<char> = s.chars().collect();
+    let n = cs.len();
+    for i in 0..n / 2 {
+        let j = n - 1 - i;
+        cs[i] = std::cmp::min(cs[i], cs[j]);
+        cs[j] = cs[i];
+    }
+    cs.into_iter().collect()
+}
+
+struct CountIntervals {
+
+}
+
+
+/**
+ * `&self` means the method takes an immutable reference.
+ * If you need a mutable reference, change it to `&mut self` instead.
+ */
+impl CountIntervals {
+
+    fn new() -> Self {
+
+    }
+    
+    fn add(&self, left: i32, right: i32) {
+
+    }
+    
+    fn count(&self) -> i32 {
+
+    }
+}
+
+/**
+ * Your CountIntervals object will be instantiated and called as such:
+ * let obj = CountIntervals::new();
+ * obj.add(left, right);
+ * let ret_2: i32 = obj.count();
+ */
+
 fn main() {
     // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
     // println!("{:?}", ans);
-
-    let ans =minimum_effort_path(vec![vec![1,2,2],vec![3,8,2],vec![5,3,5]]);
-    println!("{:?}", ans);
+    
+    let obj = CountIntervals::new();
+    obj.add(left, right);
+    let ret_2: i32 = obj.count();
 }
