@@ -793,27 +793,63 @@ pub fn make_smallest_palindrome(s: String) -> String {
     cs.into_iter().collect()
 }
 
-struct CountIntervals {
+// Import BTreeMap from the standard collections library
+use std::collections::BTreeMap;
 
+// Define the CountIntervals struct
+struct CountIntervals {
+    // A BTreeMap to store intervals in a sorted order.
+    mp: BTreeMap<i32, i32>,
+    // An integer to keep track of the total count of unique elements in all intervals.
+    cnt: i32,
 }
 
-
-/**
- * `&self` means the method takes an immutable reference.
- * If you need a mutable reference, change it to `&mut self` instead.
- */
+// Implementation block for CountIntervals
 impl CountIntervals {
-
+    // Constructor for CountIntervals
     fn new() -> Self {
-
+        CountIntervals {
+            // Initialize an empty BTreeMap for storing intervals
+            mp: BTreeMap::new(),
+            // Initialize the count to 0
+            cnt: 0,
+        }
     }
-    
-    fn add(&self, left: i32, right: i32) {
 
+    // Method to add a new interval to the collection
+    fn add(&mut self, mut left: i32, mut right: i32) {
+        // Find the last interval that might overlap with the new interval
+        let mut interval_index = self.mp.range(..=right).next_back();
+
+        // Loop to merge overlapping intervals
+        while let Some((&l, &r)) = interval_index {
+            // Break the loop if there is no overlap
+            if l > right || r < left {
+                break;
+            }
+
+            // Update the bounds of the new interval to encompass the current interval
+            left = left.min(l);
+            right = right.max(r);
+
+            // Update the count by removing the size of the current interval
+            self.cnt -= r - l + 1;
+            // Remove the current interval from the map
+            self.mp.remove(&l);
+
+            // Look for the next interval that might overlap
+            interval_index = self.mp.range(..=right).next_back();
+        }
+
+        // Add the size of the new/merged interval to the total count
+        self.cnt += right - left + 1;
+        // Insert the new/merged interval into the map
+        self.mp.insert(left, right);
     }
-    
+
+    // Method to get the total count of unique elements in all intervals
     fn count(&self) -> i32 {
-
+        self.cnt
     }
 }
 
@@ -824,11 +860,102 @@ impl CountIntervals {
  * let ret_2: i32 = obj.count();
  */
 
+// 二维前缀和 + 二维差分数组
+pub fn possible_to_stamp(grid: Vec<Vec<i32>>, stamp_height: i32, stamp_width: i32) -> bool {
+    let m = grid.len();
+    let n = grid[0].len();
+
+    // 初始化二维前缀和
+    // 定义sum[i+1][j+1]为左上角为[0,0]，右下角为[i,j]的子矩阵元素和
+    // 计算任意矩阵的元素和
+    // 假设子矩阵的左上角为[r1, c1], 右下角为[r2-1, c2-1]
+    // 则该子矩阵的和为 sum[r2][c2] - sum[r1][c2] - sum[r2][c1] + sum[r1][c1]
+    let mut s = vec![vec![0; n + 1]; m + 1];
+    for (i, row) in grid.iter().enumerate() {
+        for (j, x) in row.iter().enumerate() {
+            s[i+1][j+1] = s[i + 1][j] + s[i][j + 1] - s[i][j] + x
+        }
+    }
+
+    // 计算二维差分
+    let mut d = vec![vec![0; n + 2]; m + 2];
+    for i2 in stamp_height as usize..=m {
+        for j2 in stamp_width as usize..=n {
+            let i1 = i2 - stamp_height as usize + 1;
+            let j1 = j2 - stamp_width as usize + 1;
+            if s[i2][j2] - s[i2][j1 - 1] - s[i1 - 1][j2] + s[i1 - 1][j1 - 1] == 0 {
+                d[i1][j1] += 1;
+                d[i1][j2 + 1] -= 1;
+                d[i2 + 1][j1] -= 1;
+                d[i2 + 1][j2 + 1] += 1;
+            }
+        }
+    }
+
+    for (i, row) in grid.iter().enumerate() {
+        for (j, &v) in row.iter().enumerate() {
+            d[i + 1][j + 1] += d[i + 1][j] + d[i][j + 1] - d[i][j];
+            if v == 0 && d[i + 1][j + 1] == 0 {
+                return false;
+            }
+        }
+    }
+
+    true
+}
+
+
+struct MagicDictionary {
+    set: HashSet<String>
+}
+
+
+/**
+ * `&self` means the method takes an immutable reference.
+ * If you need a mutable reference, change it to `&mut self` instead.
+ */
+impl MagicDictionary {
+
+    fn new() -> Self {
+        MagicDictionary {
+            set: HashSet::new()
+        }
+    }
+    
+    fn build_dict(&mut self, dictionary: Vec<String>) {
+        self.set = dictionary.into_iter().collect();
+    }
+    
+    fn search(&self, search_word: String) -> bool {
+        self.set.iter().any(|word| {
+            if word.len() == search_word.len() {
+                word.chars().zip(search_word.chars()).filter(|(a, b)| a != b).count() == 1
+            } else {
+                false
+            }
+        })
+    }
+}
+
+/**
+ * Your MagicDictionary object will be instantiated and called as such:
+ * let obj = MagicDictionary::new();
+ * obj.build_dict(dictionary);
+ * let ret_2: bool = obj.search(searchWord);
+ */
+
+/**
+ * Your MagicDictionary object will be instantiated and called as such:
+ * let obj = MagicDictionary::new();
+ * obj.build_dict(dictionary);
+ * let ret_2: bool = obj.search(searchWord);
+ */
+
 fn main() {
     // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
     // println!("{:?}", ans);
     
-    let obj = CountIntervals::new();
-    obj.add(left, right);
-    let ret_2: i32 = obj.count();
+    let mut obj = MagicDictionary::new();
+    obj.build_dict(vec!["String".to_string()]);
+    let ret_2: bool = obj.search("test".to_string());
 }
