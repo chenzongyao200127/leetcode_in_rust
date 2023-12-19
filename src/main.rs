@@ -1,6 +1,5 @@
-use std::collections::HashSet;
 use std::collections::HashMap;
-
+use std::collections::HashSet;
 
 pub fn top_students(
     positive_feedback: Vec<String>,
@@ -16,8 +15,8 @@ pub fn top_students(
 
     let report = report
         .into_iter()
-        .map(|x| {x
-                .to_string()
+        .map(|x| {
+            x.to_string()
                 .split_whitespace() // Using split_whitespace to handle potential spaces
                 .map(|s| s.to_string())
                 .collect::<Vec<String>>()
@@ -36,17 +35,12 @@ pub fn top_students(
 
     let mut ans: Vec<_> = score.iter().zip(&student_id).collect();
 
-    ans.sort_by(|(s1, i1), (s2, i2)| {
-        match s2.cmp(s1) {
-            std::cmp::Ordering::Equal => i1.cmp(i2),
-            order => order,
-        }
+    ans.sort_by(|(s1, i1), (s2, i2)| match s2.cmp(s1) {
+        std::cmp::Ordering::Equal => i1.cmp(i2),
+        order => order,
     });
 
-    ans.into_iter()
-        .take(k as usize)
-        .map(|(_, b)| *b)
-        .collect()
+    ans.into_iter().take(k as usize).map(|(_, b)| *b).collect()
 }
 
 pub fn h_index(citations: Vec<i32>) -> i32 {
@@ -58,7 +52,7 @@ pub fn h_index(citations: Vec<i32>) -> i32 {
 
     while l <= r {
         let mid = l + (r - l) / 2;
-        
+
         if mid + 1 <= citations[mid as usize] {
             l = mid + 1;
         } else {
@@ -70,9 +64,10 @@ pub fn h_index(citations: Vec<i32>) -> i32 {
 }
 
 pub fn count_seniors(details: Vec<String>) -> i32 {
-    details.iter()
-           .filter(|s| s[s.len()-4..s.len()-2].parse::<i32>().unwrap_or(0) >= 60)
-           .count() as i32
+    details
+        .iter()
+        .filter(|s| s[s.len() - 4..s.len() - 2].parse::<i32>().unwrap_or(0) >= 60)
+        .count() as i32
 }
 
 pub fn num_rolls_to_target(n: i32, k: i32, target: i32) -> i32 {
@@ -85,7 +80,6 @@ pub fn num_rolls_to_target(n: i32, k: i32, target: i32) -> i32 {
     let mut dp = vec![0; target as usize + 1];
     let mut new_dp = vec![0; target as usize + 1];
 
-    
     for i in 1..=k {
         if i <= target {
             dp[i as usize] = 1;
@@ -96,7 +90,7 @@ pub fn num_rolls_to_target(n: i32, k: i32, target: i32) -> i32 {
         for j in 1..=target as usize {
             for t in 1..=k as usize {
                 if j >= t {
-                    new_dp[j] += dp[j-t];
+                    new_dp[j] += dp[j - t];
                     new_dp[j] %= MOD;
                 }
             }
@@ -144,13 +138,13 @@ pub fn length_of_lis(nums: Vec<i32>) -> i32 {
         } else {
             tails[l] = n
         }
-    }   
+    }
 
-    tails.len() as i32    
+    tails.len() as i32
 }
 
 pub fn max_product(words: Vec<String>) -> i32 {
-    #[inline] 
+    #[inline]
     fn str_to_set(str: &str) -> HashSet<char> {
         let mut set = HashSet::new();
 
@@ -161,13 +155,11 @@ pub fn max_product(words: Vec<String>) -> i32 {
         set
     }
 
-    let words_sets = words.iter().map(|s| {
-        str_to_set(&s)
-    }).collect::<Vec<_>>();
+    let words_sets = words.iter().map(|s| str_to_set(&s)).collect::<Vec<_>>();
 
     let mut ans = 0;
-    for i in 0..words_sets.len()-1 {
-        for j in i+1..words_sets.len() {
+    for i in 0..words_sets.len() - 1 {
+        for j in i + 1..words_sets.len() {
             let intersection: HashSet<_> = words_sets[i].intersection(&words_sets[j]).collect();
             if intersection.is_empty() {
                 ans = ans.max(words[i].len() * words[j].len());
@@ -177,7 +169,6 @@ pub fn max_product(words: Vec<String>) -> i32 {
 
     ans as i32
 }
-
 
 struct TrieNode {
     children: [Option<Box<TrieNode>>; 2],
@@ -202,7 +193,7 @@ pub fn find_maximum_xor(nums: Vec<i32>) -> i32 {
             if node.children[bit as usize].is_none() {
                 node.children[bit as usize] = Some(Box::new(TrieNode::new()));
             }
-            node = node.children[bit as usize].as_mut().unwrap()    
+            node = node.children[bit as usize].as_mut().unwrap()
         }
     }
 
@@ -252,25 +243,29 @@ pub fn find_the_longest_balanced_substring(s: String) -> i32 {
         }
         pre = s[idx];
         idx += 1
-    }   
+    }
 
     let mut ans = 0;
     // println!("{:?}", (cnts_0.clone(),cnts_1.clone()));
     for i in 0..cnts_0.len().min(cnts_1.len()) {
         ans = ans.max(cnts_0[i].min(cnts_1[i]))
     }
-    
+
     ans
 }
 
 pub fn distance(nums: Vec<i32>) -> Vec<i64> {
     let mut map: HashMap<i32, Vec<usize>> = HashMap::new();
     for (i, &n) in nums.iter().enumerate() {
-        map.entry(n).and_modify(|v| { v.push(i); }).or_insert_with(|| {
-            let mut v = vec![];
-            v.push(i);
-            v
-        });
+        map.entry(n)
+            .and_modify(|v| {
+                v.push(i);
+            })
+            .or_insert_with(|| {
+                let mut v = vec![];
+                v.push(i);
+                v
+            });
     }
 
     let mut arr = vec![0; nums.len()];
@@ -283,12 +278,12 @@ pub fn distance(nums: Vec<i32>) -> Vec<i64> {
         arr[a[0]] = s as i64;
 
         for i in 1..len {
-            if i* 2 >= len {
-                s += (i * 2 - len) * (a[i] - a[i-1]);
+            if i * 2 >= len {
+                s += (i * 2 - len) * (a[i] - a[i - 1]);
             } else {
-                s -= (len - i * 2) * (a[i] - a[i-1]);
+                s -= (len - i * 2) * (a[i] - a[i - 1]);
             }
-            arr[a[i]] = s as  i64
+            arr[a[i]] = s as i64
         }
     }
 
@@ -304,7 +299,6 @@ pub fn distance(nums: Vec<i32>) -> Vec<i64> {
 
 //     ans
 // }
-
 
 pub fn successful_pairs(spells: Vec<i32>, mut potions: Vec<i32>, success: i64) -> Vec<i32> {
     potions.sort_unstable();
@@ -325,7 +319,10 @@ pub fn successful_pairs(spells: Vec<i32>, mut potions: Vec<i32>, success: i64) -
         l
     }
 
-    spells.iter().map(|&spell| (potions.len() - search(&potions, spell, success)) as i32).collect()
+    spells
+        .iter()
+        .map(|&spell| (potions.len() - search(&potions, spell, success)) as i32)
+        .collect()
 }
 
 pub fn min_swaps_couples(row: Vec<i32>) -> i32 {
@@ -386,14 +383,13 @@ pub fn min_operations(mut nums1: Vec<i32>, nums2: Vec<i32>) -> i32 {
     let operations_swapped = calc_operations(&nums1, &nums2) + 1;
 
     let min_operations = operations_normal.min(operations_swapped);
-    
+
     if min_operations == nums1.len() as i32 {
         -1
     } else {
         min_operations
     }
 }
-
 
 pub fn two_sum(mut nums: Vec<i32>, target: i32) -> Vec<i32> {
     nums.sort_unstable();
@@ -416,33 +412,37 @@ pub fn two_sum(mut nums: Vec<i32>, target: i32) -> Vec<i32> {
         }
     }
 
-    vec![*idx_map.get(&nums[l]).unwrap() as i32, *idx_map.get(&nums[r]).unwrap() as i32]
+    vec![
+        *idx_map.get(&nums[l]).unwrap() as i32,
+        *idx_map.get(&nums[r]).unwrap() as i32,
+    ]
 }
 
 pub fn find_closest_elements(arr: Vec<i32>, k: i32, x: i32) -> Vec<i32> {
-    let mut indexed_diff: Vec<_> = arr.iter()
-                                      .enumerate()
-                                      .map(|(idx, &n)| (idx, (n - x).abs()))
-                                      .collect();
+    let mut indexed_diff: Vec<_> = arr
+        .iter()
+        .enumerate()
+        .map(|(idx, &n)| (idx, (n - x).abs()))
+        .collect();
 
     // Partially sort the array to find the kth element
     let kth = k as usize - 1;
-    indexed_diff.select_nth_unstable_by(kth, |a, b| {
-        a.1.cmp(&b.1).then_with(|| a.0.cmp(&b.0))
-    });
+    indexed_diff.select_nth_unstable_by(kth, |a, b| a.1.cmp(&b.1).then_with(|| a.0.cmp(&b.0)));
 
     // Extract the first k elements and sort them
-    let mut result: Vec<i32> = indexed_diff[..=kth].iter().map(|&(idx, _)| arr[idx]).collect();
+    let mut result: Vec<i32> = indexed_diff[..=kth]
+        .iter()
+        .map(|&(idx, _)| arr[idx])
+        .collect();
     result.sort_unstable();
 
     result
 }
 
-
 pub fn find_peak_element(nums: Vec<i32>) -> i32 {
     if nums.len() == 1 {
         return 0;
-    }       
+    }
 
     let mut l = 0;
     let mut r = nums.len() - 1;
@@ -485,12 +485,12 @@ pub fn find_min(nums: Vec<i32>) -> i32 {
         return nums[0];
     }
 
-    if nums[0] < nums[nums.len()-1] {
+    if nums[0] < nums[nums.len() - 1] {
         return nums[0];
     }
 
-    if nums[nums.len()-1] < nums[0] && nums[0] <= nums[nums.len()-2] {
-        return nums[nums.len()-1];
+    if nums[nums.len() - 1] < nums[0] && nums[0] <= nums[nums.len() - 2] {
+        return nums[nums.len() - 1];
     }
 
     #[inline]
@@ -503,7 +503,7 @@ pub fn find_min(nums: Vec<i32>) -> i32 {
     }
 
     let mut l = 0;
-    let mut r = nums.len() - 1; 
+    let mut r = nums.len() - 1;
 
     while l < r {
         let mid = l + (r - l) / 2;
@@ -515,7 +515,7 @@ pub fn find_min(nums: Vec<i32>) -> i32 {
         }
     }
 
-    return nums[l]
+    return nums[l];
 }
 
 // Quotation Mark: the entity is &quot; and symbol character is ".
@@ -540,7 +540,7 @@ pub fn unique_letter_string(s: String) -> i32 {
     let len = s.len();
     let mut cnts = vec![];
     let mut cur_cnt = vec![0; 26]; // 对于大写字母，数组大小为 26
-    
+
     for byte in s.as_bytes() {
         // 计算大写字母的索引
         if *byte >= b'A' && *byte <= b'Z' {
@@ -572,7 +572,7 @@ pub fn unique_letter_string(s: String) -> i32 {
 
 pub fn first_complete_index(arr: Vec<i32>, mat: Vec<Vec<i32>>) -> i32 {
     #[inline]
-    fn find_position(n: i32, position_map: &HashMap<i32, (usize, usize)>)-> (usize, usize) {
+    fn find_position(n: i32, position_map: &HashMap<i32, (usize, usize)>) -> (usize, usize) {
         *position_map.get(&n).unwrap()
     }
 
@@ -601,7 +601,6 @@ pub fn first_complete_index(arr: Vec<i32>, mat: Vec<Vec<i32>>) -> i32 {
     unimplemented!()
 }
 
-
 pub fn max_score(card_points: Vec<i32>, k: i32) -> i32 {
     let k = k as usize; // Convert k to usize for indexing
     let total_points: i32 = card_points.iter().sum();
@@ -621,24 +620,25 @@ pub fn max_score(card_points: Vec<i32>, k: i32) -> i32 {
 // Definition for a binary tree node.
 #[derive(Debug, PartialEq, Eq)]
 pub struct TreeNode {
-  pub val: i32,
-  pub left: Option<Rc<RefCell<TreeNode>>>,
-  pub right: Option<Rc<RefCell<TreeNode>>>,
+    pub val: i32,
+    pub left: Option<Rc<RefCell<TreeNode>>>,
+    pub right: Option<Rc<RefCell<TreeNode>>>,
 }
 
 impl TreeNode {
-  #[inline]
-  pub fn new(val: i32) -> Self {
-    TreeNode {
-      val,
-      left: None,
-      right: None
+    #[inline]
+    pub fn new(val: i32) -> Self {
+        TreeNode {
+            val,
+            left: None,
+            right: None,
+        }
     }
-  }
 }
 
-use std::rc::Rc;
 use std::cell::RefCell;
+use std::process::id;
+use std::rc::Rc;
 
 pub fn bst_to_gst(root: Option<Rc<RefCell<TreeNode>>>) -> Option<Rc<RefCell<TreeNode>>> {
     fn dfs(node: Option<&Rc<RefCell<TreeNode>>>, s: &mut i32) {
@@ -655,7 +655,6 @@ pub fn bst_to_gst(root: Option<Rc<RefCell<TreeNode>>>) -> Option<Rc<RefCell<Tree
     root
 }
 
-
 pub fn min_reorder(n: i32, connections: Vec<Vec<i32>>) -> i32 {
     let mut g = vec![vec![]; n as usize];
     for c in &connections {
@@ -666,14 +665,21 @@ pub fn min_reorder(n: i32, connections: Vec<Vec<i32>>) -> i32 {
 
     // println!("{:?}", g);
 
-    let paths: HashSet<(i32, i32)> = connections.iter()
+    let paths: HashSet<(i32, i32)> = connections
+        .iter()
         .flat_map(|x| vec![(x[0], x[1])])
         .collect();
 
     let mut ans = 0;
     let mut visited: HashSet<usize> = HashSet::new();
 
-    fn dfs(node: usize, g: &[Vec<usize>], paths: &HashSet<(i32, i32)>, ans: &mut i32, visited: &mut HashSet<usize>) {
+    fn dfs(
+        node: usize,
+        g: &[Vec<usize>],
+        paths: &HashSet<(i32, i32)>,
+        ans: &mut i32,
+        visited: &mut HashSet<usize>,
+    ) {
         visited.insert(node);
         // println!("{:?}", g[node]);
         // println!("visited: {:?}", visited);
@@ -685,7 +691,7 @@ pub fn min_reorder(n: i32, connections: Vec<Vec<i32>>) -> i32 {
                 if paths.contains(&(node as i32, n as i32)) {
                     *ans += 1;
                 }
-                
+
                 dfs(n, g, paths, ans, visited);
             }
         }
@@ -694,7 +700,6 @@ pub fn min_reorder(n: i32, connections: Vec<Vec<i32>>) -> i32 {
     dfs(0, &g, &paths, &mut ans, &mut visited);
     ans
 }
-
 
 pub fn minimum_effort_path(heights: Vec<Vec<i32>>) -> i32 {
     let mut graph: HashMap<(usize, usize), Vec<((usize, usize), usize)>> = HashMap::new();
@@ -710,7 +715,10 @@ pub fn minimum_effort_path(heights: Vec<Vec<i32>>) -> i32 {
                 if ni >= 0 && ni < m as i32 && nj >= 0 && nj < n as i32 {
                     let cost = (heights[i][j] - heights[ni as usize][nj as usize]).abs() as usize;
                     max_cost = max_cost.max(cost);
-                    graph.entry((i, j)).or_insert_with(Vec::new).push(((ni as usize, nj as usize), cost));
+                    graph
+                        .entry((i, j))
+                        .or_insert_with(Vec::new)
+                        .push(((ni as usize, nj as usize), cost));
                 }
             }
         }
@@ -873,7 +881,7 @@ pub fn possible_to_stamp(grid: Vec<Vec<i32>>, stamp_height: i32, stamp_width: i3
     let mut s = vec![vec![0; n + 1]; m + 1];
     for (i, row) in grid.iter().enumerate() {
         for (j, x) in row.iter().enumerate() {
-            s[i+1][j+1] = s[i + 1][j] + s[i][j + 1] - s[i][j] + x
+            s[i + 1][j + 1] = s[i + 1][j] + s[i][j + 1] - s[i][j] + x
         }
     }
 
@@ -904,32 +912,33 @@ pub fn possible_to_stamp(grid: Vec<Vec<i32>>, stamp_height: i32, stamp_width: i3
     true
 }
 
-
 struct MagicDictionary {
-    set: HashSet<String>
+    set: HashSet<String>,
 }
-
 
 /**
  * `&self` means the method takes an immutable reference.
  * If you need a mutable reference, change it to `&mut self` instead.
  */
 impl MagicDictionary {
-
     fn new() -> Self {
         MagicDictionary {
-            set: HashSet::new()
+            set: HashSet::new(),
         }
     }
-    
+
     fn build_dict(&mut self, dictionary: Vec<String>) {
         self.set = dictionary.into_iter().collect();
     }
-    
+
     fn search(&self, search_word: String) -> bool {
         self.set.iter().any(|word| {
             if word.len() == search_word.len() {
-                word.chars().zip(search_word.chars()).filter(|(a, b)| a != b).count() == 1
+                word.chars()
+                    .zip(search_word.chars())
+                    .filter(|(a, b)| a != b)
+                    .count()
+                    == 1
             } else {
                 false
             }
@@ -951,11 +960,46 @@ impl MagicDictionary {
  * let ret_2: bool = obj.search(searchWord);
  */
 
+pub fn find_peak_grid(mat: Vec<Vec<i32>>) -> Vec<i32> {
+    let rows = mat.len();
+    let cols = mat[0].len();
+    let mut l = 0;
+    let mut r = cols - 1;
+
+    while l <= r {
+        let mid = l + (r - l) / 2;
+
+        // Find the maximum element in the middle column
+        let (mut idx, mut max_num_in_center) = (0, 0);
+        for i in 0..rows {
+            if mat[i][mid] > max_num_in_center {
+                idx = i;
+                max_num_in_center = mat[i][mid];
+            }
+        }
+
+        // Check if the maximum element is a peak
+        let left_is_smaller = mid == 0 || max_num_in_center > mat[idx][mid - 1];
+        let right_is_smaller = mid == cols - 1 || max_num_in_center > mat[idx][mid + 1];
+
+        if left_is_smaller && right_is_smaller {
+            return vec![idx as i32, mid as i32];
+        } else if !left_is_smaller {
+            r = mid;
+        } else {
+            l = mid + 1;
+        }
+    }
+
+    unreachable!()
+}
+
 fn main() {
-    // let ans = find_closest_elements(vec![1,2,3,4,5], 4, 3);
-    // println!("{:?}", ans);
-    
-    let mut obj = MagicDictionary::new();
-    obj.build_dict(vec!["String".to_string()]);
-    let ret_2: bool = obj.search("test".to_string());
+    let ans = find_peak_grid(vec![
+        vec![48, 36, 35, 17, 48],
+        vec![38, 28, 38, 26, 24],
+        vec![15, 9, 33, 32, 6],
+        vec![49, 4, 8, 10, 41],
+    ]);
+    println!("{:?}", ans);
 }
