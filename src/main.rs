@@ -994,12 +994,41 @@ pub fn find_peak_grid(mat: Vec<Vec<i32>>) -> Vec<i32> {
     unreachable!()
 }
 
+use rand::Rng; // For random number generation
+use std::iter::Iterator; // For iterator methods
+
+struct Solution {
+    cumulative_weights: Vec<f64>,
+}
+
+impl Solution {
+    fn new(weights: Vec<i32>) -> Self {
+        let total_weight: f64 = weights.iter().map(|&w| w as f64).sum();
+        let cumulative_weights: Vec<f64> = weights
+            .iter()
+            .map(|&w| w as f64 / total_weight)
+            .scan(0.0, |state, x| {
+                *state += x;
+                Some(*state)
+            })
+            .collect();
+
+        Solution { cumulative_weights }
+    }
+
+    fn pick_index(&self) -> usize {
+        let rand_num = rand::thread_rng().gen::<f64>();
+        match self
+            .cumulative_weights
+            .binary_search_by(|&w| w.partial_cmp(&rand_num).unwrap())
+        {
+            Ok(index) => index,
+            Err(index) => index,
+        }
+    }
+}
+
 fn main() {
-    let ans = find_peak_grid(vec![
-        vec![48, 36, 35, 17, 48],
-        vec![38, 28, 38, 26, 24],
-        vec![15, 9, 33, 32, 6],
-        vec![49, 4, 8, 10, 41],
-    ]);
-    println!("{:?}", ans);
+    let solution = Solution::new(vec![1, 3, 2]); // Example weights
+    println!("Picked index: {}", solution.pick_index());
 }
