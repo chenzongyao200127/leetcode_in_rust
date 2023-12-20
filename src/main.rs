@@ -1028,6 +1028,14 @@ impl Solution {
     }
 }
 
+pub fn is_acronym(words: Vec<String>, s: String) -> bool {
+    s.to_uppercase()
+        == words
+            .iter()
+            .map(|word| word.chars().next().unwrap().to_string().to_uppercase())
+            .collect::<String>()
+}
+
 fn main() {
     let solution = Solution::new(vec![1, 3, 2]); // Example weights
     println!("Picked index: {}", solution.pick_index());
