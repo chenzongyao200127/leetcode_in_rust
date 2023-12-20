@@ -994,40 +994,6 @@ pub fn find_peak_grid(mat: Vec<Vec<i32>>) -> Vec<i32> {
     unreachable!()
 }
 
-use rand::Rng; // For random number generation
-use std::iter::Iterator; // For iterator methods
-
-struct Solution {
-    cumulative_weights: Vec<f64>,
-}
-
-impl Solution {
-    fn new(weights: Vec<i32>) -> Self {
-        let total_weight: f64 = weights.iter().map(|&w| w as f64).sum();
-        let cumulative_weights: Vec<f64> = weights
-            .iter()
-            .map(|&w| w as f64 / total_weight)
-            .scan(0.0, |state, x| {
-                *state += x;
-                Some(*state)
-            })
-            .collect();
-
-        Solution { cumulative_weights }
-    }
-
-    fn pick_index(&self) -> usize {
-        let rand_num = rand::thread_rng().gen::<f64>();
-        match self
-            .cumulative_weights
-            .binary_search_by(|&w| w.partial_cmp(&rand_num).unwrap())
-        {
-            Ok(index) => index,
-            Err(index) => index,
-        }
-    }
-}
-
 pub fn is_acronym(words: Vec<String>, s: String) -> bool {
     s.to_uppercase()
         == words
@@ -1036,7 +1002,59 @@ pub fn is_acronym(words: Vec<String>, s: String) -> bool {
             .collect::<String>()
 }
 
+use rand::Rng; // For random number generation
+use std::iter::Iterator; // For iterator methods
+
+struct Solution {
+    cumulative_weights: Vec<f64>,
+    my_rects: Vec<Vec<i32>>,
+}
+
+impl Solution {
+    fn new(rects: Vec<Vec<i32>>) -> Self {
+        let total_weight: f64 = rects
+            .iter()
+            .map(|rect| ((rect[2] - rect[0] + 1) * (rect[3] - rect[1] + 1)) as f64)
+            .sum();
+        let cumulative_weights: Vec<f64> = rects
+            .iter()
+            .map(|rect| ((rect[2] - rect[0] + 1) * (rect[3] - rect[1] + 1)) as f64 / total_weight)
+            .scan(0.0, |state, x| {
+                *state += x;
+                Some(*state)
+            })
+            .collect();
+
+        Solution {
+            cumulative_weights,
+            my_rects: rects,
+        }
+    }
+
+    fn pick(&self) -> Vec<i32> {
+        let mut rng = rand::thread_rng();
+        let pick = rng.gen::<f64>();
+        let idx = self
+            .cumulative_weights
+            .iter()
+            .position(|&weight| weight >= pick)
+            .unwrap_or(0);
+
+        let rect = &self.my_rects[idx];
+        let x = rng.gen_range(rect[0]..=rect[2] + 1);
+        let y = rng.gen_range(rect[1]..=rect[3] + 1);
+
+        vec![x, y]
+    }
+}
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * let obj = Solution::new(rects);
+ * let ret_1: Vec<i32> = obj.pick();
+ */
+
 fn main() {
-    let solution = Solution::new(vec![1, 3, 2]); // Example weights
-    println!("Picked index: {}", solution.pick_index());
+    let solution = Solution::new(vec![vec![-2, -2, 1, 1], vec![2, 2, 4, 6]]); // Example weights
+    println!("Picked index: {:?}", solution.pick());
 }
