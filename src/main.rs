@@ -1053,8 +1053,49 @@ impl Solution {
  * let obj = Solution::new(rects);
  * let ret_1: Vec<i32> = obj.pick();
  */
+pub fn maximum_sum_of_heights(max_heights: Vec<i32>) -> i64 {
+    let n = max_heights.len();
+    let mut res: i64 = 0;
+    let mut prefix = vec![0i64; n];
+    let mut suffix = vec![0i64; n];
+    let mut stack1: Vec<usize> = Vec::new();
+    let mut stack2: Vec<usize> = Vec::new();
+
+    for i in 0..n {
+        while !stack1.is_empty() && max_heights[i] < max_heights[*stack1.last().unwrap()] {
+            stack1.pop();
+        }
+        prefix[i] = if stack1.is_empty() {
+            (i as i64 + 1) * max_heights[i] as i64
+        } else {
+            let top = *stack1.last().unwrap();
+            prefix[top] + (i as i64 - top as i64) * max_heights[i] as i64
+        };
+        stack1.push(i);
+    }
+
+    for i in (0..n).rev() {
+        while !stack2.is_empty() && max_heights[i] < max_heights[*stack2.last().unwrap()] {
+            stack2.pop();
+        }
+        suffix[i] = if stack2.is_empty() {
+            (n as i64 - i as i64) * max_heights[i] as i64
+        } else {
+            let top = *stack2.last().unwrap();
+            suffix[top] + (top as i64 - i as i64) * max_heights[i] as i64
+        };
+        stack2.push(i);
+
+        res = std::cmp::max(res, prefix[i] + suffix[i] - max_heights[i] as i64);
+    }
+
+    res
+}
 
 fn main() {
-    let solution = Solution::new(vec![vec![-2, -2, 1, 1], vec![2, 2, 4, 6]]); // Example weights
-    println!("Picked index: {:?}", solution.pick());
+    // let solution = Solution::new(vec![vec![-2, -2, 1, 1], vec![2, 2, 4, 6]]); // Example weights
+    // println!("Picked index: {:?}", solution.pick());
+
+    let ans = maximum_sum_of_heights(vec![6, 5, 3, 9, 2, 7]);
+    println!("{:?}", ans);
 }
