@@ -1004,48 +1004,16 @@ pub fn is_acronym(words: Vec<String>, s: String) -> bool {
 
 use rand::Rng; // For random number generation
 use std::iter::Iterator; // For iterator methods
+struct Solution {}
 
-struct Solution {
-    cumulative_weights: Vec<f64>,
-    my_rects: Vec<Vec<i32>>,
-}
-
+/**
+ * `&self` means the method takes an immutable reference.
+ * If you need a mutable reference, change it to `&mut self` instead.
+ */
 impl Solution {
-    fn new(rects: Vec<Vec<i32>>) -> Self {
-        let total_weight: f64 = rects
-            .iter()
-            .map(|rect| ((rect[2] - rect[0] + 1) * (rect[3] - rect[1] + 1)) as f64)
-            .sum();
-        let cumulative_weights: Vec<f64> = rects
-            .iter()
-            .map(|rect| ((rect[2] - rect[0] + 1) * (rect[3] - rect[1] + 1)) as f64 / total_weight)
-            .scan(0.0, |state, x| {
-                *state += x;
-                Some(*state)
-            })
-            .collect();
+    fn new(nums: Vec<i32>) -> Self {}
 
-        Solution {
-            cumulative_weights,
-            my_rects: rects,
-        }
-    }
-
-    fn pick(&self) -> Vec<i32> {
-        let mut rng = rand::thread_rng();
-        let pick = rng.gen::<f64>();
-        let idx = self
-            .cumulative_weights
-            .iter()
-            .position(|&weight| weight >= pick)
-            .unwrap_or(0);
-
-        let rect = &self.my_rects[idx];
-        let x = rng.gen_range(rect[0]..=rect[2] + 1);
-        let y = rng.gen_range(rect[1]..=rect[3] + 1);
-
-        vec![x, y]
-    }
+    fn pick(&self, target: i32) -> i32 {}
 }
 
 /**
@@ -1092,10 +1060,45 @@ pub fn maximum_sum_of_heights(max_heights: Vec<i32>) -> i64 {
     res
 }
 
+pub fn minimum_mountain_removals(nums: Vec<i32>) -> i32 {
+    let n = nums.len();
+    let mut lis = vec![1; n];
+    let mut lds = vec![1; n];
+
+    // 计算 LIS
+    for i in 1..n {
+        for j in 0..i {
+            if nums[i] > nums[j] {
+                lis[i] = lis[i].max(lis[j] + 1);
+            }
+        }
+    }
+
+    // 计算 LDS
+    for i in (0..n - 1).rev() {
+        for j in (i + 1..n).rev() {
+            if nums[i] > nums[j] {
+                lds[i] = lds[i].max(lds[j] + 1);
+            }
+        }
+    }
+
+    // 找到最大的 lis[i] + lds[i] - 1
+    let mut max_length = 0;
+    for i in 0..n {
+        if lis[i] > 1 && lds[i] > 1 {
+            // 确保 i 可以作为山峰
+            max_length = max_length.max(lis[i] + lds[i] - 1);
+        }
+    }
+
+    (n as i32) - (max_length as i32)
+}
+
 fn main() {
     // let solution = Solution::new(vec![vec![-2, -2, 1, 1], vec![2, 2, 4, 6]]); // Example weights
     // println!("Picked index: {:?}", solution.pick());
 
-    let ans = maximum_sum_of_heights(vec![6, 5, 3, 9, 2, 7]);
+    let ans = minimum_mountain_removals(vec![4, 3, 2, 1, 1, 2, 3, 1]);
     println!("{:?}", ans);
 }
