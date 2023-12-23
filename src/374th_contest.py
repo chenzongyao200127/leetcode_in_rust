@@ -175,15 +175,37 @@ class Solution:
 
         return total_sequences
 
+
+
+class Solution:
+    def incremovableSubarrayCount(self, nums: List[int]) -> int:
+        n = len(nums)
+        if n == 0:
+            return 0
+
+        # Arrays to store the maximum to the left and the minimum to the right
+        max_left = [None] * n
+        min_right = [None] * n
+
+        # Fill in the max_left array
+        max_so_far = float('-inf')
+        for i in range(n):
+            max_so_far = max(max_so_far, nums[i])
+            max_left[i] = max_so_far
+
+        # Fill in the min_right array
+        min_so_far = float('inf')
+        for i in range(n - 1, -1, -1):
+            min_so_far = min(min_so_far, nums[i])
+            min_right[i] = min_so_far
+
+        ans = 0
+        for i in range(n):
+            if (i == 0 or max_left[i - 1] < nums[i]) and (i == n - 1 or nums[i] < min_right[i + 1]):
+                ans += 1
+
+        return ans
     
 s = Solution()
-ans = s.numberOfSequence(n = 5, sick = [0,4])
-print(ans) # 4
-
-s = Solution()
-ans = s.numberOfSequence(n = 4, sick = [1])
-print(ans) # 3
-
-s = Solution()
-ans = s.numberOfSequence(n = 5, sick = [0])
-print(ans) # 1
+ans = s.incremovableSubarrayCount([1,2,3,4])
+print(ans)
