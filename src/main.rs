@@ -1095,6 +1095,14 @@ pub fn minimum_mountain_removals(nums: Vec<i32>) -> i32 {
     (n as i32) - (max_length as i32)
 }
 
+pub fn minimum_perimeter(needed_apples: i64) -> i64 {
+    let mut n = 1;
+    while 2 * n * (n + 1) * (2 * n + 1) < needed_apples {
+        n += 1
+    }
+    return n * 8;
+}
+
 fn main() {
     // let solution = Solution::new(vec![vec![-2, -2, 1, 1], vec![2, 2, 4, 6]]); // Example weights
     // println!("Picked index: {:?}", solution.pick());
