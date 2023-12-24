@@ -206,6 +206,89 @@ class Solution:
 
         return ans
     
+
+
+class Solution:
+    def numberGame(self, nums: List[int]) -> List[int]:
+        nums.sort()
+        arr = []
+        for _ in range(0, len(nums)//2):
+            arr.append(nums[1])
+            arr.append(nums[0])
+            nums = nums[2:]
+        
+        return arr
+    
+    
+
+class Solution:
+    def maximizeSquareArea(self, m: int, n: int, hFences: List[int], vFences: List[int]) -> int:
+        hFences.sort()
+        vFences.sort()
+        a = [1] + hFences + [m]
+        b = [1] + vFences + [n]
+        MOD = 10 ** 9 + 7
+        
+        # print((a, b))
+        
+        rows = set()
+        for i in range(len(a)-1):
+            for j in range(i + 1, len(a)):
+                rows.add(a[j] - a[i])
+        
+        cols = set()
+        for i in range(len(b)-1):
+            for j in range(i + 1, len(b)):
+                cols.add(b[j] - b[i])
+
+        # print(rows)
+        # print(cols)
+        union_set = rows & cols
+        if not union_set:
+            return -1
+        else:
+            x = max(union_set)
+            return (x * x) % MOD        
+        
+class Solution:
+    def minimumCost(self, source: str, target: str, original: List[str], changed: List[str], cost: List[int]) -> int:
+        import string
+
+        # Initialize the graph with high costs
+        graph = {c1: {c2: float('inf') for c2 in string.ascii_lowercase} for c1 in string.ascii_lowercase}
+
+        # Set the cost of self-transformation to 0
+        for c in string.ascii_lowercase:
+            graph[c][c] = 0
+
+        # Add the transformations to the graph
+        for o, c, co in zip(original, changed, cost):
+            if co < graph[o][c]:
+                graph[o][c] = co
+
+        # Floyd-Warshall Algorithm to find all pairs shortest paths
+        for k in string.ascii_lowercase:
+            for i in string.ascii_lowercase:
+                for j in string.ascii_lowercase:
+                    graph[i][j] = min(graph[i][j], graph[i][k] + graph[k][j])
+
+        # Calculate the total cost of transformation
+        total_cost = 0
+        for s, t in zip(source, target):
+            if graph[s][t] == float('inf'):
+                return -1  # Transformation not possible
+            total_cost += graph[s][t]
+
+        return total_cost
+    
 s = Solution()
-ans = s.incremovableSubarrayCount([1,2,3,4])
+ans = s.minimumCost(source = "abcd", target = "acbe", original = ["a","b","c","c","e","d"], changed = ["b","c","b","e","b","e"], cost = [2,5,5,1,2,20])
+print(ans)
+
+s = Solution()
+ans = s.minimumCost(source = "aaaa", target = "bbbb", original = ["a","c"], changed = ["c","b"], cost = [1,2])
+print(ans)
+
+s = Solution()
+ans = s.minimumCost(source = "abcd", target = "abce", original = ["a"], changed = ["e"], cost = [10000])
 print(ans)
