@@ -1,59 +1,34 @@
-use std::collections::HashMap;
 
-// Definition for singly-linked list.
-// #[derive(PartialEq, Eq, Clone, Debug)]
-pub struct ListNode {
-    pub val: i32,
-    pub next: Option<Box<ListNode>>,
-}
+pub fn maximum_rows(matrix: Vec<Vec<i32>>, num_select: i32) -> i32 {
+    let n = matrix[0].len();
+    let mut ans = 0;
 
-impl ListNode {
-    #[inline]
-    fn new(val: i32) -> Self {
-        ListNode { val, next: None }
-    }
-}
-
-pub fn remove_nodes(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
-    // Reverse the linked list
-    let mut head = Solution::reverse(head);
-
-    // Remove nodes based on the logic
-    head = Solution::remove_nodes_internal(head);
-
-    // Reverse the list again to restore the original order
-    Solution::reverse(head)
-}
-
-fn reverse(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
-    let mut prev = None;
-    while let Some(mut current_node) = head.take() {
-        let next = current_node.next.take();
-        current_node.next = prev.take();
-        prev = Some(current_node);
-        head = next;
-    }
-    prev
-}
-
-fn remove_nodes_internal(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
-    let mut dummy = Box::new(ListNode::new(0));
-    dummy.next = head;
-    let mut cur_max = i32::MIN;
-    let mut cur_node = &mut dummy;
-
-    while let Some(ref mut next_node) = cur_node.next {
-        if next_node.val >= cur_max {
-            cur_max = next_node.val;
-            cur_node = cur_node.next.as_mut().unwrap();
-        } else {
-            cur_node.next = next_node.next.take();
+    // Iterate through all combinations using bitmasks
+    for mask in 0u32..(1 << n) {
+        if mask.count_ones() == num_select as u32 {
+            let mut cnt = 0;
+            'outer: for row in &matrix {
+                for (j, &item) in row.iter().enumerate() {
+                    // If the column is not selected but the cell is 1, skip this row
+                    if ((mask >> j) & 1) == 0 && item == 1 {
+                        continue 'outer;
+                        // break;
+                    }
+                }
+                // Row is valid, increment count
+                cnt += 1;
+            }
+            ans = ans.max(cnt);
         }
     }
 
-    dummy.next
+    ans
 }
 
 fn main() {
-    println!("Hello World!");
+    let ans = maximum_rows(
+        vec![vec![0, 0, 0], vec![1, 0, 1], vec![0, 1, 1], vec![0, 0, 1]],
+        2,
+    );
+    println!("{:?}", ans);
 }
