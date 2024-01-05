@@ -27,8 +27,8 @@ impl Solution {
     }
 }
 
-// To implement the function `can_see_persons_count` in Rust, we need to follow the same logic as previously described. 
-// We will use a stack to efficiently determine the number of people each person can see to their right in the queue. 
+// To implement the function `can_see_persons_count` in Rust, we need to follow the same logic as previously described.
+// We will use a stack to efficiently determine the number of people each person can see to their right in the queue.
 // The stack will keep track of indices of the people in the queue.
 
 // Here's how we can implement this:
@@ -39,7 +39,6 @@ impl Solution {
 // 4. After the loop, we process the remaining indices in the stack. These are the people who couldn't see anyone taller than themselves to their right.
 
 // Let's write the Rust code for this:
-
 
 impl Solution {
     pub fn can_see_persons_count(heights: Vec<i32>) -> Vec<i32> {
@@ -66,6 +65,5 @@ impl Solution {
         answer
     }
 }
-
 
 // This implementation should efficiently compute the number of people each person in the queue can see to their right, adhering to the rules specified in your problem statement.
