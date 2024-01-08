@@ -1,5 +1,3 @@
-use std::process::id;
-
 pub fn maximum_rows(matrix: Vec<Vec<i32>>, num_select: i32) -> i32 {
     let n = matrix[0].len();
     let mut ans = 0;
