@@ -55,7 +55,7 @@ class Solution:
                     prime_list.append(i)
                     for multiple in range(i * i, n + 1, i):
                         is_prime[multiple] = False
-                        
+
             for i in range(int(n**0.5) + 1, n + 1):
                 if is_prime[i]:
                     prime_list.append(i)
@@ -66,12 +66,12 @@ class Solution:
         result = []
 
         for p in list(primes):
-            if n - p in primes and p <= (n // 2) :
+            if n - p in primes and p <= (n // 2):
                 result.append([p, n - p])
         result.sort()
         return result
-    
-    
+
+
 # 线性筛法（Linear Sieve）：线性筛法是一种时间复杂度为O(n)的筛法，适用于筛选较大范围内的素数。
 # 其基本原理和厄拉多塞筛法类似，但线性筛法在标记合数时有所不同：
 # 当一个数被筛选到时，线性筛会让这个数只被它的最小质因数筛掉，避免了重复标记，从而达到了线性的时间复杂度。

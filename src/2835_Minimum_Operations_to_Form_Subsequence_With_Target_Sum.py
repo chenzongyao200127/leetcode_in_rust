@@ -13,6 +13,8 @@
 # 数组中一个 子序列 是通过删除原数组中一些元素，并且不改变剩余元素顺序得到的剩余数组。
 from typing import List
 from collections import Counter
+
+
 class Solution:
     def minOperations(self, nums: List[int], target: int) -> int:
         if sum(nums) < target:
@@ -21,17 +23,17 @@ class Solution:
         count = Counter(nums)
         operations = total_sum = 0
 
-        for i in range(31):  
+        for i in range(31):
             total_sum += count[1 << i] << i
-            
+
             if (target >> i & 1) == 0:
                 continue
-            
+
             total_sum -= 1 << i
-            
+
             if total_sum >= 0:
                 continue
-            
+
             for j in range(i + 1, 31):
                 if count[1 << j]:
                     operations += j - i
@@ -40,4 +42,3 @@ class Solution:
                     break
 
         return operations
-                

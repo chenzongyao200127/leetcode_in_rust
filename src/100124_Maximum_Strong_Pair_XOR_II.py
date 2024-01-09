@@ -3,6 +3,7 @@
 
 from typing import List
 
+
 class Solution:
     def maximumStrongPairXor(self, nums: List[int]) -> int:
         nums.sort()
@@ -18,7 +19,7 @@ class Solution:
                     ans = new_ans  # 这个比特位可以是 1
                     break
                 d[mask_y] = y
-                
+
         return ans
 
 
@@ -28,6 +29,7 @@ class Node:
     def __init__(self):
         self.children = [None, None]
         self.cnt = 0  # 子树大小
+
 
 class Trie:
     HIGH_BIT = 19
@@ -69,6 +71,7 @@ class Trie:
             cur = cur.children[bit]
         return ans
 
+
 class Solution:
     def maximumStrongPairXor(self, nums: List[int]) -> int:
         nums.sort()
@@ -91,6 +94,7 @@ class Node:
     def __init__(self):
         self.children = [None, None]  # Binary trie nodes
         self.cnt = 0  # Count of numbers in the subtree
+
 
 class Trie:
     # Define the highest bit we will consider (0-indexed, 19 for 32-bit integers)

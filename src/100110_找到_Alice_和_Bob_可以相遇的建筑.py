@@ -40,6 +40,11 @@
 # 要用 Python 实现一个堆，通常可以通过编写一个类来封装相关的操作。
 # 这里我将为你展示一个简单的最小堆的实现。最小堆中，每个父节点的值都小于或等于其子节点的值。基本操作包括插入（上浮）、删除（下沉）、以及构建堆。
 
+from collections import heapq
+from typing import List
+import heapq
+
+
 class MinHeap:
     def __init__(self):
         self.heap = []
@@ -105,8 +110,6 @@ class MinHeap:
 # 请注意，这个实现是一个基本的示例，可能需要根据具体的应用场景进行调整或优化。
 
 
-
-
 # Python 的标准库中的 `heapq` 模块提供了对堆的支持，特别是最小堆。这个模块包括一些重要的函数来管理堆，下面是其中一些最常用的函数：
 
 # 1. **`heappush(heap, item)`**：
@@ -121,9 +124,6 @@ class MinHeap:
 #    - 分别返回数据集中最大和最小的 `n` 个元素。这些函数使用堆算法实现，对于找到相对较小的 `n` 个元素时非常有效。
 
 # 下面是一个使用 `heapq` 的简单示例，展示了如何创建一个堆并进行基本操作：
-
-
-import heapq
 
 # 创建一个空堆
 heap = []
@@ -281,11 +281,11 @@ def merge_sort(arr):
             j += 1
             k += 1
 
+
 # 测试归并排序
 arr = [12, 11, 13, 5, 6, 7]
 merge_sort(arr)
 print("Sorted array is:", arr)
-
 
 
 # ### 插入排序（Insertion Sort）
@@ -322,20 +322,20 @@ def insertion_sort(arr):
     for i in range(1, len(arr)):
         key = arr[i]
         j = i-1
-        while j >=0 and key < arr[j]:  # 将元素向右移动，为插入操作腾出空间
+        while j >= 0 and key < arr[j]:  # 将元素向右移动，为插入操作腾出空间
             arr[j+1] = arr[j]
             j -= 1
         arr[j+1] = key
+
 
 # 测试插入排序
 arr = [12, 11, 13, 5, 6, 7]
 insertion_sort(arr)
 print("Sorted array is:", arr)
 
-from typing import List
-from collections import heapq
 
 # 离线查询 + 最小堆
+
 class Solution:
     def leftmostBuildingQueries(self, heights: List[int], queries: List[List[int]]) -> List[int]:
         ans = [-1] * len(queries)
@@ -356,9 +356,9 @@ class Solution:
                 heapq.heappush(h, p)  # 后面再回答
         return ans
 
+
 # 可读性优化
-from typing import List
-from collections import heapq
+
 
 class Solution:
     def leftmostBuildingQueries(self, heights: List[int], queries: List[List[int]]) -> List[int]:
@@ -373,9 +373,11 @@ class Solution:
             if left > right:
                 left, right = right, left  # 保证 start <= end
             if left == right or heights[left] < heights[right]:
-                answers[query_index] = right  # 如果 start 和 end 相等或 start 建筑更矮，直接跳到 end
+                # 如果 start 和 end 相等或 start 建筑更矮，直接跳到 end
+                answers[query_index] = right
             else:
-                left_jump[right].append((heights[left], query_index))  # 否则，记录需要从 start 跳跃的请求
+                # 否则，记录需要从 start 跳跃的请求
+                left_jump[right].append((heights[left], query_index))
 
         # 使用最小堆处理跳跃请求
         min_heap = []
@@ -391,8 +393,6 @@ class Solution:
 
         return answers
 
-                
 
-        
 # 输入：heights = [6,4,8,5,2,7], queries = [[0,1],[0,3],[2,4],[3,4],[2,2]]
-# 输出：[2,5,-1,5,2]        
+# 输出：[2,5,-1,5,2]

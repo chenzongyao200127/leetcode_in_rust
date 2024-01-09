@@ -30,15 +30,17 @@
 
 
 # 方法一：枚举全排列
+from collections import deque
 from typing import List
 from itertools import permutations
+
 
 class Solution:
     def minimumMoves(self, grid: List[List[int]]) -> int:
         # 初始化起点和终点列表
         start_points = []
         end_points = []
-        
+
         # 遍历网格，寻找起点和终点
         for i, row in enumerate(grid):
             for j, value in enumerate(row):
@@ -48,10 +50,10 @@ class Solution:
                 # 当格子的值为0时，将其作为一个终点
                 elif value == 0:
                     end_points.append((i, j))
-        
+
         # 初始化最小移动次数为无穷大
         min_moves = float("inf")
-        
+
         # 遍历所有起点的可能排列
         for start_permutation in permutations(start_points):
             current_moves = 0
@@ -60,39 +62,37 @@ class Solution:
                 current_moves += abs(x1 - x2) + abs(y1 - y2)
             # 更新最小移动次数
             min_moves = min(min_moves, current_moves)
-        
+
         return min_moves
 
 
-
 # BFS
-from typing import List
-from collections import deque
+
 
 class Solution:
     def minimumMoves(self, grid: List[List[int]]) -> int:
         N = 3  # 网格的大小
-        
+
         # 定义目标状态：即每个位置恰好有一个石头的状态
         target = tuple(sorted((i, j) for i in range(N) for j in range(N)))
         stones = []
-        
+
         # 遍历网格，找到所有石头的位置
         for i in range(N):
             for j in range(N):
                 # 对于多个石头在同一位置的情况，记录所有石头的位置
                 for k in range(grid[i][j]):
                     stones.append((i, j))
-                    
+
         # 初始化石头的起始状态
         start = tuple(stones)
 
         # 使用BFS搜索，queue中存储当前的状态和到达该状态所需的步数
         queue = deque([(start, 0)])
-        
+
         # 使用集合记录已经访问过的状态，避免重复搜索
         visited = set([start])
-        
+
         # 当队列非空时，继续搜索
         while queue:
             # 从队列头部取出一个状态
@@ -100,27 +100,27 @@ class Solution:
             # 如果该状态为目标状态，返回所需步数
             if state == target:
                 return steps
-            
+
             # 遍历当前状态中的每一个石头
             for i, (x, y) in enumerate(state):
                 # 尝试四个方向的移动
                 for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
                     # 计算石头移动后的新位置
                     nx, ny = x + dx, y + dy
-                    
+
                     # 检查新位置是否在网格内，且该位置没有其他石头
                     if 0 <= nx < N and 0 <= ny < N and (nx, ny) not in state:
                         # 创建新的状态，并更新移动后的石头位置
                         newState = list(state)
                         newState[i] = (nx, ny)
-                        
+
                         # 对新状态的石头位置进行排序，确保状态的唯一性
                         newState = tuple(sorted(newState))
-                        
+
                         # 如果新状态没有被访问过，将其加入队列和访问集合
                         if newState not in visited:
                             visited.add(newState)
                             queue.append((newState, steps + 1))
-                            
+
         # 如果没有找到解，返回-1
         return -1
