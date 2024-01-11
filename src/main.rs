@@ -45,7 +45,9 @@ pub fn can_see_persons_count(heights: Vec<i32>) -> Vec<i32> {
     answer
 }
 
+pub fn add_minimum(word: String) -> i32 {}
+
 fn main() {
-    let ans = can_see_persons_count(vec![10, 6, 8, 5, 11, 9]);
+    let ans = add_minimum("aaaaab".to_string());
     println!("{:?}", ans);
 }
