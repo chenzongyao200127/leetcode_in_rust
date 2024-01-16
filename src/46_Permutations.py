@@ -11,20 +11,21 @@ class Solution:
     def permute(self, nums: List[int]) -> List[List[int]]:
         ans = []
         n = len(nums)
+
         def dfs(com, nums, n):
             if len(com) == n:
                 ans.append(com[:])
-            
+
             for i in range(len(nums)):
                 com.append(nums[i])
                 new_num = nums[:i] + nums[i+1:]
                 dfs(com, new_num, n)
                 com.pop()
-        
+
         dfs([], nums, n)
         return ans
-    
-    
+
+
 class Solution:
     def permute(self, nums: List[int]) -> List[List[int]]:
         result = [[]]
@@ -46,11 +47,11 @@ class Solution:
         :type nums: List[int]
         :rtype: List[List[int]]
         """
-        def backtrack(first = 0):
+        def backtrack(first=0):
             # 所有数都填完了
-            if first == n:  
+            if first == n:
                 res.append(nums[:])
-                
+
             for i in range(first, n):
                 # 动态维护数组
                 nums[first], nums[i] = nums[i], nums[first]
@@ -58,7 +59,7 @@ class Solution:
                 backtrack(first + 1)
                 # 撤销操作
                 nums[first], nums[i] = nums[i], nums[first]
-        
+
         n = len(nums)
         res = []
         backtrack()

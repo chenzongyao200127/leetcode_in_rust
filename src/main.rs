@@ -115,7 +115,81 @@ pub fn repeat_limited_string(s: String, repeat_limit: i32) -> String {
     result
 }
 
+use std::collections::HashMap;
+
+struct Solution;
+
+impl Solution {
+    pub fn count(num1: String, num2: String, min_sum: i32, max_sum: i32) -> i32 {
+        fn calc(
+            high: &str,
+            min_sum: i32,
+            max_sum: i32,
+            cache: &mut HashMap<(usize, i32, bool), i32>,
+        ) -> i32 {
+            fn dfs(
+                index: usize,
+                sum: i32,
+                is_limit: bool,
+                high_chars: &Vec<char>,
+                min_sum: i32,
+                max_sum: i32,
+                cache: &mut HashMap<(usize, i32, bool), i32>,
+            ) -> i32 {
+                if sum > max_sum {
+                    return 0;
+                }
+                if index == high_chars.len() {
+                    return (sum >= min_sum) as i32;
+                }
+                if let Some(&cached) = cache.get(&(index, sum, is_limit)) {
+                    return cached;
+                }
+
+                let mut result = 0;
+                let upper_bound = if is_limit {
+                    high_chars[index].to_digit(10).unwrap() as i32
+                } else {
+                    9
+                };
+                for digit in 0..=upper_bound {
+                    result += dfs(
+                        index + 1,
+                        sum + digit,
+                        is_limit && digit == upper_bound,
+                        high_chars,
+                        min_sum,
+                        max_sum,
+                        cache,
+                    );
+                }
+
+                cache.insert((index, sum, is_limit), result);
+                result
+            }
+
+            let high_chars = high.chars().collect::<Vec<char>>();
+            let mut cache = HashMap::new();
+            dfs(0, 0, true, &high_chars, min_sum, max_sum, &mut cache)
+        }
+
+        let is_num1_valid = {
+            let num1_sum: i32 = num1.chars().map(|c| c.to_digit(10).unwrap() as i32).sum();
+            min_sum <= num1_sum && num1_sum <= max_sum
+        };
+
+        (calc(&num2, min_sum, max_sum, &mut HashMap::new())
+            - calc(&num1, min_sum, max_sum, &mut HashMap::new())
+            + is_num1_valid as i32)
+            % 1_000_000_007
+    }
+}
+
 fn main() {
-    let ans = max_sliding_window(vec![1, 3, -1, -3, 5, 3, 6, 7], 3);
-    println!("{:?}", ans);
+    let num1 = "123".to_string();
+    let num2 = "456".to_string();
+    let min_sum = 10;
+    let max_sum = 100;
+    let result = Solution::count(num1, num2, min_sum, max_sum);
+    println!("Result: {}", result);
 }
