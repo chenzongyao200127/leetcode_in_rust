@@ -1,7 +1,7 @@
 # 126_Word_Ladder_II
 # https://leetcode.cn/problems/word-ladder-ii/
 
-# 按字典 wordList 完成从单词 beginWord 到单词 endWord 转化，一个表示此过程的 转换序列 
+# 按字典 wordList 完成从单词 beginWord 到单词 endWord 转化，一个表示此过程的 转换序列
 # 是形式上像 beginWord -> s1 -> s2 -> ... -> sk 这样的单词序列，并满足：
 
 # 每对相邻的单词之间仅有单个字母不同。
@@ -20,25 +20,25 @@ def findLadders(beginWord: str, endWord: str, wordList: List[str]) -> List[List[
     # 如果endWord不在wordList中，直接返回空列表
     if endWord not in wordList:
         return []
-    
+
     # 获取beginWord的长度
     L = len(beginWord)
-    
+
     # 使用defaultdict建立字典，字典的值是一个列表
     all_combo_dict = defaultdict(list)
-    
+
     # 遍历wordList，建立通用状态到所有可达单词的映射
     for word in wordList:
         for i in range(L):
             all_combo_dict[word[:i] + "*" + word[i+1:]].append(word)
-    
+
     # 创建一个双端队列，将beginWord和其对应路径作为起点
     queue = deque([(beginWord, [beginWord])])
     # 记录已经访问过的单词
     visited = {beginWord: True}
     # 最短路径结果
     ans = []
-    
+
     # 进行广度优先搜索
     while queue and not ans:
         # 记录在这一层访问过的节点，防止在这一层出现重复访问
@@ -65,13 +65,13 @@ def findLadders(beginWord: str, endWord: str, wordList: List[str]) -> List[List[
                 pprint(queue)
             # 更新已访问过的节点
             visited.update(level_visited)
-    
+
     # 返回所有最短路径
     return ans
 
-    
 
-pprint(findLadders(beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log","cog"]))
-pprint(findLadders(beginWord = "hot", endWord = "dog", wordList = ["hot","dog"]))
+pprint(findLadders(beginWord="hit", endWord="cog",
+       wordList=["hot", "dot", "dog", "lot", "log", "cog"]))
+pprint(findLadders(beginWord="hot", endWord="dog", wordList=["hot", "dog"]))
 # "hit" -> "hot" -> "dot" -> "dog" -> "cog"
 # "hit" -> "hot" -> "lot" -> "log" -> "cog"
