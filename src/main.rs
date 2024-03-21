@@ -185,6 +185,61 @@ impl Solution {
     }
 }
 
+struct FrequencyTracker {
+    num_freq: HashMap<i32, i32>,
+    freq_count: HashMap<i32, i32>,
+}
+
+impl FrequencyTracker {
+    fn new() -> Self {
+        FrequencyTracker {
+            num_freq: HashMap::new(),
+            freq_count: HashMap::new(),
+        }
+    }
+
+    fn add(&mut self, number: i32) {
+        let freq = self.num_freq.entry(number).or_insert(0);
+        *self
+            .freq_count
+            .entry(*freq)
+            .and_modify(|e| *e -= 1)
+            .or_insert(0);
+        *freq += 1;
+        *self.freq_count.entry(*freq).or_insert(0) += 1;
+    }
+
+    fn delete_one(&mut self, number: i32) {
+        if let Some(freq) = self.num_freq.get_mut(&number) {
+            *self
+                .freq_count
+                .entry(*freq)
+                .and_modify(|e| *e -= 1)
+                .or_insert(0);
+            *freq -= 1;
+            if *freq > 0 {
+                *self.freq_count.entry(*freq).or_insert(0) += 1;
+            } else {
+                self.num_freq.remove(&number);
+            }
+        }
+    }
+
+    fn has_frequency(&self, frequency: i32) -> bool {
+        self.freq_count
+            .get(&frequency)
+            .map_or(false, |&count| count > 0)
+    }
+}
+
+/**
+ * Your FrequencyTracker object will be instantiated and called as such:
+ * let obj = FrequencyTracker::new();
+ * obj.add(number);
+ * obj.delete_one(number);
+ * let ret_3: bool = obj.has_frequency(frequency);
+ */
+
 fn main() {
     let num1 = "123".to_string();
     let num2 = "456".to_string();

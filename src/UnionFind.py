@@ -9,7 +9,7 @@ class UnionFind:
         self.n = n
         # Initialize the count of distinct sets
         self.setCount = n
-    
+
     def findset(self, x: int) -> int:
         # Find the root of the set to which 'x' belongs
         # If 'x' is its own parent, it is the root
@@ -18,7 +18,7 @@ class UnionFind:
         # Path compression: update the parent of 'x' to its root
         self.parent[x] = self.findset(self.parent[x])
         return self.parent[x]
-    
+
     def unite(self, x: int, y: int) -> bool:
         # Find the roots of the sets to which 'x' and 'y' belong
         x, y = self.findset(x), self.findset(y)
@@ -35,9 +35,8 @@ class UnionFind:
         # Decrease the number of distinct sets
         self.setCount -= 1
         return True
-    
+
     def connected(self, x: int, y: int) -> bool:
         # Check if 'x' and 'y' are in the same set
         x, y = self.findset(x), self.findset(y)
         return x == y
-
