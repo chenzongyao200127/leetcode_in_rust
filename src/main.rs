@@ -115,18 +115,6 @@ pub fn repeat_limited_string(s: String, repeat_limit: i32) -> String {
     result
 }
 
-struct Solution;
-
-impl Solution {
-    pub fn move_zeroes(nums: &mut Vec<i32>) {
-        let len = nums.len();
-        nums.retain(|x| *x != 0);
-        nums.resize(len, 0);
-    }
-}
-
 fn main() {
-    let mut case = vec![0, 1, 2, 0, 3];
-    Solution::move_zeroes(&mut case);
-    println!("{:?}", case);
+    println!("Hello World");
 }
