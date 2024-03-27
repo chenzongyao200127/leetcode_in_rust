@@ -47,6 +47,8 @@ pub fn can_see_persons_count(heights: Vec<i32>) -> Vec<i32> {
 
 use std::collections::{HashMap, HashSet, VecDeque};
 
+use itertools::Itertools;
+
 pub fn max_sliding_window(nums: Vec<i32>, k: i32) -> Vec<i32> {
     let n = nums.len();
     let k = k as usize;
@@ -239,6 +241,17 @@ pub fn count_ways(mut ranges: Vec<Vec<i32>>) -> i32 {
     println!("{:?}", splits);
     let two: i32 = 2;
     two.pow(n as u32) % MOD
+}
+
+pub fn group_anagrams(strs: Vec<String>) -> Vec<Vec<String>> {
+    let mut map: HashMap<String, Vec<String>> = HashMap::new();
+    for s in strs {
+        let mut chars: Vec<char> = s.chars().collect();
+        chars.sort_unstable();
+        let key = chars.into_iter().collect::<String>();
+        map.entry(key).or_default().push(s);
+    }
+    map.into_iter().map(|(_, v)| v).collect()
 }
 
 fn main() {
