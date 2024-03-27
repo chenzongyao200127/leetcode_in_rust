@@ -254,6 +254,25 @@ pub fn group_anagrams(strs: Vec<String>) -> Vec<Vec<String>> {
     map.into_iter().map(|(_, v)| v).collect()
 }
 
+pub fn longest_consecutive(nums: Vec<i32>) -> i32 {
+    let mut set: HashSet<i32> = HashSet::new();
+    for i in nums.into_iter() {
+        set.insert(i);
+    }
+    let mut ans = 0;
+    for i in set.iter() {
+        if !set.contains(&(i - 1)) {
+            let mut cnt = 1;
+            while set.contains(&(i + cnt)) {
+                cnt += 1;
+            }
+            ans = ans.max(cnt);
+        }
+    }
+
+    ans
+}
+
 fn main() {
     println!("Hello World");
     let ans = count_ways(vec![vec![0, 0], vec![8, 9], vec![12, 13], vec![1, 3]]);
