@@ -59,7 +59,12 @@
     "tuple": "cpp",
     "type_traits": "cpp",
     "typeinfo": "cpp",
-    "bit": "cpp"
+    "bit": "cpp",
+    "chrono": "cpp",
+    "condition_variable": "cpp",
+    "ratio": "cpp",
+    "mutex": "cpp",
+    "thread": "cpp"
   },
   "rust-analyzer.showUnlinkedFileNotification": false,
   "C_Cpp_Runner.msvcBatchPath": "",
