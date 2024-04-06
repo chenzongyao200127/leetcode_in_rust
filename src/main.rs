@@ -1,116 +1,85 @@
-pub fn max_area(height: Vec<i32>) -> i32 {
-    let (mut left, mut right) = (0, height.len() - 1);
-    let mut max_area = 0;
+// Import necessary modules from the reqwest and scraper crates.
+use reqwest::blocking::Client;
+use reqwest::Url;
+use scraper::{Html, Selector};
+use thiserror::Error;
 
-    while left < right {
-        let width = (right - left) as i32;
-        let (left_height, right_height) = (height[left], height[right]);
-
-        max_area = max_area.max(width * left_height.min(right_height));
-
-        if left_height < right_height {
-            left += 1;
-        } else {
-            right -= 1;
-        }
-    }
-
-    max_area
+// Define a custom error type for the program using thiserror crate.
+#[derive(Error, Debug)]
+enum Error {
+    #[error("request error: {0}")]
+    ReqwestError(#[from] reqwest::Error), // Error for handling reqwest-related issues.
+    #[error("bad http response: {0}")]
+    BadResponse(String), // Error for non-successful HTTP responses.
 }
 
-pub fn trap(height: Vec<i32>) -> i32 {
-    let mut stack = Vec::new();
-    let mut ans = 0;
-    for (idx, &h) in height.iter().enumerate() {
-        while let Some(&last_idx) = stack.last() {
-            if height[last_idx] < h {
-                let low = stack.pop().unwrap();
-                if let Some(&last_idx) = stack.last() {
-                    let bounded_height = h.min(height[last_idx]) - height[low];
-                    ans += bounded_height * (idx - last_idx - 1) as i32;
-                }
-            } else {
-                break;
+// A struct to represent a crawl command with a URL and a flag to extract links.
+#[derive(Debug)]
+struct CrawlCommand {
+    url: Url,
+    extract_links: bool,
+}
+
+// Function to visit a webpage and optionally extract all links from it.
+fn visit_page(client: &Client, command: &CrawlCommand) -> Result<Vec<Url>, Error> {
+    // Print the URL being visited.
+    println!("Checking {:#}", command.url);
+    // Perform an HTTP GET request on the URL.
+    let response = client.get(command.url.clone()).send()?;
+    // Check for HTTP success status, return error if not successful.
+    if !response.status().is_success() {
+        return Err(Error::BadResponse(response.status().to_string()));
+    }
+
+    // Vector to store found URLs.
+    let mut link_urls = Vec::new();
+    // If not extracting links, return the empty vector.
+    if !command.extract_links {
+        return Ok(link_urls);
+    }
+
+    // Parse the body of the response to extract links.
+    let base_url = response.url().to_owned();
+    let body_text = response.text()?;
+    let document = Html::parse_document(&body_text);
+
+    // Create a selector to find 'a' elements (hyperlinks).
+    let selector = Selector::parse("a").unwrap();
+    // Select all 'a' elements and extract the 'href' attributes.
+    let href_values = document
+        .select(&selector)
+        .filter_map(|element| element.value().attr("href"));
+    for href in href_values {
+        // Attempt to resolve the href to a full URL.
+        match base_url.join(href) {
+            Ok(link_url) => {
+                link_urls.push(link_url); // Add valid URL to the list.
+            }
+            Err(err) => {
+                // Print an error message for any href that can't be parsed into a URL.
+                println!("On {base_url:#}: ignored unparsable {href:?}: {err}");
             }
         }
-        stack.push(idx);
     }
-
-    ans
+    // Return the list of found URLs.
+    Ok(link_urls)
 }
 
-pub fn find_anagrams(s: String, p: String) -> Vec<i32> {
-    let s = s.chars().collect::<Vec<char>>();
-    let mut cnt = vec![0; 26];
-    let mut ans = vec![];
-    for &c in p.as_bytes() {
-        cnt[(c - 'a' as u8) as usize] += 1;
-    }
-    let mut r = p.len() - 1;
-    let mut l = 0;
-    let mut window = vec![0; 26];
-    if p.len() > s.len() {
-        return ans;
-    }
-    for i in 0..p.len() {
-        window[(s[i] as u8 - 'a' as u8) as usize] += 1;
-    }
-    // println!("{:?}", cnt);
-    while l < s.len() - p.len() {
-        // println!("{:?}", window);
-        if window == cnt {
-            ans.push(l as i32);
-        }
-        l += 1;
-        r += 1;
-        window[(s[l - 1] as u8 - 'a' as u8) as usize] -= 1;
-        window[(s[r] as u8 - 'a' as u8) as usize] += 1;
-    }
-    if window == cnt {
-        ans.push(l as i32);
-    }
-
-    ans
-}
-
-// Definition for a binary tree node.
-#[derive(Debug, PartialEq, Eq)]
-pub struct TreeNode {
-    pub val: i32,
-    pub left: Option<Rc<RefCell<TreeNode>>>,
-    pub right: Option<Rc<RefCell<TreeNode>>>,
-}
-
-impl TreeNode {
-    #[inline]
-    pub fn new(val: i32) -> Self {
-        TreeNode {
-            val,
-            left: None,
-            right: None,
-        }
-    }
-}
-
-use std::cell::RefCell;
-use std::rc::Rc;
-
-pub fn inorder_traversal(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
-    let mut ans = Vec::new();
-    dfs(&root, &mut ans);
-    ans
-}
-
-pub fn dfs(node: &Option<Rc<RefCell<TreeNode>>>, ans: &mut Vec<i32>) {
-    if let Some(node) = node {
-        let node_borrowed = node.borrow();
-        dfs(&node_borrowed.left, ans);
-        ans.push(node_borrowed.val);
-        dfs(&node_borrowed.right, ans);
-    }
-}
-
+// The main function to run the crawler.
 fn main() {
-    let ans = trap(vec![4, 2, 0, 3, 2, 5]);
-    assert_eq!(ans, 9);
+    // Create a new client instance for making HTTP requests.
+    let client = Client::new();
+    // Parse the starting URL.
+    let start_url = Url::parse("https://www.google.org").unwrap();
+    // Create a crawl command with the URL and flag to extract links.
+    let crawl_command = CrawlCommand {
+        url: start_url,
+        extract_links: true,
+    };
+
+    // Visit the page and handle the result.
+    match visit_page(&client, &crawl_command) {
+        Ok(links) => println!("Links: {links:#?}"), // Print out all found links.
+        Err(err) => println!("Could not extract links: {err:#}"), // Print out an error if occurred.
+    }
 }
