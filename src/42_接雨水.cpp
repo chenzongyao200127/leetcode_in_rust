@@ -6,6 +6,7 @@
 #include <algorithm>
 using namespace std;
 
+// 单调栈写法
 class Solution
 {
     int trap(vector<int> &height)
@@ -27,5 +28,44 @@ class Solution
             stk.push(idx);
         }
         return ans;
+    }
+};
+
+// 双指针
+#include <vector>
+#include <algorithm> // For std::max and std::min
+
+class Solution
+{
+public:
+    int trap(const std::vector<int> &height)
+    {
+        std::size_t n = height.size();
+        if (n == 0)
+        { // Handle empty vector case
+            return 0;
+        }
+
+        std::vector<int> leftMax(n);
+        leftMax[0] = height[0];
+        for (std::size_t i = 1; i < n; ++i)
+        {
+            leftMax[i] = std::max(leftMax[i - 1], height[i]);
+        }
+
+        std::vector<int> rightMax(n);
+        rightMax[n - 1] = height[n - 1];
+        for (std::size_t i = n - 1; i-- > 0;)
+        {
+            rightMax[i] = std::max(rightMax[i + 1], height[i]);
+        }
+
+        int res = 0;
+        for (std::size_t i = 0; i < n; ++i)
+        {
+            res += std::min(rightMax[i], leftMax[i]) - height[i];
+        }
+
+        return res;
     }
 };
