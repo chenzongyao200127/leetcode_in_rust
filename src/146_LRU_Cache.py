@@ -22,6 +22,10 @@
 # 最多调用 2 * 105 次 get 和 put
 
 # 超时
+from collections import OrderedDict
+from typing import Optional
+
+
 class LRUCache:
 
     def __init__(self, capacity: int):
@@ -33,11 +37,11 @@ class LRUCache:
             return -1
         else:
             v, _ = self.map[key]
-            
+
             # Increment count for all other keys
             for k in self.map:
                 self.map[k] = (self.map[k][0], self.map[k][1] + 1)
-                
+
             # Reset count for accessed key
             self.map[key] = (v, 0)
             return v
@@ -47,7 +51,7 @@ class LRUCache:
             # Reset count for existing key and increment others
             for k in self.map:
                 self.map[k] = (self.map[k][0], self.map[k][1] + 1)
-                
+
             self.map[key] = (value, 0)
         else:
             if len(self.map) >= self.capacity:
@@ -58,21 +62,17 @@ class LRUCache:
             # Increment count for all keys
             for k in self.map:
                 self.map[k] = (self.map[k][0], self.map[k][1] + 1)
-                
+
             # Add new item with count 0
             self.map[key] = (value, 0)
 
-        
-        
-
 
 # Your LRUCache object will be instantiated and called as such:
-capacity=3000
+capacity = 3000
 obj = LRUCache(capacity)
 # param_1 = obj.get(key)
 # obj.put(key,value)
 
-from typing import Optional
 
 class Node:
     # 提高访问属性的速度，并节省内存
@@ -81,18 +81,7 @@ class Node:
     def __init__(self, key=0, value=0):
         self.key = key
         self.value = value
-        
 
-from typing import Optional
-
-class Node:
-    # 提高访问属性的速度，并节省内存
-    __slots__ = 'prev', 'next', 'key', 'value'
-
-    def __init__(self, key=0, value=0):
-        self.key = key
-        self.value = value
-        
 
 class LRUCache:
 
@@ -110,11 +99,10 @@ class LRUCache:
         self.remove(node)
         self.push_front(node)
         return node
-    
+
     def get(self, key: int) -> int:
         node = self.get_node(key)
         return node.value if node else -1
-
 
     def put(self, key: int, value: int) -> None:
         node = self.get_node(key)
@@ -127,7 +115,7 @@ class LRUCache:
             back_node = self.dummy.prev
             del self.key_to_node[back_node.key]
             self.remove(back_node)
-        
+
     # 删除一个节点（抽出一本书）
     def remove(self, x: Node) -> None:
         x.prev.next = x.next
@@ -139,15 +127,13 @@ class LRUCache:
         x.next = self.dummy.next
         x.prev.next = x
         x.next.prev = x
-        
+
 
 # Your LRUCache object will be instantiated and called as such:
 # obj = LRUCache(capacity)
 # param_1 = obj.get(key)
 # obj.put(key,value)
 
-
-from collections import OrderedDict
 
 class LRUCache:
     def __init__(self, capacity: int):
@@ -177,39 +163,39 @@ class LRUCache:
 # cache.put(3, 3) # evicts key 2
 # print(cache.get(2)) # returns -1 (not found)
 
-### OrderedDict 
+# OrderedDict
 # `OrderedDict` is a subclass of the dictionary class in Python's `collections` module.
-# Introduced in Python 2.7, it retains the order in which its elements are added, 
-# a feature that was not available in the standard dictionary (`dict`) in earlier versions of Python. 
+# Introduced in Python 2.7, it retains the order in which its elements are added,
+# a feature that was not available in the standard dictionary (`dict`) in earlier versions of Python.
 # Here's a detailed overview:
 
 # ### Key Features of OrderedDict
 
-# 1. **Order Preservation**: 
-# The main feature of an `OrderedDict` is that it maintains the order of elements as they are inserted. 
+# 1. **Order Preservation**:
+# The main feature of an `OrderedDict` is that it maintains the order of elements as they are inserted.
 # When you iterate over an `OrderedDict`, elements are returned in the order they were added.
 
-# 2. **Equivalent to Regular Dictionary in Python 3.7+**: 
-# Starting from Python 3.7, the built-in `dict` type also maintains insertion order by default. 
+# 2. **Equivalent to Regular Dictionary in Python 3.7+**:
+# Starting from Python 3.7, the built-in `dict` type also maintains insertion order by default.
 # However, `OrderedDict` is still relevant because it has some unique features.
 
-# 3. **Equality Testing**: 
-# An `OrderedDict` considers the order of elements when checking for equality. 
-# Two `OrderedDict` objects are considered equal if their order and contents are the same. 
+# 3. **Equality Testing**:
+# An `OrderedDict` considers the order of elements when checking for equality.
+# Two `OrderedDict` objects are considered equal if their order and contents are the same.
 # This is in contrast to standard `dict`, where order is not considered in equality checks.
 
 # ### Methods and Operations
 
 # `OrderedDict` supports all methods and operations aWvailable in a regular dictionary, plus a few additional methods:
 
-# - **`popitem(last=True)`**: This method removes and returns a `(key, value)` pair. 
+# - **`popitem(last=True)`**: This method removes and returns a `(key, value)` pair.
 # The pairs are returned in LIFO order if `last` is true or FIFO order if false.
 
-# - **`move_to_end(key, last=True)`**: This method moves an existing key to either end of the `OrderedDict`. 
-# If `last` is true (default), the item is moved to the right end. 
+# - **`move_to_end(key, last=True)`**: This method moves an existing key to either end of the `OrderedDict`.
+# If `last` is true (default), the item is moved to the right end.
 # If `last` is false, the item is moved to the beginning.
 
-# - **`reversed()`**: In Python 3.8 and later, `OrderedDict` supports the `reversed()` 
+# - **`reversed()`**: In Python 3.8 and later, `OrderedDict` supports the `reversed()`
 # function to return a reverse iterator over the keys of the dictionary.
 
 # ### Use Cases
@@ -223,8 +209,8 @@ class LRUCache:
 
 # Here's a simple example of using `OrderedDict`:
 
+
 # ```python
-from collections import OrderedDict
 
 # Creating an ordered dictionary
 od = OrderedDict()
@@ -247,8 +233,8 @@ for key, value in od.items():
 
 # ### Conclusion
 
-# While `OrderedDict` is not as commonly used since Python 3.7 due to the standard dictionary 
-# also maintaining insertion order, its additional methods and the guaranteed 
+# While `OrderedDict` is not as commonly used since Python 3.7 due to the standard dictionary
+# also maintaining insertion order, its additional methods and the guaranteed
 # order-preserving feature make it a valuable tool in certain Python programming scenarios.
 
 
@@ -259,7 +245,7 @@ class Node:
     def __init__(self, key=0, value=0):
         self.key = key
         self.value = value
-        
+
 
 class LRUCache:
     def __init__(self, capacity: int):
@@ -277,7 +263,7 @@ class LRUCache:
         self._remove(node)
         self._add_to_front(node)
         return node
-    
+
     def get(self, key: int) -> int:
         """Retrieve a value from the cache based on the key."""
         node = self._get_node(key)
