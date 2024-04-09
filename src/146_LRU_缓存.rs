@@ -48,41 +48,6 @@ impl LRUCache {
     }
 }
 
-// 42. 接雨水 单调栈写法
-/// Computes the total amount of water that can be trapped between the bars.
-///
-/// # Arguments
-///
-/// * `heights`: A slice of integers representing the height of each bar.
-///
-/// # Returns
-///
-/// An `i32` representing the total amount of trapped water.
-pub fn trap(heights: &[i32]) -> i32 {
-    let mut stack = Vec::new();
-    let mut water_trapped = 0;
-
-    for (current_index, &current_height) in heights.iter().enumerate() {
-        while let Some(&last_index) = stack.last() {
-            // If the current height is greater, pop from the stack and calculate trapped water.
-            if heights[last_index] < current_height {
-                stack.pop(); // We've already checked that stack is not empty.
-
-                if let Some(&second_last_index) = stack.last() {
-                    let bounded_height = current_height.min(heights[second_last_index]);
-                    water_trapped += (bounded_height - heights[last_index])
-                        * (current_index - second_last_index - 1) as i32;
-                }
-            } else {
-                break;
-            }
-        }
-        stack.push(current_index);
-    }
-
-    water_trapped
-}
-
 fn main() {
     let capacity = 2;
     let mut obj = LRUCache::new(capacity);
@@ -128,18 +93,3 @@ mod tests {
         assert_eq!(cache.get(4), 4);
     }
 }
-
-// 1. 给你一个整数数组 `prices` 和一个整数 `k` ，其中 `prices[i]` 是某支给定的股票在第 `i` **天的价格。
-//     设计一个算法来计算你所能获取的最大利润。你最多可以完成 `k` 笔交易。也就是说，你最多可以买 `k` 次，卖 `k` 次。
-//     **注意：**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
-
-// **示例 1：**
-// 输入：k = 2, prices = [2,4,1]
-// 输出：2
-// 解释：在第 1 天 (股票价格 = 2) 的时候买入，在第 2 天 (股票价格 = 4) 的时候卖出，这笔交易所能获得利润 = 4-2 = 2 。
-
-// **示例 2：**
-// 输入：k = 2, prices = [3,2,6,5,0,3]
-// 输出：7
-// 解释：在第 2 天 (股票价格 = 2) 的时候买入，在第 3 天 (股票价格 = 6) 的时候卖出, 这笔交易所能获得利润 = 6-2 = 4 。
-//      随后，在第 5 天 (股票价格 = 0) 的时候买入，在第 6 天 (股票价格 = 3) 的时候卖出, 这笔交易所能获得利润 = 3-0 = 3 。
