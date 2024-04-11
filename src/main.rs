@@ -269,7 +269,7 @@ pub fn min_capability(mut nums: Vec<i32>, k: i32) -> i32 {
     println!("{:#?}", nums);
     while l < r {
         let mid = l + (r - l) / 2;
-        println!("{:?}", (l, r, mid));
+        // println!("{:?}", (l, r, mid));
         if !solve(&nums, nums[mid], k) {
             l = mid + 1
         } else {
@@ -279,6 +279,10 @@ pub fn min_capability(mut nums: Vec<i32>, k: i32) -> i32 {
 
     nums[l]
 }
+
+// 685_冗余连接_II
+// https://leetcode.cn/problems/redundant-connection-ii/description/
+// pub fn find_redundant_directed_connection(edges: Vec<Vec<i32>>) -> Vec<i32> {}
 
 fn main() {
     let res = min_capability(vec![2, 7, 9, 3, 1], 2);
