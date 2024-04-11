@@ -1,4 +1,6 @@
-use std::collections::{HashMap, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
+
+use itertools::Itertools;
 
 struct LRUCache {
     capacity: usize,
@@ -165,6 +167,81 @@ pub fn rob_ii(nums: Vec<i32>) -> i32 {
         // Rob houses from 0 to n-2, or from 1 to n-1
         rob_linear(&nums[..n - 1]).max(rob_linear(&nums[1..]))
     }
+}
+
+// 547. 省份数量
+pub struct UnionFind {
+    parent: Vec<usize>,
+}
+
+impl UnionFind {
+    pub fn new(n: usize) -> Self {
+        Self {
+            parent: (0..n).collect(),
+        }
+    }
+
+    pub fn find_set(&self, x: usize) -> i32 {
+        if self.parent[x] != x {
+            return self.find_set(self.parent[x]);
+        } else {
+            return x as i32;
+        }
+    }
+
+    pub fn unite(&mut self, x: usize, y: usize) -> bool {
+        let root1 = self.find_set(x);
+        let root2 = self.find_set(y);
+
+        if root1 == root2 {
+            return false;
+        } else {
+            // union
+            self.parent[root2 as usize] = root1 as usize;
+            return true;
+        }
+    }
+}
+
+pub fn find_circle_num(is_connected: Vec<Vec<i32>>) -> i32 {
+    let cities = is_connected.len();
+    let mut uf = UnionFind::new(cities);
+
+    for i in 0..cities {
+        for j in 0..cities {
+            if is_connected[i][j] == 1 {
+                uf.unite(i, j);
+            }
+        }
+    }
+
+    let mut ans = 0;
+    (0..cities).into_iter().for_each(|x| {
+        if uf.find_set(x) == x as i32 {
+            ans += 1;
+        }
+    });
+    ans
+}
+
+// 684. 冗余连接
+pub fn find_redundant_connection(edges: Vec<Vec<i32>>) -> Vec<i32> {
+    let n = edges.len();
+    let mut nf = UnionFind::new(n + 1);
+
+    let mut res = vec![];
+
+    for edge in edges {
+        let x = edge[0];
+        let y = edge[1];
+        if nf.find_set(x as usize) == nf.find_set(y as usize) {
+            res = edge;
+        } else {
+            nf.unite(x as usize, y as usize);
+        }
+    }
+
+    res
 }
 
 fn main() {
