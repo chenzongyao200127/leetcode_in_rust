@@ -74,14 +74,101 @@ pub fn trap(heights: &[i32]) -> i32 {
     water_trapped
 }
 
-fn main() {
-    let capacity = 2;
-    let mut obj = LRUCache::new(capacity);
+// 122. 买卖股票的最佳时机 II
+pub fn max_profit_ii(prices: Vec<i32>) -> i32 {
+    let mut res = 0;
+    prices.windows(2).for_each(|x| {
+        if x[1] > x[0] {
+            res += x[1] - x[0];
+        }
+    });
+    res
+}
 
-    let key = 1;
-    let ret_1: i32 = obj.get(key);
-    let value = 2;
-    obj.put(key, value);
+// 309. 买卖股票的最佳时机含冷冻期
+pub fn max_profit(prices: Vec<i32>) -> i32 {
+    let n = prices.len();
+    let mut dp = vec![vec![-10000; 2]; n + 1];
+
+    dp[0][0] = 0;
+
+    for (idx, &p) in prices.iter().enumerate() {
+        dp[idx + 1][0] = dp[idx][0].max(dp[idx][1] + p);
+
+        if idx >= 1 {
+            dp[idx + 1][1] = dp[idx][1].max(dp[idx - 1][0] - p);
+        } else {
+            dp[idx + 1][1] = dp[idx][1].max(0 - p);
+        }
+    }
+
+    dp.last().unwrap()[0]
+}
+
+// 136. 只出现一次的数字
+pub fn single_number(nums: Vec<i32>) -> i32 {
+    let mut ans = 0;
+    nums.into_iter().for_each(|x| ans ^= x);
+    ans
+}
+
+// 169. 多数元素 (摩尔计数)
+pub fn majority_element(nums: Vec<i32>) -> i32 {
+    let mut res = nums[0];
+    let mut cnt = 1;
+    for i in 1..nums.len() {
+        if nums[i] == res {
+            cnt += 1;
+        } else {
+            cnt -= 1;
+            if cnt == 0 {
+                res = nums[i];
+                cnt = 1;
+            }
+        }
+    }
+    res
+}
+
+// 198. 打家劫舍
+pub fn rob(nums: Vec<i32>) -> i32 {
+    let mut rob = nums[0];
+    let mut not_rob = 0;
+    for i in 1..nums.len() {
+        let new_rob = rob.max(not_rob + nums[i]);
+        not_rob = rob.max(not_rob);
+        rob = new_rob;
+    }
+
+    rob.max(not_rob)
+}
+
+// 213. 打家劫舍 II
+pub fn rob_ii(nums: Vec<i32>) -> i32 {
+    fn rob_linear(nums: &[i32]) -> i32 {
+        let mut rob = 0;
+        let mut not_rob = 0;
+        for &num in nums {
+            let new_rob = not_rob + num;
+            not_rob = not_rob.max(rob);
+            rob = new_rob;
+        }
+        rob.max(not_rob)
+    }
+
+    let n = nums.len();
+    if n == 0 {
+        0 // No houses to rob
+    } else if n == 1 {
+        nums[0] // Only one house, so rob it
+    } else {
+        // Rob houses from 0 to n-2, or from 1 to n-1
+        rob_linear(&nums[..n - 1]).max(rob_linear(&nums[1..]))
+    }
+}
+
+fn main() {
+    let res = max_profit(vec![1, 2, 3, 4, 5]);
 }
 
 #[cfg(test)]
