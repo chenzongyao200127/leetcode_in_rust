@@ -244,8 +244,45 @@ pub fn find_redundant_connection(edges: Vec<Vec<i32>>) -> Vec<i32> {
     res
 }
 
+// 2560. 打家劫舍 IV
+// https://leetcode.cn/problems/house-robber-iv/description/
+
+/// 为什么 看到「最大化最小值」或者「最小化最大值」就要想到二分答案？
+pub fn min_capability(mut nums: Vec<i32>, k: i32) -> i32 {
+    nums.sort_unstable();
+    let n = nums.len();
+
+    // 贪心
+    #[inline]
+    fn solve(nums: &Vec<i32>, ms: i32, k: i32) -> bool {
+        let mut res = 0;
+        for i in (0..nums.len()).step_by(2) {
+            if nums[i] <= ms {
+                res += 1;
+            }
+        }
+        res >= k
+    }
+
+    let mut l = 0;
+    let mut r = n - 1;
+    println!("{:#?}", nums);
+    while l < r {
+        let mid = l + (r - l) / 2;
+        println!("{:?}", (l, r, mid));
+        if !solve(&nums, nums[mid], k) {
+            l = mid + 1
+        } else {
+            r = mid
+        }
+    }
+
+    nums[l]
+}
+
 fn main() {
-    let res = max_profit(vec![1, 2, 3, 4, 5]);
+    let res = min_capability(vec![2, 7, 9, 3, 1], 2);
+    assert_eq!(res, 2)
 }
 
 #[cfg(test)]
