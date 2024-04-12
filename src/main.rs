@@ -284,6 +284,27 @@ pub fn min_capability(mut nums: Vec<i32>, k: i32) -> i32 {
 // https://leetcode.cn/problems/redundant-connection-ii/description/
 // pub fn find_redundant_directed_connection(edges: Vec<Vec<i32>>) -> Vec<i32> {}
 
+// 253. 会议室 II
+// https://leetcode.cn/problems/meeting-rooms-ii/description/?envType=weekly-question&envId=2024-04-01
+pub fn min_meeting_rooms(intervals: Vec<Vec<i32>>) -> i32 {
+    let mut t = vec![];
+    for inter in intervals {
+        t.push((inter[0], 1));
+        t.push((inter[1], -1));
+    }
+    // 注意，这里需要多级排序
+    t.sort_by(|&a, &b| (a.0).cmp(&b.0).then(a.1.cmp(&b.1)));
+    let mut cur_room = 0;
+    let mut max_room = 0;
+
+    for i in 0..t.len() {
+        cur_room += t[i].1;
+        max_room = max_room.max(cur_room);
+    }
+
+    max_room
+}
+
 fn main() {
     let res = min_capability(vec![2, 7, 9, 3, 1], 2);
     assert_eq!(res, 2)
