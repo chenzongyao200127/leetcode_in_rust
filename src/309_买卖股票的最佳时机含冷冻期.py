@@ -20,3 +20,5 @@ class Solution:
                 return max(dfs(day-1, False), dfs(day-1, True) + prices[day])
 
         return dfs(n-1, False)
+
+

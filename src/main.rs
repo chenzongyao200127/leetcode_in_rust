@@ -1,4 +1,9 @@
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::{
+    collections::{HashMap, HashSet, VecDeque},
+    process::id,
+    thread::park,
+    vec,
+};
 
 use itertools::Itertools;
 
@@ -305,9 +310,169 @@ pub fn min_meeting_rooms(intervals: Vec<Vec<i32>>) -> i32 {
     max_room
 }
 
+// 20. 有效的括号
+// https://leetcode.cn/problems/valid-parentheses/description/?envType=study-plan-v2&envId=top-100-liked
+
+pub fn is_valid(s: String) -> bool {
+    let mut pair = HashMap::new();
+    pair.insert(')', '(');
+    pair.insert(']', '[');
+    pair.insert('}', '{');
+
+    let mut stk = Vec::new();
+    for c in s.chars() {
+        match pair.get(&c) {
+            Some(&expected_open) => {
+                if stk.pop() != Some(expected_open) {
+                    return false;
+                }
+            }
+            None => stk.push(c),
+        }
+    }
+
+    stk.is_empty()
+}
+
+// 155. 最小栈
+struct MinStack {
+    stk: VecDeque<(i32, i32)>, // Each element is a tuple (value, current_min)
+}
+
+impl MinStack {
+    fn new() -> Self {
+        Self {
+            stk: VecDeque::new(),
+        }
+    }
+
+    fn push(&mut self, val: i32) {
+        let current_min = if let Some(&(_, min)) = self.stk.back() {
+            std::cmp::min(min, val)
+        } else {
+            val
+        };
+        self.stk.push_back((val, current_min));
+    }
+
+    fn pop(&mut self) {
+        self.stk.pop_back();
+    }
+
+    fn top(&self) -> i32 {
+        self.stk.back().map(|&(val, _)| val).unwrap()
+    }
+
+    fn get_min(&self) -> i32 {
+        self.stk.back().map(|&(_, min)| min).unwrap()
+    }
+}
+
+// 394_字符串解码
+pub fn decode_string(s: String) -> String {
+    let mut num_stack = Vec::new();
+    let mut str_stack = Vec::new();
+    let mut current_num = 0usize;
+    let mut current_str = String::new();
+
+    for c in s.chars() {
+        match c {
+            '0'..='9' => {
+                current_num = current_num * 10 + c.to_digit(10).unwrap() as usize;
+            }
+            '[' => {
+                // Push current number and string to their respective stacks
+                num_stack.push(current_num);
+                str_stack.push(current_str.clone());
+                // Reset for the next segment
+                current_num = 0;
+                current_str = String::new();
+            }
+            ']' => {
+                let num = num_stack.pop().unwrap();
+                let last_str = str_stack.pop().unwrap();
+                // repeat `current_str` `num` times and append to `last_str`
+                let repeated = current_str.repeat(num);
+                current_str = last_str + &repeated;
+            }
+            _ => current_str.push(c), // Alphabetic and other characters
+        }
+    }
+
+    current_str
+}
+
+// 739. 每日温度
+// https://leetcode.cn/problems/daily-temperatures/description/?envType=study-plan-v2&envId=top-100-liked
+pub fn daily_temperatures(temperatures: Vec<i32>) -> Vec<i32> {
+    let mut stack = Vec::new();
+    let mut results = vec![0; temperatures.len()];
+
+    for (index, &current_temp) in temperatures.iter().enumerate() {
+        while let Some(&top_index) = stack.last() {
+            if current_temp <= temperatures[top_index] {
+                break;
+            }
+            let last_index = stack.pop().unwrap();
+            results[last_index] = (index - last_index) as i32;
+        }
+        stack.push(index);
+    }
+
+    results
+}
+
+// 84. 柱状图中最大的矩形
+pub fn largest_rectangle_area(heights: Vec<i32>) -> i32 {
+    let n = heights.len();
+
+    let mut left_stk = vec![];
+    let mut left_bounds = vec![n as i32; n];
+    for (idx, &p) in heights.iter().enumerate() {
+        while let Some(&i) = left_stk.last() {
+            if p >= heights[i as usize] {
+                break;
+            }
+            let last_idx = left_stk.pop().unwrap();
+            left_bounds[last_idx as usize] = (idx) as i32;
+        }
+        left_stk.push(idx as i32);
+    }
+
+    let mut right_stk = vec![];
+    let mut right_bounds = vec![-1; n];
+    for (idx, &p) in heights.iter().rev().enumerate() {
+        let idx = n - 1 - idx;
+        while let Some(&i) = right_stk.last() {
+            if p >= heights[i as usize] {
+                break;
+            }
+            let last_idx = right_stk.pop().unwrap();
+            right_bounds[last_idx as usize] = (idx) as i32;
+        }
+        right_stk.push(idx as i32);
+    }
+
+    let mut res = 0;
+    for i in 0..n {
+        res = res.max(heights[i] * (left_bounds[i] - right_bounds[i] - 1));
+    }
+
+    res
+}
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * let obj = MinStack::new();
+ * obj.push(val);
+ * obj.pop();
+ * let ret_3: i32 = obj.top();
+ * let ret_4: i32 = obj.get_min();
+ */
+
 fn main() {
-    let res = min_capability(vec![2, 7, 9, 3, 1], 2);
-    assert_eq!(res, 2)
+    let res = largest_rectangle_area(vec![1]);
+    assert_eq!(res, 1)
 }
 
 #[cfg(test)]
