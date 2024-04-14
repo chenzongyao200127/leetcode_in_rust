@@ -1,21 +1,24 @@
 // 226_Invert_Binary_Tree
 // https://leetcode.cn/problems/invert-binary-tree/
 
-#include<stdio.h>
+#include <stdio.h>
 #ifndef __cplusplus
 #include <stdbool.h>
 #endif
 
-struct TreeNode {
+struct TreeNode
+{
     int val;
     struct TreeNode *left;
     struct TreeNode *right;
 };
 
-struct TreeNode* invertTree(struct TreeNode* root){
+struct TreeNode *invertTree(struct TreeNode *root)
+{
     struct TreeNode *temp;
 
-    if (root == NULL) {
+    if (root == NULL)
+    {
         return NULL;
     }
 
@@ -29,15 +32,16 @@ struct TreeNode* invertTree(struct TreeNode* root){
     return root;
 }
 
-
-struct TreeNode* invertTree(struct TreeNode* root) {
-    if (root == NULL) {
+struct TreeNode *invertTree(struct TreeNode *root)
+{
+    if (root == NULL)
+    {
         return NULL;
     }
 
-    struct TreeNode* left = invertTree(root->left);
-    struct TreeNode* right = invertTree(root->right);
-    
+    struct TreeNode *left = invertTree(root->left);
+    struct TreeNode *right = invertTree(root->right);
+
     root->left = right;
     root->right = left;
 

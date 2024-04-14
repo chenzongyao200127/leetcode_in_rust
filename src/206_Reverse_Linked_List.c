@@ -1,19 +1,22 @@
 // https://leetcode.cn/problems/reverse-linked-list/
 
-#include<stdio.h>
+#include <stdio.h>
 
 // Definition for singly-linked list.
-struct ListNode {
+struct ListNode
+{
     int val;
     struct ListNode *next;
 };
 
-struct ListNode* reverseList(struct ListNode* head){
+struct ListNode *reverseList(struct ListNode *head)
+{
     struct ListNode *pre = NULL;
     struct ListNode *left = head;
     struct ListNode *right = NULL;
 
-    while (left) {
+    while (left)
+    {
         right = left->next;
         left->next = pre;
         pre = left;
@@ -23,8 +26,10 @@ struct ListNode* reverseList(struct ListNode* head){
     return pre;
 }
 
-struct ListNode* reverseList(struct ListNode* head){
-    if (!head || !head->next) {
+struct ListNode *reverseList(struct ListNode *head)
+{
+    if (!head || !head->next)
+    {
         return head;
     }
 

@@ -5,8 +5,6 @@
 // 由于返回类型是整数，结果只保留 整数部分 ，小数部分将被 舍去 。
 // 注意：不允许使用任何内置指数函数和算符，例如 pow(x, 0.5) 或者 x ** 0.5 。
 
- 
-
 // 示例 1：
 // 输入：x = 4
 // 输出：2
@@ -16,30 +14,37 @@
 // 输出：2
 // 解释：8 的算术平方根是 2.82842..., 由于返回类型是整数，小数部分将被舍去。
 
-
-#include<stdio.h>
+#include <stdio.h>
 #ifndef __cplusplus
 #include <stdbool.h>
 #endif
 
-int mySqrt(int x) {
+int mySqrt(int x)
+{
     long long l = 0;
     long long r = x / 2 + 1; // Include potential square root in search space
     long long mid;
 
-    if (x == 1){
+    if (x == 1)
+    {
         return 1;
     }
-    
-    while (l < r) {
+
+    while (l < r)
+    {
         mid = l + (r - l) / 2;
         long long tmp = mid * mid;
 
-        if (tmp < x) {
+        if (tmp < x)
+        {
             l = mid + 1; // Move to the right half if tmp < x
-        } else if (tmp > x) {
+        }
+        else if (tmp > x)
+        {
             r = mid; // Move to the left half if tmp > x
-        } else {
+        }
+        else
+        {
             return mid; // Return square root if found
         }
     }

@@ -12,15 +12,17 @@
  * };
  */
 
-struct ListNode {
+struct ListNode
+{
     int val;
     struct ListNode *next;
 };
 
 // 这道题细思极恐：如何让自己在世界上消失，但又不死？ —— 将自己完全变成另一个人，再杀了那个人就行了。
-void deleteNode(struct ListNode* node) {
+void deleteNode(struct ListNode *node)
+{
     struct ListNode *tmp = node->next;
-    
+
     node->val = tmp->val;
     node->next = tmp->next;
     free(tmp);

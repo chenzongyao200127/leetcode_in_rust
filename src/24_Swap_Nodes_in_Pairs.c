@@ -4,20 +4,23 @@
 // 4 ms 39.6%
 // 5.6 MB 78.05%
 
-#include<stdio.h>
+#include <stdio.h>
 
 // Definition for singly-linked list.
-struct ListNode {
+struct ListNode
+{
     int val;
     struct ListNode *next;
 };
 
-struct ListNode* swapPairs(struct ListNode* head){
+struct ListNode *swapPairs(struct ListNode *head)
+{
     struct ListNode dummy;
     dummy.next = head;
     struct ListNode *prev = &dummy;
 
-    while (prev->next && prev->next->next) {
+    while (prev->next && prev->next->next)
+    {
         struct ListNode *left = prev->next;
         struct ListNode *right = prev->next->next;
         prev->next = right;
@@ -29,11 +32,13 @@ struct ListNode* swapPairs(struct ListNode* head){
     return dummy.next;
 }
 
-struct ListNode* swapPairs(struct ListNode* head) {
-    if (head == NULL || head->next == NULL) {
+struct ListNode *swapPairs(struct ListNode *head)
+{
+    if (head == NULL || head->next == NULL)
+    {
         return head;
     }
-    struct ListNode* newHead = head->next;
+    struct ListNode *newHead = head->next;
     head->next = swapPairs(newHead->next);
     newHead->next = head;
     return newHead;

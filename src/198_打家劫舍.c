@@ -18,17 +18,21 @@
 // 解释：偷窃 1 号房屋 (金额 = 2), 偷窃 3 号房屋 (金额 = 9)，接着偷窃 5 号房屋 (金额 = 1)。
 //      偷窃到的最高金额 = 2 + 9 + 1 = 12 。
 
-int rob(int* nums, int numsSize) {
-    if (numsSize <= 0) return 0;  // Return 0 for empty array
-    if (numsSize == 1) return nums[0];  // Return the only element if array size is 1
+int rob(int *nums, int numsSize)
+{
+    if (numsSize <= 0)
+        return 0; // Return 0 for empty array
+    if (numsSize == 1)
+        return nums[0]; // Return the only element if array size is 1
 
     int dp[numsSize];
     dp[0] = nums[0];
-    dp[1] = (nums[0] > nums[1]) ? nums[0] : nums[1];  // maximum of the first two elements
+    dp[1] = (nums[0] > nums[1]) ? nums[0] : nums[1]; // maximum of the first two elements
 
-    for (int i = 2; i < numsSize; i++) {
-        dp[i] = (dp[i-1] > (nums[i] + dp[i-2])) ? dp[i-1] : (nums[i] + dp[i-2]);
+    for (int i = 2; i < numsSize; i++)
+    {
+        dp[i] = (dp[i - 1] > (nums[i] + dp[i - 2])) ? dp[i - 1] : (nums[i] + dp[i - 2]);
     }
 
-    return dp[numsSize-1];
+    return dp[numsSize - 1];
 }

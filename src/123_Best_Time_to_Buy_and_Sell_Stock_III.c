@@ -6,9 +6,9 @@
 #include <stdbool.h>
 #endif
 
-#define MAX(a,b) (((a)>(b))?(a):(b))
-#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
-int maxProfit(int* prices, int pricesSize){
-
+int maxProfit(int *prices, int pricesSize)
+{
 }

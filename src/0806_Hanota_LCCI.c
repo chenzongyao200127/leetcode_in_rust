@@ -13,7 +13,7 @@ typedef struct
 #define ret() ({ top--; })
 
 // Macro to simulate a goto operation, modifying the program counter of the current frame.
-#define goto(loc) ({ f->pc = (loc)-1; })
+#define goto(loc) ({ f->pc = (loc) - 1; })
 
 // Function to solve the Tower of Hanoi problem iteratively.
 void hanoi(int n, char from, char to, char via)

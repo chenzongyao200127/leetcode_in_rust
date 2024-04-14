@@ -3,20 +3,23 @@
 // 8 ms 69.75%
 // 6.8 ms 77.02%
 
-#include<stdio.h>
+#include <stdio.h>
 
 // Definition for singly-linked list.
-struct ListNode {
+struct ListNode
+{
     int val;
     struct ListNode *next;
 };
 
-struct ListNode* reverseList(struct ListNode* head) {
+struct ListNode *reverseList(struct ListNode *head)
+{
     struct ListNode *pre = NULL;
     struct ListNode *cur = head;
     struct ListNode *tmp = NULL;
 
-    while (cur) {
+    while (cur)
+    {
         tmp = cur->next;
         cur->next = pre;
         pre = cur;
@@ -26,18 +29,20 @@ struct ListNode* reverseList(struct ListNode* head) {
     return pre;
 }
 
-
-struct ListNode* reverseKGroup(struct ListNode* head, int k){
+struct ListNode *reverseKGroup(struct ListNode *head, int k)
+{
     struct ListNode dummy;
     dummy.next = head;
     int len = get_length(dummy.next);
     int times = len / k;
 
     struct ListNode *before = &dummy;
-    for (int i=0; i<times; i++) {
+    for (int i = 0; i < times; i++)
+    {
         struct ListNode *left_node = before->next;
         struct ListNode *right_node = before;
-        for (int j=0; j<k; j++) {
+        for (int j = 0; j < k; j++)
+        {
             right_node = right_node->next;
         }
         struct ListNode *succ = right_node->next;
@@ -50,7 +55,8 @@ struct ListNode* reverseKGroup(struct ListNode* head, int k){
         before->next = right_node;
         left_node->next = succ;
 
-        for (int m=0; m<k; m++) {
+        for (int m = 0; m < k; m++)
+        {
             before = before->next;
         }
     }
@@ -58,11 +64,12 @@ struct ListNode* reverseKGroup(struct ListNode* head, int k){
     return dummy.next;
 }
 
-
-int get_length(struct ListNode* head) {
+int get_length(struct ListNode *head)
+{
     int len = 0;
-    while (head) {
-        len++ ;
+    while (head)
+    {
+        len++;
         head = head->next;
     }
 

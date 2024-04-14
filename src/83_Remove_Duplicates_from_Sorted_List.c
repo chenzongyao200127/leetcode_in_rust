@@ -4,55 +4,67 @@
 /**
  * Definition for singly-linked list.
  */
-#include<stdio.h>
+#include <stdio.h>
 
-struct ListNode {
+struct ListNode
+{
     int val;
     struct ListNode *next;
 };
 
-struct ListNode* deleteDuplicates(struct ListNode* head){
+struct ListNode *deleteDuplicates(struct ListNode *head)
+{
     struct ListNode *cur = head;
-    if (head == NULL) {
+    if (head == NULL)
+    {
         return head;
     }
     // 若 head == NULL 则会访问空指针
     struct ListNode *idx = head->next;
-    if (idx == NULL) {
+    if (idx == NULL)
+    {
         return head;
     }
     // 逻辑是正确的
-    while (idx != NULL) {
-        if (idx->val != cur->val) {
+    while (idx != NULL)
+    {
+        if (idx->val != cur->val)
+        {
             cur->next = idx;
             idx = idx->next;
             cur = cur->next;
-        } else {
+        }
+        else
+        {
             idx = idx->next;
         }
     }
     // 添加尾部NULL
-    if (cur != NULL) {
+    if (cur != NULL)
+    {
         cur->next = NULL;
     }
 
     return head;
 }
 
-
-struct ListNode* deleteDuplicates(struct ListNode* head){
-    struct ListNode* p = head,*pr = p;
-    while(head!=NULL){
-        if(p->val == head->val){
+struct ListNode *deleteDuplicates(struct ListNode *head)
+{
+    struct ListNode *p = head, *pr = p;
+    while (head != NULL)
+    {
+        if (p->val == head->val)
+        {
             head = head->next;
         }
-        else{
+        else
+        {
             p->next = head;
             p = p->next;
             head = head->next;
         }
     }
-    if(p!=NULL)
-         p->next = NULL;
+    if (p != NULL)
+        p->next = NULL;
     return pr;
 }

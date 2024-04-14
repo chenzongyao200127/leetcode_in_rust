@@ -1,27 +1,32 @@
 // 203. Remove Linked List Elements
 // https://leetcode.cn/problems/remove-linked-list-elements/
 
-
 // Definition for singly-linked list.
-#include<stdio.h>
+#include <stdio.h>
 
-struct ListNode {
+struct ListNode
+{
     int val;
     struct ListNode *next;
 };
 
-struct ListNode* removeElements(struct ListNode* head, int val){
+struct ListNode *removeElements(struct ListNode *head, int val)
+{
     struct ListNode dummy;
     struct ListNode *tmp;
     dummy.next = head;
-    struct ListNode *prev = &dummy; 
+    struct ListNode *prev = &dummy;
 
-    while (prev->next != NULL) {
-        if (prev->next->val == val) {
+    while (prev->next != NULL)
+    {
+        if (prev->next->val == val)
+        {
             tmp = prev->next;
             prev->next = prev->next->next;
             free(tmp);
-        } else {
+        }
+        else
+        {
             prev = prev->next;
         }
     }
@@ -48,37 +53,47 @@ struct ListNode* removeElements(struct ListNode* head, int val){
 //     return dummy.next;
 // }
 
-
-struct ListNode* removeElements(struct ListNode* head, int val){
-    if(head==NULL)return head;
-    struct ListNode* ptr=(struct ListNode* )malloc(sizeof(struct ListNode));
-    ptr->next=head;
-    struct ListNode*slow=ptr,*fast=ptr->next;
-    while(fast!=NULL){
-        if(fast->val==val){
-            slow->next=fast->next;
+struct ListNode *removeElements(struct ListNode *head, int val)
+{
+    if (head == NULL)
+        return head;
+    struct ListNode *ptr = (struct ListNode *)malloc(sizeof(struct ListNode));
+    ptr->next = head;
+    struct ListNode *slow = ptr, *fast = ptr->next;
+    while (fast != NULL)
+    {
+        if (fast->val == val)
+        {
+            slow->next = fast->next;
             free(fast);
-            fast=slow->next;
-        }else{
-            slow=slow->next;fast=fast->next;
+            fast = slow->next;
+        }
+        else
+        {
+            slow = slow->next;
+            fast = fast->next;
         }
     }
     return ptr->next;
 }
 
-
-struct ListNode* removeElements(struct ListNode* head, int val){
+struct ListNode *removeElements(struct ListNode *head, int val)
+{
     struct ListNode dummy;
     struct ListNode *tmp;
     dummy.next = head;
     head = &dummy;
 
-    while (head->next) {
-        if (head->next->val == val) {
+    while (head->next)
+    {
+        if (head->next->val == val)
+        {
             tmp = head->next;
             head->next = head->next->next;
             free(tmp);
-        } else {
+        }
+        else
+        {
             head = head->next;
         }
     }
@@ -86,22 +101,29 @@ struct ListNode* removeElements(struct ListNode* head, int val){
     return dummy.next;
 }
 
-struct ListNode* removeElements(struct ListNode* head, int val){
-    while (head!=NULL&&head->val==val) {
-        head=head->next;
+struct ListNode *removeElements(struct ListNode *head, int val)
+{
+    while (head != NULL && head->val == val)
+    {
+        head = head->next;
     }
-    if (head==NULL) {
+    if (head == NULL)
+    {
         return head;
     }
 
-    struct ListNode* prev=head;
+    struct ListNode *prev = head;
 
-    //确保当前结点后还有结点
-    while (prev->next!=NULL) {
-        if (prev->next->val==val) {
-            prev->next=prev->next->next;
-        } else {
-            prev=prev->next;
+    // 确保当前结点后还有结点
+    while (prev->next != NULL)
+    {
+        if (prev->next->val == val)
+        {
+            prev->next = prev->next->next;
+        }
+        else
+        {
+            prev = prev->next;
         }
     }
 

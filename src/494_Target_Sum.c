@@ -1,22 +1,28 @@
 // https://leetcode.cn/problems/target-sum/submissions/
-int findTargetSumWays(int* nums, int numsSize, int target) {
+int findTargetSumWays(int *nums, int numsSize, int target)
+{
     int sum = 0;
-    for (int i = 0; i < numsSize; i++) {
+    for (int i = 0; i < numsSize; i++)
+    {
         sum += nums[i];
     }
     int diff = sum - target;
-    if (diff < 0 || diff % 2 != 0) {
+    if (diff < 0 || diff % 2 != 0)
+    {
         return 0;
     }
     int n = numsSize, neg = diff / 2;
     int dp[n + 1][neg + 1];
     memset(dp, 0, sizeof(dp));
     dp[0][0] = 1;
-    for (int i = 1; i <= n; i++) {
+    for (int i = 1; i <= n; i++)
+    {
         int num = nums[i - 1];
-        for (int j = 0; j <= neg; j++) {
+        for (int j = 0; j <= neg; j++)
+        {
             dp[i][j] = dp[i - 1][j];
-            if (j >= num) {
+            if (j >= num)
+            {
                 dp[i][j] += dp[i - 1][j - num];
             }
         }
