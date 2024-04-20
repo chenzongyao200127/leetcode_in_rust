@@ -1,5 +1,6 @@
 # 928_尽量减少恶意软件的传播_II
 # https://leetcode.cn/problems/minimize-malware-spread-ii/description/
+import heapq
 from collections import Counter
 from typing import List
 
@@ -121,3 +122,23 @@ class Solution:
         if cnt:
             return min((-size, node_id) for node_id, size in cnt.items())[1]
         return min(initial)
+
+
+def dijkstra(graph, start):
+    # 初始化最短路径长度字典
+    min_distances = {node: float('inf') for node in graph}
+    min_distances[start] = 0
+    # 使用优先队列
+    priority_queue = [(0, start)]
+
+    while priority_queue:
+        current_distance, current_node = heapq.heappop(priority_queue)
+
+        for neighbor, weight in graph[current_node]:
+            distance = current_distance + weight
+
+            if distance < min_distances[neighbor]:
+                min_distances[neighbor] = distance
+                heapq.heappush(priority_queue, (distance, neighbor))
+
+    return min_distances
