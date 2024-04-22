@@ -1,11 +1,4 @@
-use std::{
-    collections::{HashMap, HashSet, VecDeque},
-    process::id,
-    thread::park,
-    vec,
-};
-
-use itertools::Itertools;
+use std::collections::{HashMap, VecDeque};
 
 struct LRUCache {
     capacity: usize,
@@ -461,6 +454,49 @@ pub fn largest_rectangle_area(heights: Vec<i32>) -> i32 {
     res
 }
 
+// 377_组合总和_Ⅳ
+pub fn combination_sum4(nums: Vec<i32>, target: i32) -> i32 {
+    let mut dp = vec![0; target as usize + 1];
+    dp[0] = 1;
+
+    for i in 1..=target {
+        for &n in nums.iter() {
+            if i >= n {
+                dp[i as usize] += dp[i as usize - n as usize];
+            }
+        }
+    }
+
+    dp[target as usize]
+}
+
+// 215. 数组中的第K个最大元素
+use std::collections::BinaryHeap;
+
+pub fn find_kth_largest(nums: Vec<i32>, k: i32) -> i32 {
+    let mut min_heap = BinaryHeap::with_capacity(k as usize);
+
+    for num in nums {
+        // 将元素以负值形式加入最大堆以模拟最小堆
+        let neg_num = -num;
+
+        if min_heap.len() < k as usize {
+            min_heap.push(neg_num);
+        } else if neg_num < *min_heap.peek().unwrap() {
+            min_heap.pop();
+            min_heap.push(neg_num);
+        }
+        println!("{:?}", min_heap);
+    }
+    // 返回第 k 大的元素（注意取反得到原始值）
+    -min_heap.peek().unwrap()
+}
+
+// 347. 前 K 个高频元素
+
+fn main() {
+    println!("Hello World!");
+}
 /**
  * Your MinStack object will be instantiated and called as such:
  * let obj = MinStack::new();
@@ -469,11 +505,6 @@ pub fn largest_rectangle_area(heights: Vec<i32>) -> i32 {
  * let ret_3: i32 = obj.top();
  * let ret_4: i32 = obj.get_min();
  */
-
-fn main() {
-    let res = largest_rectangle_area(vec![1]);
-    assert_eq!(res, 1)
-}
 
 #[cfg(test)]
 mod tests {

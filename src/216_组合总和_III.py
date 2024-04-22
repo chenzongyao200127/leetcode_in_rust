@@ -24,3 +24,27 @@ class Solution:
         result = []
         backtrack(1, n, [])
         return result
+
+
+def maxLengthSubsequence(a: List[int], m: int) -> int:
+    n = len(a)
+    prefix_sum = [0] * (n + 1)
+    for i in range(1, n + 1):
+        prefix_sum[i] = prefix_sum[i-1] + a[i-1]
+
+    dp = [1] * n
+    ans = 1
+    for i in range(1, n):
+        for j in range(i):
+            if (prefix_sum[i+1] - prefix_sum[j]) >= m * (i - j + 1):
+                dp[i] = max(dp[i], dp[j] + 1)
+        ans = max(ans, dp[i])
+
+    return ans
+
+
+# 示例使用
+n = 5
+m = 5
+a = [9, 1, 9, 1, 9]
+print(maxLengthSubsequence(a, m))  # 测试函数
