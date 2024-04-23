@@ -494,8 +494,31 @@ pub fn find_kth_largest(nums: Vec<i32>, k: i32) -> i32 {
 
 // 347. 前 K 个高频元素
 
+// 1052. 爱生气的书店老板
+pub fn max_satisfied(customers: Vec<i32>, grumpy: Vec<i32>, minutes: i32) -> i32 {
+    let mut satisfied = 0;
+    let mut max_addition = 0;
+    let mut addition = 0;
+    for i in 0..customers.len() {
+        if grumpy[i] == 0 {
+            satisfied += customers[i];
+        } else {
+            addition += customers[i];
+        }
+        if i >= minutes as usize && grumpy[i - minutes as usize] == 1 {
+            addition -= customers[i - minutes as usize];
+        }
+        max_addition = max_addition.max(addition);
+    }
+    satisfied + max_addition
+}
+
 fn main() {
-    println!("Hello World!");
+    let ans = max_satisfied(
+        vec![1, 0, 1, 2, 1, 1, 7, 5],
+        [0, 1, 0, 1, 0, 1, 0, 1].to_vec(),
+        3,
+    );
 }
 /**
  * Your MinStack object will be instantiated and called as such:
