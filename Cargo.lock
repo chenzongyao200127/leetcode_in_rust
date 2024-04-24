@@ -346,6 +346,7 @@ dependencies = [
  "futures",
  "itertools",
  "lazy_static",
+ "nextest",
  "once_cell",
  "permutohedron",
  "rand",
@@ -428,6 +429,12 @@ name = "new_debug_unreachable"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "650eef8c711430f1a879fdd01d4745a7deea475becfb90269c06775983bbf086"
+
+[[package]]
+name = "nextest"
+version = "0.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f12ea694d270547969e9693ca5b19deed2fe73ef493ef6057e5fe8ecc8384c23"
 
 [[package]]
 name = "num_cpus"

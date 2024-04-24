@@ -513,22 +513,6 @@ pub fn max_satisfied(customers: Vec<i32>, grumpy: Vec<i32>, minutes: i32) -> i32
     satisfied + max_addition
 }
 
-fn main() {
-    let ans = max_satisfied(
-        vec![1, 0, 1, 2, 1, 1, 7, 5],
-        [0, 1, 0, 1, 0, 1, 0, 1].to_vec(),
-        3,
-    );
-}
-/**
- * Your MinStack object will be instantiated and called as such:
- * let obj = MinStack::new();
- * obj.push(val);
- * obj.pop();
- * let ret_3: i32 = obj.top();
- * let ret_4: i32 = obj.get_min();
- */
-
 #[cfg(test)]
 mod tests {
     use super::*;
