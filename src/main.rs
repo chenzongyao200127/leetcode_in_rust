@@ -513,6 +513,31 @@ pub fn max_satisfied(customers: Vec<i32>, grumpy: Vec<i32>, minutes: i32) -> i32
     satisfied + max_addition
 }
 
+// 2739. 总行驶距离
+pub fn distance_traveled(mut main_tank: i32, mut additional_tank: i32) -> i32 {
+    let mut distance = 0;
+
+    while main_tank > 0 {
+        // Calculate the next block of distance covered using the main tank.
+        let next_distance = 10 * main_tank.min(5); // Travel up to 50 km
+        distance += next_distance;
+
+        // Every 50 km, attempt to transfer fuel from the additional tank to the main tank.
+        if main_tank >= 5 {
+            if additional_tank > 0 {
+                additional_tank -= 1;
+                main_tank -= 4; // Net effect: main tank only reduces by 4 because 1 unit is added from the additional tank
+            } else {
+                main_tank -= 5; // No additional tank fuel available, reduce by 5
+            }
+        } else {
+            main_tank = 0; // If less than 5 units left, they get used up
+        }
+    }
+
+    distance
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

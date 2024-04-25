@@ -45,9 +45,8 @@ class Solution:
 
 class Solution:
     def amountOfTime(self, root: Optional[TreeNode], start: int) -> int:
-        graph = defaultdict(list)  # 无向图
+        graph = defaultdict(list)
 
-        # 一次BFS：层次遍历 + 建图
         queue = deque([root])
         while queue:
             node = queue.popleft()
@@ -60,7 +59,6 @@ class Solution:
                 graph[node.val].append(node.right.val)
                 graph[node.right.val].append(node.val)
 
-        # 二次BFS：模拟感染（SI疾病传播模型）
         queue = deque([start])
         visited = {start}
         time = 0
