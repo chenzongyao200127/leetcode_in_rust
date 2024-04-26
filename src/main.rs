@@ -454,6 +454,53 @@ pub fn largest_rectangle_area(heights: Vec<i32>) -> i32 {
     res
 }
 
+use std::cell::RefCell;
+use std::rc::Rc;
+
+type TreeNode = Rc<RefCell<BinaryTreeNode>>;
+#[derive(Debug, PartialEq, Eq)]
+pub struct BinaryTreeNode {
+    pub val: i32,
+    pub left: Option<TreeNode>,
+    pub right: Option<TreeNode>,
+}
+
+impl BinaryTreeNode {
+    pub fn new(val: i32) -> Self {
+        BinaryTreeNode {
+            val,
+            left: None,
+            right: None,
+        }
+    }
+}
+
+pub fn lowest_common_ancestor(
+    root: Option<TreeNode>,
+    p: Option<TreeNode>,
+    q: Option<TreeNode>,
+) -> Option<TreeNode> {
+    if root.is_none() || root == p || root == q {
+        return root;
+    }
+
+    let left = lowest_common_ancestor(
+        root.as_ref().unwrap().borrow().left.clone(),
+        p.clone(),
+        q.clone(),
+    );
+    let right = lowest_common_ancestor(
+        root.as_ref().unwrap().borrow().right.clone(),
+        p.clone(),
+        q.clone(),
+    );
+
+    if left.is_some() && right.is_some() {
+        return root;
+    }
+    left.or(right)
+}
+
 // 377_组合总和_Ⅳ
 pub fn combination_sum4(nums: Vec<i32>, target: i32) -> i32 {
     let mut dp = vec![0; target as usize + 1];
@@ -536,6 +583,56 @@ pub fn distance_traveled(mut main_tank: i32, mut additional_tank: i32) -> i32 {
     }
 
     distance
+}
+
+struct SnapshotArray {
+    current_snap_id: i32,
+    data: Vec<HashMap<i32, i32>>,
+}
+
+/**
+ * `&self` means the method takes an immutable reference.
+ * If you need a mutable reference, change it to `&mut self` instead.
+ */
+impl SnapshotArray {
+    fn new(length: i32) -> Self {
+        SnapshotArray {
+            current_snap_id: 0,
+            data: vec![HashMap::new(); length as usize],
+        }
+    }
+
+    fn set(&mut self, index: i32, val: i32) {
+        self.data[index as usize].insert(self.current_snap_id, val);
+    }
+
+    fn snap(&mut self) -> i32 {
+        self.current_snap_id += 1;
+        self.current_snap_id - 1
+    }
+
+    fn get(&mut self, index: i32, snap_id: i32) -> i32 {
+        let mut snap_id = snap_id;
+        while snap_id >= 0 {
+            if let Some(&val) = self.data[index as usize].get(&snap_id) {
+                return val;
+            }
+            snap_id -= 1;
+        }
+        0
+    }
+}
+
+/**
+ * Your SnapshotArray object will be instantiated and called as such:
+ * let obj = SnapshotArray::new(length);
+ * obj.set(index, val);
+ * let ret_2: i32 = obj.snap();
+ * let ret_3: i32 = obj.get(index, snap_id);
+ */
+
+fn main() {
+    println!("Hello, world!");
 }
 
 #[cfg(test)]
