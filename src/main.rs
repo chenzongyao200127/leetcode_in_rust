@@ -623,6 +623,28 @@ impl SnapshotArray {
     }
 }
 
+// 2639. 查询网格图中每一列的宽度
+pub fn find_column_width(grid: Vec<Vec<i32>>) -> Vec<i32> {
+    let n = grid.len();
+    let m = grid[0].len();
+    let mut res = vec![0; m];
+    for i in 0..n {
+        for j in 0..m {
+            let mut x = grid[i][j];
+            let mut length = 0;
+            if (x <= 0) {
+                length = 1;
+            }
+            while (x != 0) {
+                length += 1;
+                x /= 10;
+            }
+            res[j] = res[j].max(length);
+        }
+    }
+    return res;
+}
+
 /**
  * Your SnapshotArray object will be instantiated and called as such:
  * let obj = SnapshotArray::new(length);
