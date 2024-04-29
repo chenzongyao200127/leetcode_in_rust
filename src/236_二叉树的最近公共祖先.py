@@ -2,6 +2,11 @@
 # https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/description/?envType=study-plan-v2&envId=top-100-liked
 
 # Definition for a binary tree node.
+from collections import Counter
+import sys
+from typing import List
+
+
 class TreeNode:
     def __init__(self, x):
         self.val = x
@@ -84,3 +89,26 @@ class Solution:
             q = parent[q]
 
         return q
+
+
+class Solution:
+    def minimumAddedInteger(self, nums1: List[int], nums2: List[int]) -> int:
+        n = len(nums1)
+        m = n - 2
+        nums2_counter = Counter(nums2)
+        min_x = sys.maxsize
+
+        nums1.sort()
+        print(nums2_counter)
+        for i in range(n):
+            for j in range(i+1, n):
+                remaining = nums1[:i] + nums1[i+1:j] + nums1[j+1:]
+                x = nums2[0] - remaining[0]
+
+                adjusted_remaining = [num + x for num in remaining]
+                adjusted_remaining_counter = Counter(adjusted_remaining)
+
+                if adjusted_remaining_counter & nums2_counter:
+                    min_x = min(min_x, x)
+
+        return min_x if min_x != sys.maxsize else None
