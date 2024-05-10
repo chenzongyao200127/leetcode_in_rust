@@ -7,7 +7,7 @@
 
 # 输入: n = 5
 # 输出: 5
-# 解释: 
+# 解释:
 # 下面列出范围在 [0, 5] 的非负整数与其对应的二进制表示：
 # 0 : 0
 # 1 : 1
@@ -29,19 +29,19 @@
 # class Solution:
 #     def findIntegers(self, n: int) -> int:
 #         dp = [1] * 10000
-    
+
 #         for i in range(2, n+1):
 #             low = i - (1 << (i.bit_length() - 1))
 #             print(low)
 #             if low >= (1 << (i.bit_length() - 1)) or dp[low] != 1:
 #                 dp[i] = 0
-        
+
 #         print(dp[:n+1])
 #         return sum(dp[:n+1])
-    
+
 # s = Solution()
 # ans = s.findIntegers(3)
-# print(ans)    
+# print(ans)
 
 
 # 思考过程：
@@ -49,7 +49,7 @@
 # 1. 一个整数的二进制表示中不能有连续的1。
 # 2. 对于一个位长为`k`的整数，它的二进制表示中最后两位可以是`00`、`01`或`10`，但不能是`11`。
 # 3. 设`f[k]`表示位长为`k`的整数，其二进制表示中不含连续`1`的数量。
-# 
+#
 # 我们有以下转移方程：
 
 # ```
@@ -69,18 +69,18 @@ class Solution:
     def findIntegers(self, n: int) -> int:
         bin_n = bin(n)[2:]
         k = len(bin_n)
-        
+
         # 初始化 dp 数组
         dp = [0] * (k + 1)
         dp[0] = 1
         dp[1] = 2
-        
+
         # 根据递推关系填充 dp 数组
         for i in range(2, k):
             dp[i] = dp[i-1] + dp[i-2]
 
         ans, prev_bit = 0, 0
-        
+
         for i in range(k):
             curr_bit = int(bin_n[i])
             if curr_bit == 1:
@@ -90,6 +90,7 @@ class Solution:
             prev_bit = curr_bit
 
         return ans + 1
+
 
 s = Solution()
 print(s.findIntegers(3))  # 输出3
@@ -112,6 +113,7 @@ print(s.findIntegers(3))  # 输出3
 # 3. `prev_bit = curr_bit`: 更新`prev_bit`为当前的位，以备下次循环使用。
 
 # 最后，循环结束后，我们返回`ans + 1`。为什么要加1？因为`n`本身也是一个满足条件的数。
+
 
 class Solution:
     def findIntegers(self, n: int) -> int:
