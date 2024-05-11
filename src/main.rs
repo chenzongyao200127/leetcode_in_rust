@@ -83,6 +83,25 @@ pub fn job_scheduling(start_time: Vec<i32>, end_time: Vec<i32>, profit: Vec<i32>
     f[n]
 }
 
+// 2391. 收集垃圾的最少总时间
+
+use std::collections::HashSet;
+
+pub fn calculate_garbage_collection_cost(garbage: Vec<String>, travel: Vec<i32>) -> i32 {
+    let mut total_cost = garbage[0].len() as i32;
+
+    let mut unique_garbage_types = HashSet::new();
+
+    for (garbage_at_house, &travel_distance) in garbage.iter().rev().zip(travel.iter().rev()) {
+        unique_garbage_types.extend(garbage_at_house.chars());
+
+        total_cost +=
+            garbage_at_house.len() as i32 + travel_distance * unique_garbage_types.len() as i32;
+    }
+
+    total_cost
+}
+
 fn main() {
     let costs = vec![1, 3, 2, 5, 4, 6];
     let k = 2;
