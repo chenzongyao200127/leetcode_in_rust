@@ -65,6 +65,9 @@
 # 重新编写代码：
 
 
+from typing import List
+
+
 class Solution:
     def findIntegers(self, n: int) -> int:
         bin_n = bin(n)[2:]
