@@ -173,6 +173,44 @@ fn dijkstra(graph: &Graph, start: usize) -> HashMap<usize, u32> {
     min_cost
 }
 
+// https://leetcode.cn/problems/word-break/description/
+// 给你一个字符串 s 和一个字符串列表 wordDict 作为字典。
+// 如果可以利用字典中出现的一个或多个单词拼接出 s 则返回 true。
+// 注意：不要求字典中出现的单词全部都使用，并且字典中的单词可以重复使用。
+pub fn word_break(s: String, word_dict: Vec<String>) -> bool {
+    let n = s.len();
+    let mut dp = vec![false; n + 1];
+    dp[0] = true;
+
+    let word_set = word_dict.into_iter().collect::<HashSet<_>>();
+    for i in 1..=n {
+        for j in 0..i {
+            if dp[j] && word_set.contains(&s[j..i]) {
+                dp[i] = true;
+                break;
+            }
+        }
+    }
+    dp[n]
+}
+
+// 教练使用整数数组 actions 记录一系列核心肌群训练项目编号。
+// 为增强训练趣味性，需要将所有奇数编号训练项目调整至偶数编号训练项目之前。
+// 请将调整后的训练项目编号以 数组 形式返回。
+pub fn training_plan(actions: Vec<i32>) -> Vec<i32> {
+    let mut even = Vec::new();
+    let mut odd = Vec::new();
+    for &action in actions.iter() {
+        if action % 2 == 0 {
+            odd.push(action);
+        } else {
+            even.push(action);
+        }
+    }
+    even.append(&mut odd);
+    even
+}
+
 fn main() {
     // 创建图
     let mut graph = Graph::new();
