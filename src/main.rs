@@ -211,6 +211,23 @@ pub fn training_plan(actions: Vec<i32>) -> Vec<i32> {
     even
 }
 
+// 2244. 完成所有任务需要的最少轮数
+pub fn minimum_rounds(tasks: Vec<i32>) -> i32 {
+    let counter = tasks.iter().fold(HashMap::new(), |mut map, &task| {
+        *map.entry(task).or_insert(0) += 1;
+        map
+    });
+    let mut ans = 0;
+    for (_, v) in counter.iter() {
+        if *v == 1 {
+            return -1;
+        }
+        ans += v / 3 + if v % 3 == 0 { 0 } else { 1 };
+    }
+
+    ans
+}
+
 fn main() {
     // 创建图
     let mut graph = Graph::new();
