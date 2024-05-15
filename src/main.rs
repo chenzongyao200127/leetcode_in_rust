@@ -228,6 +228,62 @@ pub fn minimum_rounds(tasks: Vec<i32>) -> i32 {
     ans
 }
 
+// 250_Count_Number_of_Rectangles_Containing_Each_Point
+pub fn count_rectangles(rectangles: Vec<Vec<i32>>, points: Vec<Vec<i32>>) -> Vec<i32> {
+    let mut count = vec![0; points.len()];
+    for (i, point) in points.iter().enumerate() {
+        for rectangle in rectangles.iter() {
+            if point[0] >= 0
+                && point[0] <= rectangle[0]
+                && point[1] >= 0
+                && point[1] <= rectangle[1]
+            {
+                count[i] += 1;
+            }
+        }
+    }
+    count
+}
+
+// 2589. Minimum Time to Complete All Tasks
+pub fn find_minimum_time(tasks: Vec<Vec<i32>>) -> i32 {
+    let mut tasks = tasks;
+    tasks.sort_unstable_by_key(|task| task[1]);
+    let mut timeline = vec![0; 2001];
+
+    for task in tasks.iter() {
+        let (start, end, mut duration) = (task[0], task[1], task[2]);
+        for time in start..=end {
+            if duration == 0 {
+                break;
+            }
+            // 尽可能的复用时间
+            if timeline[time as usize] == 1 {
+                duration -= 1;
+            }
+        }
+        // 尽可能的推迟任务的执行时间
+        for time in (start..=end).rev() {
+            if duration == 0 {
+                break;
+            }
+            if timeline[time as usize] == 0 {
+                timeline[time as usize] = 1;
+                duration -= 1;
+            }
+        }
+    }
+
+    let mut ans = 0;
+    for time in timeline.iter() {
+        if *time != 0 {
+            ans += 1;
+        }
+    }
+
+    ans
+}
+
 fn main() {
     // 创建图
     let mut graph = Graph::new();
