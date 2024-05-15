@@ -284,6 +284,109 @@ pub fn find_minimum_time(tasks: Vec<Vec<i32>>) -> i32 {
     ans
 }
 
+// 8. String to Integer (atoi)
+pub fn my_atoi(s: String) -> i32 {
+    let mut s = s.trim_start();
+    let mut sign = 1;
+    if s.starts_with('-') {
+        sign = -1;
+        s = &s[1..];
+    } else if s.starts_with('+') {
+        s = &s[1..];
+    }
+
+    let mut ans = 0;
+    for c in s.chars() {
+        if !c.is_ascii_digit() {
+            break;
+        }
+        let digit = c.to_digit(10).unwrap() as i32;
+        if ans > (i32::MAX - digit) / 10 {
+            return if sign == 1 { i32::MAX } else { i32::MIN };
+        }
+        ans = ans * 10 + digit;
+    }
+
+    sign * ans
+}
+
+// 12. Integer to Roman
+pub fn int_to_roman(num: i32) -> String {
+    let mut num = num;
+    let mut ans = String::new();
+    let symbols = vec![
+        (1000, "M"),
+        (900, "CM"),
+        (500, "D"),
+        (400, "CD"),
+        (100, "C"),
+        (90, "XC"),
+        (50, "L"),
+        (40, "XL"),
+        (10, "X"),
+        (9, "IX"),
+        (5, "V"),
+        (4, "IV"),
+        (1, "I"),
+    ];
+
+    for (value, symbol) in symbols {
+        while num >= value {
+            ans.push_str(symbol);
+            num -= value;
+        }
+    }
+
+    ans
+}
+
+// 13. Roman to Integer
+pub fn roman_to_int(s: String) -> i32 {
+    let mut ans = 0;
+    let mut prev = 0;
+    let symbols = vec![
+        ('I', 1),
+        ('V', 5),
+        ('X', 10),
+        ('L', 50),
+        ('C', 100),
+        ('D', 500),
+        ('M', 1000),
+    ];
+
+    for c in s.chars().rev() {
+        let value = symbols.iter().find(|&&(symbol, _)| symbol == c).unwrap().1;
+        if value < prev {
+            ans -= value;
+        } else {
+            ans += value;
+        }
+        prev = value;
+    }
+
+    ans
+}
+
+// 38. Count and Say
+pub fn count_and_say(n: i32) -> String {
+    let mut ans = "1".to_string();
+    for _ in 1..n {
+        let mut temp = String::new();
+        let mut i = 0;
+        while i < ans.len() {
+            let mut j = i + 1;
+            while j < ans.len() && ans.as_bytes()[i] == ans.as_bytes()[j] {
+                j += 1;
+            }
+            temp.push_str(&(j - i).to_string());
+            temp.push(ans.as_bytes()[i] as char);
+            i = j;
+        }
+        ans = temp;
+    }
+    ans
+}
+
 fn main() {
     // 创建图
     let mut graph = Graph::new();
