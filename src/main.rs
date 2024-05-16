@@ -387,6 +387,34 @@ pub fn count_and_say(n: i32) -> String {
     ans
 }
 
+// 1953. Maximum Number of Weeks for Which You Can Work
+pub fn number_of_weeks(milestones: Vec<i32>) -> i64 {
+    // Clone the input vector and sort it in non-decreasing order
+    let mut milestones = milestones;
+    milestones.sort_unstable();
+
+    // Initialize a variable to store the sum of milestones
+    let mut sum = 0;
+
+    // Iterate through milestones except the last one
+    for &milestone in milestones.iter().take(milestones.len() - 1) {
+        // Add each milestone to the sum
+        sum += milestone as i64;
+    }
+
+    // Get the value of the maximum milestone
+    let max = milestones[milestones.len() - 1] as i64;
+
+    // Check if the sum of milestones is greater than or equal to the maximum milestone
+    if sum >= max {
+        // If so, return the sum plus the maximum milestone
+        sum + max
+    } else {
+        // Otherwise, return twice the sum plus one
+        2 * sum + 1
+    }
+}
+
 fn main() {
     // 创建图
     let mut graph = Graph::new();
