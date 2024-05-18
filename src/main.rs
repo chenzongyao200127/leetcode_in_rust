@@ -415,6 +415,26 @@ pub fn number_of_weeks(milestones: Vec<i32>) -> i64 {
     }
 }
 
+// 826. Most Profit Assigning Work
+pub fn max_profit_assignment(difficulty: Vec<i32>, profit: Vec<i32>, mut worker: Vec<i32>) -> i32 {
+    let mut jobs = difficulty.iter().zip(profit.iter()).collect::<Vec<_>>();
+    jobs.sort_unstable();
+    worker.sort_unstable();
+
+    let mut max_profit = 0;
+    let mut i = 0;
+    let mut ans = 0;
+    for ability in worker.iter() {
+        while i < jobs.len() && jobs[i].0 <= ability {
+            max_profit = max_profit.max(*jobs[i].1);
+            i += 1;
+        }
+        ans += max_profit;
+    }
+
+    ans
+}
+
 fn main() {
     // 创建图
     let mut graph = Graph::new();

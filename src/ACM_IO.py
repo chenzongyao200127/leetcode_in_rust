@@ -13,4 +13,7 @@ for _ in range(group):
     print(sum(nums))
 
 
+line = sys.stdin.readline().strip()
 
+for line in sys.stdin:
+    nums = list(map(int, line.strip().split(' ')))
