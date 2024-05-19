@@ -435,6 +435,12 @@ pub fn max_profit_assignment(difficulty: Vec<i32>, profit: Vec<i32>, mut worker:
     ans
 }
 
+// 到达第 K 级台阶的方案数
+// https://leetcode.cn/contest/weekly-contest-398/problems/find-number-of-ways-to-reach-the-k-th-stair/
+pub fn ways_to_reach_stair(k: i32) -> i32 {
+    
+}
+
 fn main() {
     // 创建图
     let mut graph = Graph::new();
