@@ -435,10 +435,75 @@ pub fn max_profit_assignment(difficulty: Vec<i32>, profit: Vec<i32>, mut worker:
     ans
 }
 
-// 到达第 K 级台阶的方案数
-// https://leetcode.cn/contest/weekly-contest-398/problems/find-number-of-ways-to-reach-the-k-th-stair/
-pub fn ways_to_reach_stair(k: i32) -> i32 {
-    
+// 1535. Find the Winner of an Array Game
+pub fn get_winner(arr: Vec<i32>, k: i32) -> i32 {
+    let k = k as usize;
+    let mut wins = 0;
+    let mut max = arr[0];
+    for i in 1..arr.len() {
+        if arr[i] > max {
+            max = arr[i];
+            wins = 1;
+        } else {
+            wins += 1;
+        }
+        if wins == k {
+            return max;
+        }
+    }
+    max
+}
+
+// 1542. Find Longest Awesome Substring
+
+pub fn longest_awesome(s: String) -> i32 {
+    let mut prefix: HashMap<i32, i32> = HashMap::new();
+    prefix.insert(0, -1);
+    let mut ans = 0;
+    let mut sequence = 0;
+
+    for (j, ch) in s.chars().enumerate() {
+        let digit = ch.to_digit(10).unwrap() as i32;
+        sequence ^= 1 << digit;
+
+        if let Some(&i) = prefix.get(&sequence) {
+            ans = ans.max(j as i32 - i);
+        } else {
+            prefix.insert(sequence, j as i32);
+        }
+
+        for k in 0..10 {
+            let toggled_sequence = sequence ^ (1 << k);
+            if let Some(&i) = prefix.get(&toggled_sequence) {
+                ans = ans.max(j as i32 - i);
+            }
+        }
+    }
+
+    ans
+}
+
+// 1177. Can Make Palindrome from Substring
+pub fn can_make_pali_queries(s: String, queries: Vec<Vec<i32>>) -> Vec<bool> {
+    let s = s.as_bytes();
+    let n = s.len();
+    let mut prefix = vec![vec![0; 26]; n + 1];
+    for i in 0..n {
+        for j in 0..26 {
+            prefix[i + 1][j] = prefix[i][j];
+        }
+        prefix[i + 1][(s[i] - b'a') as usize] += 1;
+    }
+
+    let mut ans = Vec::new();
+    for query in queries.iter() {
+        let mut count = 0;
+        for j in 0..26 {
+            count += (prefix[query[1] as usize + 1][j] - prefix[query[0] as usize][j]) % 2;
+        }
+        ans.push(count / 2 <= query[2]);
+    }
+    ans
 }
 
 fn main() {

@@ -2,6 +2,9 @@
 # https://leetcode.cn/contest/weekly-contest-398/problems/find-number-of-ways-to-reach-the-k-th-stair/
 
 
+from functools import cache
+
+
 def is_special_array(nums, queries):
     n = len(nums)
 
@@ -56,3 +59,17 @@ def digit_difference_sum(nums):
 
 # 100298. 到达第 K 级台阶的方案数
 # https://leetcode-cn.com/contest/weekly-contest-398/problems/find-number-of-ways-to-reach-the-k-th-stair/
+
+
+class Solution:
+    def waysToReachStair(self, k: int) -> int:
+        @cache
+        def dfs(i: int, j: int, pre_down: bool) -> int:
+            if i > k + 1:
+                return 0
+            res = 1 if i == k else 0
+            res += dfs(i + (1 << j), j + 1, False)
+            if i and not pre_down:
+                res += dfs(i - 1, j, True)
+            return res
+        return dfs(1, 0, False)
