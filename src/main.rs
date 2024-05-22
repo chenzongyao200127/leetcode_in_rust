@@ -506,6 +506,75 @@ pub fn can_make_pali_queries(s: String, queries: Vec<Vec<i32>>) -> Vec<bool> {
     ans
 }
 
+// 846. Hand of Straights
+pub fn is_n_straight_hand(hand: Vec<i32>, group_size: i32) -> bool {
+    let group_size = group_size as usize;
+    let mut hand = hand;
+    hand.sort_unstable();
+    let mut counter = HashMap::new();
+    for &card in hand.iter() {
+        *counter.entry(card).or_insert(0) += 1;
+    }
+
+    for &card in hand.iter() {
+        if counter[&card] == 0 {
+            continue;
+        }
+        for i in 0..group_size {
+            if let Some(&count) = counter.get(&(card + i as i32)) {
+                if count == 0 {
+                    return false;
+                }
+                *counter.get_mut(&(card + i as i32)).unwrap() -= 1;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    true
+}
+
+// 2225. 找出输掉零场或一场比赛的玩家
+pub fn find_winners(matches: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+    let mut freq = HashMap::new();
+    for match_ in matches {
+        let (winner, loser) = (match_[0], match_[1]);
+        freq.entry(winner).or_insert(0);
+        *freq.entry(loser).or_insert(0) += 1;
+    }
+
+    let mut ans = vec![Vec::new(), Vec::new()];
+    for (key, value) in freq {
+        if value < 2 {
+            ans[value as usize].push(key);
+        }
+    }
+    ans[0].sort_unstable();
+    ans[1].sort_unstable();
+    ans
+}
+
+// 2226. Maximum Candies Allocated to K Children
+pub fn maximum_candies(candies: Vec<i32>, k: i64) -> i32 {
+    let candies: Vec<i64> = candies.iter().map(|&x| x as i64).collect();
+    let mut low = 0;
+    let mut high = candies.iter().sum::<i64>() / k;
+
+    while low < high {
+        let mid = (low + high + 1) / 2;
+        let s: i64 = candies.iter().map(|&v| v as i64 / mid as i64).sum();
+
+        if s >= k {
+            low = mid; // mid is a valid solution, try for a bigger one
+        } else {
+            high = mid - 1; // mid is too big, try a smaller one
+        }
+    }
+
+    low as i32
+}
+
 fn main() {
     // 创建图
     let mut graph = Graph::new();
