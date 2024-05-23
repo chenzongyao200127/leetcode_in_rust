@@ -24,9 +24,8 @@
 // 输出：10
 // 解释：最优子序列为 [6,1,5] ，交替和为 (6 + 5) - 1 = 10 。
 
-
 // dp[i][pos & 1]
-// dp[i][0] = max(dp[i - 1][1] + nums[i], dp[i - 1][0])   
+// dp[i][0] = max(dp[i - 1][1] + nums[i], dp[i - 1][0])
 // dp[i][1] = max(dp[i - 1][0] - nums[i], dp[i - 1][1])
 
 impl Solution {
@@ -37,7 +36,7 @@ impl Solution {
             even = even.max(odd + nums[i] as i64);
             odd = odd.max(even - nums[i] as i64);
         }
-        return even as i64
+        return even as i64;
     }
 }
 

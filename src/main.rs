@@ -575,6 +575,31 @@ pub fn maximum_candies(candies: Vec<i32>, k: i64) -> i32 {
     low as i32
 }
 
+// 2831. 找出最长等值子数组
+pub fn longest_equal_subarray(nums: Vec<i32>, k: i32) -> i32 {
+    let mut indexes_map: HashMap<i32, Vec<usize>> = HashMap::new();
+
+    // Store indices for each number
+    for (i, &num) in nums.iter().enumerate() {
+        indexes_map.entry(num).or_insert_with(Vec::new).push(i);
+    }
+
+    let mut max_equal_length = 0;
+
+    for indexes in indexes_map.values() {
+        let mut j = 0;
+        for i in 0..indexes.len() {
+            // Expand j to maintain the condition
+            while j < indexes.len() && (indexes[j] - indexes[i] - (j - i)) <= k as usize {
+                j += 1;
+            }
+            max_equal_length = max_equal_length.max(j - i);
+        }
+    }
+
+    max_equal_length as i32
+}
+
 fn main() {
     // 创建图
     let mut graph = Graph::new();
