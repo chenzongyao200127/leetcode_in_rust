@@ -600,6 +600,73 @@ pub fn longest_equal_subarray(nums: Vec<i32>, k: i32) -> i32 {
     max_equal_length as i32
 }
 
+// 1673. Find the Most Competitive Subsequence
+// 贪心 + 单调栈
+pub fn most_competitive(nums: Vec<i32>, k: i32) -> Vec<i32> {
+    let mut stack = Vec::new();
+    let n = nums.len();
+    let k = k as usize;
+
+    for (i, &num) in nums.iter().enumerate() {
+        while !stack.is_empty() && stack.len() + n - i > k && *stack.last().unwrap() > num {
+            stack.pop();
+        }
+        if stack.len() < k {
+            stack.push(num);
+        }
+    }
+
+    stack
+}
+
+// 2903_找出满足差值条件的下标_I
+pub fn find_indices(nums: Vec<i32>, index_difference: i32, value_difference: i32) -> Vec<i32> {
+    let mut max_idx = 0;
+    let mut min_idx = 0;
+    for j in index_difference as usize..nums.len() {
+        let i = j - index_difference as usize;
+        if nums[i] > nums[max_idx] {
+            max_idx = i;
+        } else if nums[i] < nums[min_idx] {
+            min_idx = i;
+        }
+        if nums[max_idx] - nums[j] >= value_difference {
+            return vec![max_idx as i32, j as i32];
+        }
+        if nums[j] - nums[min_idx] >= value_difference {
+            return vec![min_idx as i32, j as i32];
+        }
+    }
+    vec![-1, -1]
+}
+
+// 2904. 最短且字典序最小的美丽子字符串
+pub fn shortest_beautiful_substring(s: String, k: i32) -> String {
+    let mut indexs = vec![];
+    for (i, c) in s.chars().enumerate() {
+        if c == '1' {
+            indexs.push(i);
+        }
+    }
+    if indexs.len() < k as usize {
+        return "".to_string();
+    }
+
+    let mut ans = s.clone();
+    for i in 0..indexs.len() {
+        if i + k as usize - 1 >= indexs.len() {
+            break;
+        }
+        let tmp = s[indexs[i]..=indexs[i + k as usize - 1]].to_string();
+        if tmp.len() < ans.len() {
+            ans = tmp;
+        } else if tmp.len() == ans.len() && tmp < ans {
+            ans = tmp;
+        }
+    }
+    ans
+}
+
 fn main() {
     // 创建图
     let mut graph = Graph::new();
