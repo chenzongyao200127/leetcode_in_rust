@@ -667,6 +667,48 @@ pub fn shortest_beautiful_substring(s: String, k: i32) -> String {
     ans
 }
 
+// 1738. 找出第 K 大的异或坐标值
+pub fn kth_largest_value(matrix: Vec<Vec<i32>>, k: i32) -> i32 {
+    let m = matrix.len();
+    let n = matrix[0].len();
+    let mut prefix = vec![vec![0; n + 1]; m + 1];
+    let mut xor = vec![0; m * n];
+    let mut idx = 0;
+
+    for i in 1..=m {
+        for j in 1..=n {
+            prefix[i][j] =
+                prefix[i - 1][j] ^ prefix[i][j - 1] ^ prefix[i - 1][j - 1] ^ matrix[i - 1][j - 1];
+            xor[idx] = prefix[i][j];
+            idx += 1;
+        }
+    }
+
+    xor.sort_unstable();
+    xor[xor.len() - k as usize]
+}
+
+// 2028. 找出缺失的观测数据
+pub fn missing_rolls(rolls: Vec<i32>, mean: i32, n: i32) -> Vec<i32> {
+    let m = rolls.len() as i32;
+    let sum: i32 = rolls.iter().sum();
+    let total = (m + n) * mean;
+    let mut ans = vec![1; n as usize];
+
+    if total - sum > 6 * n || total - sum < n {
+        return vec![];
+    }
+
+    let mut diff = total - sum - n;
+    for i in 0..n as usize {
+        let x = diff.min(5);
+        ans[i] += x;
+        diff -= x;
+    }
+
+    ans
+}
+
 fn main() {
     // 创建图
     let mut graph = Graph::new();
