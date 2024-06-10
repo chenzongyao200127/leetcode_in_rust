@@ -709,6 +709,57 @@ pub fn missing_rolls(rolls: Vec<i32>, mean: i32, n: i32) -> Vec<i32> {
     ans
 }
 
+// 2951. 找出峰值
+pub fn find_peaks(mountain: Vec<i32>) -> Vec<i32> {
+    let mut ans = vec![];
+    for i in 1..mountain.len() - 1 {
+        if mountain[i] > mountain[i - 1] && mountain[i] > mountain[i + 1] {
+            ans.push(i as i32);
+        }
+    }
+    ans
+}
+
+// 1103. 分糖果 II
+pub fn distribute_candies(candies: i32, num_people: i32) -> Vec<i32> {
+    let num_people = num_people as usize;
+    let mut ans = vec![0; num_people];
+    let mut candies = candies;
+    let mut i = 0;
+    while candies > 0 {
+        ans[i % num_people] += candies.min(i as i32 + 1);
+        candies -= i as i32 + 1;
+        i += 1;
+    }
+    ans
+}
+
+// 3067. 在带权树网络中统计可连接服务器对数目
+pub fn count_pairs_of_connectable_servers(edges: Vec<Vec<i32>>, signal_speed: i32) -> Vec<i32> {
+    // TODO: 6/5/2024
+    unimplemented!()
+}
+
+// 3072. 将元素分配到两个数组中 II
+pub fn result_array(nums: Vec<i32>) -> Vec<i32> {
+    // TODO: 6/5/2024
+    unimplemented!()
+}
+
+// 2938. 区分黑球与白球
+pub fn minimum_steps(s: String) -> i64 {
+    let mut ans = 0i64;
+    let mut sum = 0i64;
+    for &item in s.chars().collect::<Vec<_>>().iter() {
+        if item == '1' {
+            sum += 1;
+        } else {
+            ans += sum;
+        }
+    }
+    ans
+}
+
 fn main() {
     // 创建图
     let mut graph = Graph::new();
