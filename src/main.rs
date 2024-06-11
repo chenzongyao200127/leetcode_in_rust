@@ -760,6 +760,24 @@ pub fn minimum_steps(s: String) -> i64 {
     ans
 }
 
+// 419. 甲板上的战舰
+pub fn count_battleships(board: Vec<Vec<char>>) -> i32 {
+    let mut ans = 0;
+    for i in 0..board.len() {
+        for j in 0..board[0].len() {
+            if board[i][j] == 'X'
+                && (i == 0 || board[i - 1][j] == '.')
+                && (j == 0 || board[i][j - 1] == '.')
+            {
+                ans += 1;
+            }
+        }
+    }
+    ans
+}
+
+// 881. 救生艇
+
 fn main() {
     // 创建图
     let mut graph = Graph::new();
