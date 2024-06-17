@@ -778,6 +778,37 @@ pub fn count_battleships(board: Vec<Vec<char>>) -> i32 {
 
 // 881. 救生艇
 
+// 522. 最长特殊序列 II
+pub fn find_lu_slength(strs: Vec<String>) -> i32 {
+    let mut ans = -1;
+    for i in 0..strs.len() {
+        let mut is_subsequence = false;
+        for j in 0..strs.len() {
+            if i == j {
+                continue;
+            }
+            if subsequence(&strs[i], &strs[j]) {
+                is_subsequence = true;
+                break;
+            }
+        }
+        if !is_subsequence {
+            ans = ans.max(strs[i].len() as i32);
+        }
+    }
+    ans
+}
+
+pub fn subsequence(a: &str, b: &str) -> bool {
+    let mut i = 0;
+    for &c in b.as_bytes() {
+        if i < a.len() && a.as_bytes()[i] == c {
+            i += 1;
+        }
+    }
+    i == a.len()
+}
+
 fn main() {
     // 创建图
     let mut graph = Graph::new();
