@@ -809,6 +809,19 @@ pub fn subsequence(a: &str, b: &str) -> bool {
     i == a.len()
 }
 
+// 724. 寻找数组的中心下标
+pub fn pivot_index(nums: Vec<i32>) -> i32 {
+    let sum: i32 = nums.iter().sum();
+    let mut left_sum = 0;
+    for i in 0..nums.len() {
+        if left_sum == sum - left_sum - nums[i] {
+            return i as i32;
+        }
+        left_sum += nums[i];
+    }
+    -1
+}
+
 fn main() {
     // 创建图
     let mut graph = Graph::new();
