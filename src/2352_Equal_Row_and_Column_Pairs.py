@@ -17,8 +17,8 @@ class Solution:
                 if is_equal(grid[r], [grid[i][c] for i in range(n)]):
                     count += 1
         return count
-    
-    
+
+
 class Solution:
     def equalPairs(self, grid: List[List[int]]) -> int:
         n = len(grid)

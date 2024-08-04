@@ -2,18 +2,18 @@
 # https://leetcode.cn/problems/move-pieces-to-obtain-a-string/description/
 
 
-# The condition `if i != j and (c == 'L') == (i < j):` contains two parts, 
+# The condition `if i != j and (c == 'L') == (i < j):` contains two parts,
 # and understanding both is crucial for grasping the logic of the algorithm:
 
-# 1. `i != j`: This checks whether the current character from the `start` 
-# string and the corresponding character from the `target` string are in different positions. 
-# If `i == j`, it means the current character hasn't moved, 
-# so there's no need to check any further for this character since it's already in the correct position in the target string. 
+# 1. `i != j`: This checks whether the current character from the `start`
+# string and the corresponding character from the `target` string are in different positions.
+# If `i == j`, it means the current character hasn't moved,
+# so there's no need to check any further for this character since it's already in the correct position in the target string.
 
-# 2. `(c == 'L') == (i < j)`: This condition is used to determine the legality of the move. 
-# If the character is 'L', it means it can only move to the left. Hence, its starting position (`i`) 
-# should be greater than its ending position (`j`). If the character is 'R', it can only move to the right, 
-# so its starting position should be less than its ending position. Thus, the condition checks for the legality 
+# 2. `(c == 'L') == (i < j)`: This condition is used to determine the legality of the move.
+# If the character is 'L', it means it can only move to the left. Hence, its starting position (`i`)
+# should be greater than its ending position (`j`). If the character is 'R', it can only move to the right,
+# so its starting position should be less than its ending position. Thus, the condition checks for the legality
 # of the move based on the character and its positions in both strings.
 
 # Putting the two conditions together:
@@ -31,14 +31,13 @@ class Solution:
         for i, c in enumerate(start):
             if c == '_':
                 continue
-            
+
             while target[j] == '_':
                 j += 1
-            
+
             if i != j and (c == 'L') == (i < j):
                 return False
-            
+
             j += 1
-            
+
         return True
-            
