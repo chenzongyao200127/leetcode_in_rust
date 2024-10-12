@@ -12,6 +12,8 @@
 # Explanation: Intervals [1,4] and [4,5] are considered overlapping.
 
 from typing import List
+
+
 class Solution:
     def merge(self, intervals: List[List[int]]) -> List[List[int]]:
         intervals = sorted(intervals)
@@ -26,17 +28,17 @@ class Solution:
             else:
                 l = min(l, x)
                 r = max(r, y)
-        
+
         ans.append([l, r])
         return ans
 
+
 s = Solution()
-res = s.merge([[1,3],[2,6],[8,10],[15,18]])
+res = s.merge([[1, 3], [2, 6], [8, 10], [15, 18]])
 print(res)
 
-res = s.merge([[1,4],[4,5]])
+res = s.merge([[1, 4], [4, 5]])
 print(res)
-
 
 
 class Solution:
@@ -45,11 +47,20 @@ class Solution:
 
         merged = []
         for interval in intervals:
-            # 如果列表为空，或者当前区间与上一区间不重合，直接添加
+            # If the list is empty, or the current interval does not overlap with the previous one, add it directly
             if not merged or merged[-1][1] < interval[0]:
                 merged.append(interval)
             else:
-                # 否则的话，我们就可以与上一区间进行合并
+                # Otherwise, we can merge it with the previous interval
                 merged[-1][1] = max(merged[-1][1], interval[1])
 
         return merged
+
+
+# test
+s = Solution()
+res = s.merge([[1, 3], [2, 6], [8, 10], [15, 18]])
+print(res)
+
+res = s.merge([[1, 4], [4, 5]])
+print(res)
