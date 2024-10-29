@@ -64,7 +64,8 @@
     "condition_variable": "cpp",
     "ratio": "cpp",
     "mutex": "cpp",
-    "thread": "cpp"
+    "thread": "cpp",
+    "3211_生成不含相邻零的二进制字符串.C": "cpp"
   },
   "rust-analyzer.showUnlinkedFileNotification": false,
   "C_Cpp_Runner.msvcBatchPath": "",
