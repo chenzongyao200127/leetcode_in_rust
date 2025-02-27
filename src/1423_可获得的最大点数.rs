@@ -1,7 +1,6 @@
 // 1423_可获得的最大点数
 // https://leetcode.cn/problems/maximum-points-you-can-obtain-from-cards/
 
-
 impl Solution {
     pub fn max_score(card_points: Vec<i32>, k: i32) -> i32 {
         let k = k as usize; // Convert k to usize for indexing
@@ -20,12 +19,11 @@ impl Solution {
     }
 }
 
-
 impl Solution {
     pub fn max_score(card_points: Vec<i32>, k: i32) -> i32 {
         let n = card_points.len();
         let k = k as usize;
-        
+
         // DP arrays to store the maximum score when taking cards from the beginning or the end
         let mut dp_front = vec![0; k + 1];
         let mut dp_back = vec![0; k + 1];
@@ -49,7 +47,6 @@ impl Solution {
         max_score
     }
 }
-
 
 impl Solution {
     pub fn max_score(card_points: Vec<i32>, k: i32) -> i32 {
